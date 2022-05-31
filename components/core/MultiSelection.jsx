@@ -17,7 +17,9 @@ const MultiSelection = (props) => {
         if (typeof props.defaultValue === 'string') {
           var str_array = convertListToArray(props.defaultValue)
           setSelected(str_array)
-           console.log("init ms data", str_array)
+           //console.log("init ms data", str_array)
+        } else {
+          setSelected(props.defaultValue)
         }
      }
       // try {
