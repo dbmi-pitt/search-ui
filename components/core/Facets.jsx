@@ -10,8 +10,9 @@ const Facets = props => {
   console.log('FACETS comp', props)
   return (
       <div>
-      {Object.entries(props.facets)
+      {Object.entries(props.fields.facets)
         .map((facet) => {
+          //console.log(facet)
         return (
          <Facet
           key={facet[0]}
