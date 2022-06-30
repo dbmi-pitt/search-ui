@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FieldGroup from "./FieldGroup";
 import TextField from "./TextField";
+import TextArea from "./TextArea";
 import GeneralOption from "./Option";
 import SimpleSelect from "./SimpleSelect";
 import MultiSelection from "./MultiSelection";
@@ -164,6 +165,22 @@ const Form = (props) => {
 			                  </div>
 
 			                  )
+			            case "textarea":
+			             return (<div key={field._uid}>
+			                <TextArea
+			                  register={register}
+			                  errors={errors}
+			                  key={field._uid}
+			                  name={field._uid}
+			                  field={field}
+			                  fieldchanged={fieldchanged}
+			                  value={values[field._uid]}
+			                  rows={field.rows}
+			                  required={field.required}
+			                  type={field.type}
+			                />
+			                </div>
+			              );
 			            case "anchor":
 			              return (
 			                <div key={field._uid}>
