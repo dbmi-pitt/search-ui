@@ -6,11 +6,6 @@ import { ErrorMessage } from "@hookform/error-message";
 const TextArea = ({...props}) => {
     //console.log('Field',props)
     const theRef = useRef();
-    // var help_message = ""
-    // try {
-    //     help_message = props.field.help_message
-    // } catch (e) { }
-
     return (
         <div className="form-floating mb-3">
             <textarea {...props}

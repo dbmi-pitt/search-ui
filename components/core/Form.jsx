@@ -47,21 +47,7 @@ const Form = (props) => {
     console.log('FORM2:  form state has changed...')
     const upcomingPageData = FORM_FIELD_DEF[page];
     setCurrentPageData(upcomingPageData);
-    // setValues((currentValues) => {
-    //   const newValues = FORM_FIELD_DEF[page].fields.reduce((obj, field) => {
-    //     if (field.component === "field_group") {
-    //       for (const subField of field.fields) {
-    //         obj[subField._uid] = "";
-    //       }
-    //     } else {
-    //       obj[field._uid] = "";
-    //     }
-
-    //     return obj;
-    //   }, {});
-
-    //   return Object.assign({}, newValues, currentValues);
-    // });
+ 
   }, []);
 
   // const reload = (data) => {
