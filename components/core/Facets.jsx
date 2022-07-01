@@ -9,7 +9,7 @@ const Facets = props => {
 
   console.log('FACETS comp', props)
   return (
-      <div>
+      <>
       {Object.entries(props.fields.facets)
         .map((facet) => {
           //console.log(facet)
@@ -25,7 +25,7 @@ const Facets = props => {
         );
       })
       }
-  </div>);
+  </>);
 };
 
 export default Facets;
