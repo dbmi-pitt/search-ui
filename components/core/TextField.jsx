@@ -1,9 +1,10 @@
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import log from "loglevel";
 
 const TextField = ({...props}) => {
-    //console.log('Field',props)
+    //log.trace('Field',props)
     const theRef = useRef();
 
     return (
