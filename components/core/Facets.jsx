@@ -2,17 +2,17 @@ import React from 'react';
 import {
   Facet
 } from "@elastic/react-search-ui";
-
+import log from "loglevel";
 import { MultiCheckboxFacet } from "@elastic/react-search-ui-views";
 
 const Facets = props => {
 
-  console.log('FACETS comp', props)
+  log.trace('FACETS comp', props)
   return (
       <div>
       {Object.entries(props.fields.facets)
         .map((facet) => {
-          //console.log(facet)
+          //log.trace(facet)
         return (
          <Facet
           key={facet[0]}
