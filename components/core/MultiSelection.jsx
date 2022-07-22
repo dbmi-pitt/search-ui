@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import { convertListToArray } from "../../lib/utils";
+import log from "loglevel";
 
 const MultiSelection = (props) => {
   const [selected, setSelected] = useState([]);
@@ -17,7 +18,7 @@ const MultiSelection = (props) => {
         if (typeof props.defaultValue === 'string') {
           var str_array = convertListToArray(props.defaultValue)
           setSelected(str_array)
-           //console.log("init ms data", str_array)
+           //log.trace("init ms data", str_array)
         } else {
           setSelected(props.defaultValue)
         }
