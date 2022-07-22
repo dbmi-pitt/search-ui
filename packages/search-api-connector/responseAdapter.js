@@ -1,4 +1,5 @@
 import { getFacets, getResults, transformResults } from "./responseAdapters";
+import log from "loglevel";
 
 export default function adaptResponse(response, indexName) {
   
@@ -12,7 +13,7 @@ export default function adaptResponse(response, indexName) {
   //const facets = getFacets(transFormedResults.info[indexName]);
   const facets = getFacets(response);
 
-  //console.log("facets", facets)
+  //log.trace("facets", facets)
   return {
     rawResponse: transFormedResults,
     results,
