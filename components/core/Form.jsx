@@ -45,7 +45,7 @@ const Form = (props) => {
 
   // this effect will run when the `page` changes
   useEffect(() => {
-    log.trace('FORM2:  form state has changed...')
+    log.info('FORM2:  form state has changed...')
     const upcomingPageData = FORM_FIELD_DEF[page];
     setCurrentPageData(upcomingPageData);
  
@@ -57,14 +57,14 @@ const Form = (props) => {
 
   useEffect(() => {
         // reset form with user data
-        log.trace("FORM2: values have changed...")
+        log.info("FORM2: values have changed...")
        setValues(props.data)
     }, [props.data]);
 
 
   // callback provided to components to update the main list of form values
   const fieldchanged = (fieldId, value) => {
-    log.trace('fieldchanged',fieldId, value)
+    log.info('fieldchanged',fieldId, value)
     // use a callback to find the field in the value list and update it
     setValues((currentValues) => {
       currentValues[fieldId] = value;
@@ -80,12 +80,12 @@ const Form = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-      log.trace('Form OnSubmit', e)
+      log.info('Form OnSubmit', e)
     // todo - send data somewhere
-    //log.trace(e.currentTarget.elements)
+    //log.info(e.currentTarget.elements)
     props.onsubmit({data: values, mode: editMode})
   
-    //log.trace('Submitted Values', values)
+    //log.info('Submitted Values', values)
   };
 
 //setSelectedOption(selected)
@@ -103,7 +103,7 @@ const Form = (props) => {
 			      {currentPageData.fields
 			        .filter(fieldMeetsCondition(values))
 			        .map((field) => {
-			        log.trace(field)
+			        log.info(field)
 			          switch (field.component) {
 			            case "field_group":
 			              return (

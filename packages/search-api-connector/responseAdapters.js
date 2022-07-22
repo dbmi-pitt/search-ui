@@ -48,7 +48,7 @@ export function getFacets(results) {
   // this follows the Elasticsearch DSL return results
   if (!results.aggregations) return {};
 
-  log.trace('aggs', results.aggregations)
+  log.info('aggs', results.aggregations)
   //let facets =  []
   let facet = {}
 
@@ -80,14 +80,14 @@ export function getFacets(results) {
 
   });
 
-  //log.trace(facet)
+  //log.info(facet)
   return facet
 }
 
 
 // take the ES DSL results and transform them into the form search-ui expects
 export function transformResults(records, indexName) {
-  log.trace("transformResults", records)
+  log.info("transformResults", records)
   let result = new Object();
   let docType = new Object();
   let total = records["hits"]["total"].value;
@@ -110,7 +110,7 @@ export function transformResults(records, indexName) {
   result["info"] = info
   result["errors"] = {}
 
-  log.trace("result", result)
+  log.info("result", result)
   return result;
 
 }

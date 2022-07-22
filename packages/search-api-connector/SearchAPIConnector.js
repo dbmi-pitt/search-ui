@@ -94,7 +94,7 @@ class SearchAPIConnector {
     //const options = adaptRequest(state, queryConfig, this.indexName);
     const options = customAdaptRequest(state, queryConfig, state);
  
-    log.trace("I'm HERE:  onSearch", options)
+    log.info("I'm HERE:  onSearch", options)
     return this.beforeSearchCall(options, newOptions =>
       this.request("POST", "/search", newOptions, this.accessToken, this.indexUrl, this.indexName).then(json =>
         adaptResponse(json, this.indexName)

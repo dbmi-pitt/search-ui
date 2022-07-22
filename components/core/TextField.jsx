@@ -4,7 +4,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import log from "loglevel";
 
 const TextField = ({...props}) => {
-    //log.trace('Field',props)
+    //log.info('Field',props)
     const theRef = useRef();
 
     return (

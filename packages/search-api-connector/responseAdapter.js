@@ -13,7 +13,7 @@ export default function adaptResponse(response, indexName) {
   //const facets = getFacets(transFormedResults.info[indexName]);
   const facets = getFacets(response);
 
-  //log.trace("facets", facets)
+  //log.info("facets", facets)
   return {
     rawResponse: transFormedResults,
     results,
