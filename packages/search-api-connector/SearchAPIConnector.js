@@ -2,6 +2,7 @@ import adaptRequest from "./requestAdapter";
 import customAdaptRequest from "./customRequestAdapter";
 import adaptResponse from "./responseAdapter";
 import request from "./request";
+import log from "loglevel";
 
 function _get(engineKey, path, params) {
   const query = Object.entries({ engine_key: engineKey, ...params })
@@ -64,7 +65,7 @@ class SearchAPIConnector {
 
   onResultClick({ query, documentId, tags }) {
     if (tags && tags.length > 0) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: Site Search does not support tags on click"
       );
     }
@@ -77,7 +78,7 @@ class SearchAPIConnector {
 
   onAutocompleteResultClick({ query, documentId, tags }) {
     if (tags) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: Site Search does not support tags on autocompleteClick"
       );
     }
@@ -93,7 +94,7 @@ class SearchAPIConnector {
     //const options = adaptRequest(state, queryConfig, this.indexName);
     const options = customAdaptRequest(state, queryConfig, state);
  
-    console.log("I'm HERE:  onSearch", options)
+    log.info("I'm HERE:  onSearch", options)
     return this.beforeSearchCall(options, newOptions =>
       this.request("POST", "/search", newOptions, this.accessToken, this.indexUrl, this.indexName).then(json =>
         adaptResponse(json, this.indexName)
@@ -118,7 +119,7 @@ class SearchAPIConnector {
       );
     }
     if (queryConfig.suggestions) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: Site Search does support query suggestions on autocomplete"
       );
     }

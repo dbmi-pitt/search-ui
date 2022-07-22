@@ -1,3 +1,5 @@
+import log from "loglevel";
+
 const addEachKeyValueToObject = (acc, [key, value]) => ({
   ...acc,
   [key]: value
@@ -46,7 +48,7 @@ export function getFacets(results) {
   // this follows the Elasticsearch DSL return results
   if (!results.aggregations) return {};
 
-  console.log('aggs', results.aggregations)
+  log.info('aggs', results.aggregations)
   //let facets =  []
   let facet = {}
 
@@ -78,14 +80,14 @@ export function getFacets(results) {
 
   });
 
-  //console.log(facet)
+  //log.info(facet)
   return facet
 }
 
 
 // take the ES DSL results and transform them into the form search-ui expects
 export function transformResults(records, indexName) {
-  console.log("transformResults", records)
+  log.info("transformResults", records)
   let result = new Object();
   let docType = new Object();
   let total = records["hits"]["total"].value;
@@ -108,7 +110,7 @@ export function transformResults(records, indexName) {
   result["info"] = info
   result["errors"] = {}
 
-  console.log("result", result)
+  log.info("result", result)
   return result;
 
 }

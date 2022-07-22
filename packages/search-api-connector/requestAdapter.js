@@ -4,18 +4,19 @@ import {
   adaptResultFieldsConfig,
   adaptSearchFieldsConfig
 } from "./requestAdapters";
+import log from "loglevel";
 
 export default function adaptRequest(request, queryConfig, documentType) {
   const { disjunctiveFacets, disjunctiveFacetsAnalyticsTags } = queryConfig;
 
   if (disjunctiveFacets) {
-    console.warn(
+    log.warn(
       "search-ui-site-search-connector: disjunctiveFacets is not supported by Site Search"
     );
   }
 
   if (disjunctiveFacetsAnalyticsTags) {
-    console.warn(
+    log.warn(
       "search-ui-site-search-connector: disjunctiveFacetsAnalyticsTags is not supported by Site Search"
     );
   }

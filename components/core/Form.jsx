@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FieldGroup from "./FieldGroup";
 import TextField from "./TextField";
+import TextArea from "./TextArea";
 import GeneralOption from "./Option";
 import SimpleSelect from "./SimpleSelect";
 import MultiSelection from "./MultiSelection";
@@ -11,6 +12,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
+import log from "loglevel";
 
 
 const fieldMeetsCondition = (values) => (field) => {
@@ -43,24 +45,10 @@ const Form = (props) => {
 
   // this effect will run when the `page` changes
   useEffect(() => {
-    console.log('FORM2:  form state has changed...')
+    log.info('FORM2:  form state has changed...')
     const upcomingPageData = FORM_FIELD_DEF[page];
     setCurrentPageData(upcomingPageData);
-    // setValues((currentValues) => {
-    //   const newValues = FORM_FIELD_DEF[page].fields.reduce((obj, field) => {
-    //     if (field.component === "field_group") {
-    //       for (const subField of field.fields) {
-    //         obj[subField._uid] = "";
-    //       }
-    //     } else {
-    //       obj[field._uid] = "";
-    //     }
-
-    //     return obj;
-    //   }, {});
-
-    //   return Object.assign({}, newValues, currentValues);
-    // });
+ 
   }, []);
 
   // const reload = (data) => {
@@ -69,14 +57,14 @@ const Form = (props) => {
 
   useEffect(() => {
         // reset form with user data
-        console.log("FORM2: values have changed...")
+        log.info("FORM2: values have changed...")
        setValues(props.data)
     }, [props.data]);
 
 
   // callback provided to components to update the main list of form values
   const fieldchanged = (fieldId, value) => {
-    console.log('fieldchanged',fieldId, value)
+    log.info('fieldchanged',fieldId, value)
     // use a callback to find the field in the value list and update it
     setValues((currentValues) => {
       currentValues[fieldId] = value;
@@ -92,12 +80,12 @@ const Form = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-      console.log('Form OnSubmit', e)
+      log.info('Form OnSubmit', e)
     // todo - send data somewhere
-    //console.log(e.currentTarget.elements)
+    //log.info(e.currentTarget.elements)
     props.onsubmit({data: values, mode: editMode})
   
-    //console.log('Submitted Values', values)
+    //log.info('Submitted Values', values)
   };
 
 //setSelectedOption(selected)
@@ -115,7 +103,7 @@ const Form = (props) => {
 			      {currentPageData.fields
 			        .filter(fieldMeetsCondition(values))
 			        .map((field) => {
-			        console.log(field)
+			        log.info(field)
 			          switch (field.component) {
 			            case "field_group":
 			              return (
@@ -164,6 +152,22 @@ const Form = (props) => {
 			                  </div>
 
 			                  )
+			            case "textarea":
+			             return (<div key={field._uid}>
+			                <TextArea
+			                  register={register}
+			                  errors={errors}
+			                  key={field._uid}
+			                  name={field._uid}
+			                  field={field}
+			                  fieldchanged={fieldchanged}
+			                  value={values[field._uid]}
+			                  rows={field.rows}
+			                  required={field.required}
+			                  type={field.type}
+			                />
+			                </div>
+			              );
 			            case "anchor":
 			              return (
 			                <div key={field._uid}>

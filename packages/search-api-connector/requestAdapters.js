@@ -1,3 +1,5 @@
+import log from "loglevel";
+
 function adaptFilterType(type) {
   if (type === "any") return {};
   if (type === "all") return { type: "and" };
@@ -9,18 +11,18 @@ export function adaptFacetConfig(facets) {
 
   const convertInvalidFacetsToUndefined = ([fieldName, config]) => {
     if (config.type !== "value") {
-      console.warn(
+      log.warn(
         `search-ui-site-search-connector: Dropping ${fieldName} facet, only value facets are supported in Site Search`
       );
       return;
     }
     if (config.sort) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: Site Search does not support 'sort' on facets"
       );
     }
     if (config.size) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: Site Search does not support 'size' on facets"
       );
     }
@@ -46,14 +48,14 @@ export function adaptFilterConfig(filters) {
     let fieldValue = filter.values;
 
     if (acc[fieldName]) {
-      console.warn(
+      log.warn(
         "search-ui-site-search-connector: More than one filter found for a single field"
       );
       return acc;
     }
 
     if (filter.type && (filter.type !== "all" && filter.type !== "any")) {
-      console.warn(
+      log.warn(
         `search-ui-site-search-connector: Unsupported filter type "${filter.type}" found, only "all" and "any" are currently supported`
       );
       return acc;
@@ -61,7 +63,7 @@ export function adaptFilterConfig(filters) {
 
     if (fieldValue.find(v => typeof v === "object") !== undefined) {
       if (fieldValue.length > 1) {
-        console.warn(
+        log.warn(
           "search-ui-site-search-connector: Cannot apply more than 1 none-value filters to a single field"
         );
         return acc;

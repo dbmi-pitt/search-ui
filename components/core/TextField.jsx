@@ -1,15 +1,11 @@
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import log from "loglevel";
 
-//const Field = ({ field, fieldChanged, type, value }) => {
 const TextField = ({...props}) => {
-    //console.log('Field',props)
+    //log.info('Field',props)
     const theRef = useRef();
-    // var help_message = ""
-    // try {
-    //     help_message = props.field.help_message
-    // } catch (e) { }
 
     return (
         <div className="form-floating mb-3">
