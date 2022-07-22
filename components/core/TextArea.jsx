@@ -5,7 +5,7 @@ import log from "loglevel";
 
 //const Field = ({ field, fieldChanged, type, value }) => {
 const TextArea = ({...props}) => {
-    //log.trace('Field',props)
+    //log.info('Field',props)
     const theRef = useRef();
     return (
         <div className="form-floating mb-3">
