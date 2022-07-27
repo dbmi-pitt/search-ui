@@ -43,6 +43,8 @@ const Form = (props) => {
   const [values, setValues] = useState(props.data);
   const [selectedOption, setSelectedOption] = useState(null);
 
+  const [isDisabled, setIsDisabled] = useState(props.disabled);
+
   // this effect will run when the `page` changes
   useEffect(() => {
     log.info('FORM2:  form state has changed...')
@@ -194,7 +196,7 @@ const Form = (props) => {
 			        })}
 			        <hr />
 			          <div className="btn-group text-right" role="group">
-			      <button className="btn btn-primary" type="submit">Submit</button>
+			      <button className="btn btn-primary" type="submit" disabled={isDisabled}>Submit</button>
 			      <Link href="/search" passHref>
 			       <button className="btn btn-secondary" type="button">Cancel</button>
 			      </Link>
