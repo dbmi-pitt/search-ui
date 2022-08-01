@@ -69,6 +69,7 @@ export function getFacets(results) {
         let c = b["doc_count"]
         //x[k] = t;
         bucket_list[i] = {"value": k, "count": c};
+
         i += 1
       });
       compound["field"] = facet_name
@@ -86,7 +87,7 @@ export function getFacets(results) {
 
 
 // take the ES DSL results and transform them into the form search-ui expects
-export function transformResults(records, indexName) {
+export function transformResults(records, indexName, state) {
   log.info("transformResults", records)
   let result = new Object();
   let docType = new Object();
@@ -103,9 +104,9 @@ export function transformResults(records, indexName) {
   let info = new Object();
   info[indexName] = {"total_result_count": total, 
           "query": "test", 
-          "current_page": 1, 
-          "num_pages": total/20,
-          "per_page": 20,
+          "current_page": state.current,
+          "num_pages": total/state.resultsPerPage,
+          "per_page": state.resultsPerPage,
           "facets": {}}
   result["info"] = info
   result["errors"] = {}

@@ -97,7 +97,7 @@ class SearchAPIConnector {
     log.info("I'm HERE:  onSearch", options)
     return this.beforeSearchCall(options, newOptions =>
       this.request("POST", "/search", newOptions, this.accessToken, this.indexUrl, this.indexName).then(json =>
-        adaptResponse(json, this.indexName)
+        adaptResponse(json, this.indexName, state)
       )
     );
   }
