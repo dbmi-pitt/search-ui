@@ -1,12 +1,12 @@
 import { getFacets, getResults, transformResults } from "./responseAdapters";
 import log from "loglevel";
 
-export default function adaptResponse(response, indexName) {
+export default function adaptResponse(response, indexName, state) {
   
   // transform from pure ES results
-  const transFormedResults = transformResults(response, indexName);
+  const transFormedResults = transformResults(response, indexName, state);
 
-  const results = getResults(transFormedResults.records, indexName);
+  const results = getResults(transFormedResults.records, indexName, state);
   const totalPages = transFormedResults.info[indexName].num_pages;
   const totalResults = transFormedResults.info[indexName].total_result_count;
   const requestId = "";
