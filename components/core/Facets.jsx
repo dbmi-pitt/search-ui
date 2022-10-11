@@ -1,31 +1,18 @@
-import React from 'react';
-import {
-  Facet
-} from "@elastic/react-search-ui";
+import React from 'react'
 import log from "loglevel"
-import { MultiCheckboxFacet } from "@elastic/react-search-ui-views";
+import CollapsableFacet from "./CollapsableFacet";
 
-const Facets = props => {
+const Facets = ({fields, filters}) => {
+    log.info('FACETS component props', fields, filters)
 
-  log.info('FACETS comp', props)
-  return (
-      <>
-      {Object.entries(props.fields.facets)
-        .map((facet) => {
-          //log.info(facet)
-        return (
-         <Facet
-          key={facet[0]}
-          field={facet[0]}
-          label={facet[1]["label"]}
-          filterType={facet[1]["filterType"]}
-          isFilterable={facet[1]["isFilterable"]}
-          //view={MultiCheckboxFacet}
-        />
-        );
-      })
-      }
-  </>);
-};
+    return (<>
+        {Object.entries(fields.facets)
+            .map(facet => (<CollapsableFacet
+                key={facet[0]}
+                facet={facet}
+                fields={fields}
+                filters={filters}/>))}
+    </>)
+}
 
 export default Facets;

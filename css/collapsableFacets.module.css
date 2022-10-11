@@ -1,0 +1,9 @@
+.facetsHover:hover {
+    cursor: pointer;
+    color: blue;
+}
+
+.contracted {
+    cursor: pointer;
+    color: blue;
+}
