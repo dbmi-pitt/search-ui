@@ -61,6 +61,7 @@ const CollapsableFacet = ({fields, filters, facet}) => {
                         field={facet_key}
                         filterType={facet[1]["filterType"]}
                         isFilterable={facet[1]["isFilterable"]}
+                        className='js-gtm--facets'
                     />
                 </>}
                 {!isExpanded && <legend className={`sui-facet__title ${styles.contracted}`}
