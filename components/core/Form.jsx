@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import log from "loglevel";
+import styles from '../../css/form.module.css'
 
 
 const fieldMeetsCondition = (values) => (field) => {
@@ -195,9 +196,9 @@ const Form = (props) => {
 			        })}
 			        <hr />
 			          <div className="btn-group text-right" role="group">
-			      <button className="btn btn-primary" type="submit" disabled={isDisabled}>Submit</button>
+			      <button className={`${styles.submitButton} btn rounded-pill me-3 px-4 shadow`} type="submit" disabled={isDisabled}>Submit</button>
 			      <Link href="/search" passHref>
-			       <button className="btn btn-secondary" type="button">Cancel</button>
+			       <button className={`${styles.cancelButton} btn rounded-pill px-4 shadow`} type="button">Cancel</button>
 			      </Link>
 			      </div>
 			    </form>
