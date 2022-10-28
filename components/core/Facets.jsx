@@ -12,6 +12,7 @@ const Facets = ({fields, filters}) => {
                 facet={facet}
                 fields={fields}
                 filters={filters}/>))}
+        <br/>
     </>)
 }
 

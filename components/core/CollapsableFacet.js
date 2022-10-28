@@ -49,12 +49,15 @@ const CollapsableFacet = ({fields, filters, facet}) => {
         updateConditionalFacetVisibility(facet_key)
     })
 
+    const column1Style = isExpanded ? 'col-9' : 'col-9 d-flex align-items-center'
+    const column2Style = isExpanded ? 'text-end d-flex justify-content-end' : 'text-end d-flex align-items-center justify-content-end'
+
     return (<>
-        {isVisible && <Row className={'pt-4'}>
-            <Col className={'col-9'}>
+        {isVisible && <Row className={`${styles.background} p-2 mt-4 shadow`}>
+            <Col className={column1Style}>
 
                 {isExpanded && <>
-                    <legend className={`sui-facet__title ${styles.facetsHover}`}
+                    <legend className={`sui-facet__title hurmeFontSemiBold text-capitalize text-nowrap ${styles.onHoverCursorPointer} ${styles.fs7} ${styles.legendColor}`}
                             onClick={handleClick}>{label}</legend>
                     <Facet
                         key={facet_key}
@@ -64,18 +67,18 @@ const CollapsableFacet = ({fields, filters, facet}) => {
                         className='js-gtm--facets'
                     />
                 </>}
-                {!isExpanded && <legend className={`sui-facet__title ${styles.contracted}`}
+                {!isExpanded && <legend className={`sui-facet__title hurmeFontSemiBold text-capitalize text-nowrap ${styles.onHoverCursorPointer} ${styles.fs7} ${styles.legendColor} mb-0`}
                                         onClick={handleClick}>{label}</legend>}
             </Col>
 
-            <Col className={'text-end'}>
+            <Col className={column2Style}>
                 {isExpanded && <ChevronDown
                     onClick={handleClick}
-                    className={`align-top ${styles.facetsHover}`}
+                    className={`align-top ${styles.onHoverCursorPointer}`}
                 />}
                 {!isExpanded && <ChevronRight
                     onClick={handleClick}
-                    className={`align-top ${styles.contracted}`}
+                    className={styles.onHoverCursorPointer}
                 />}
             </Col>
         </Row>}

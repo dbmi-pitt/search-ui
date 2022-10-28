@@ -1,9 +1,16 @@
-.facetsHover:hover {
-    cursor: pointer;
-    color: blue;
+.background {
+    background-color: white;
+    border-radius: 10px;
 }
 
-.contracted {
+.legendColor {
+    color: #575757;
+}
+
+.fs7 {
+    font-size: .85rem;
+}
+
+.onHoverCursorPointer:hover {
     cursor: pointer;
-    color: blue;
 }
