@@ -17,6 +17,7 @@ const TextArea = ({...props}) => {
                 value={props.value}
                 rows={props.rows}
                 onChange={e => props.fieldchanged(props.field._uid, e.target.value)}
+                style={{height: '100%'}}
             />
              <label htmlFor={props.field._uid}>{props.field.label}</label>
              <small id="{props.field._uid}_Help" className="form-text text-muted">{props.field.help_message}</small>
