@@ -11,7 +11,6 @@ import { default as ReactSelect } from "react-select";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import 'bootstrap/dist/css/bootstrap.css';
 import log from "loglevel";
 
 

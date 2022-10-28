@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import 'bootstrap/dist/css/bootstrap.css';
+
 
 const GeneralOptions = ({ field, fieldchanged, value }) => {
   return (
