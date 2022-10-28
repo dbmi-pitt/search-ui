@@ -1,0 +1,8 @@
+.clearSearchBox {
+    background-color: #05364a;
+    color: white;
+}
+
+.clearSearchBox:hover {
+    color: white;
+}
