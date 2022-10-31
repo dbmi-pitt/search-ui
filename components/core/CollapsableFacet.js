@@ -49,14 +49,20 @@ const CollapsableFacet = ({fields, filters, facet}) => {
         updateConditionalFacetVisibility(facet_key)
     })
 
+    const formatClassName = (label) => {
+        label = label.replace(/\s/g, '-')
+        return `sui-facet__title sui-facet__title--${label}`
+    }
+
     return (<>
         {isVisible && <Row className={'pt-4'}>
             <Col className={'col-9'}>
 
                 {isExpanded && <>
-                    <legend className={`sui-facet__title ${styles.facetsHover}`}
-                            onClick={handleClick}>{label}</legend>
+                    <legend className={`${formatClassName(label)} ${styles.facetsHover}`}
+                            onClick={handleClick} tabIndex={0}>{label}</legend>
                     <Facet
+                        
                         key={facet_key}
                         field={facet_key}
                         filterType={facet[1]["filterType"]}
@@ -64,8 +70,8 @@ const CollapsableFacet = ({fields, filters, facet}) => {
                         className='js-gtm--facets'
                     />
                 </>}
-                {!isExpanded && <legend className={`sui-facet__title ${styles.contracted}`}
-                                        onClick={handleClick}>{label}</legend>}
+                {!isExpanded && <legend className={`${formatClassName(label)} ${styles.contracted}`}
+                                        onClick={handleClick} tabIndex={0}>{label}</legend>}
             </Col>
 
             <Col className={'text-end'}>
