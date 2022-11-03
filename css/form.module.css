@@ -3,7 +3,9 @@
     color: white;
 }
 .submitButton:hover {
-    color: white;
+    color: #d0006f;
+    background-color: white;
+    border-color: #d0006f;
 }
 
 .cancelButton {
@@ -12,5 +14,7 @@
 }
 
 .cancelButton:hover {
-    color: white;
+    color: #00364B;
+    background-color: white;
+    border-color: #00364B;
 }

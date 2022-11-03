@@ -196,9 +196,9 @@ const Form = (props) => {
 			        })}
 			        <hr />
 			          <div className="btn-group text-right" role="group">
-			      <button className={`${styles.submitButton} btn rounded-pill me-3 px-4 shadow`} type="submit" disabled={isDisabled}>Submit</button>
+			      <button className={`${styles.submitButton} btn rounded-pill me-3 px-4 shadow-sm`} type="submit" disabled={isDisabled}>Submit</button>
 			      <Link href="/search" passHref>
-			       <button className={`${styles.cancelButton} btn rounded-pill px-4 shadow`} type="button">Cancel</button>
+			       <button className={`${styles.cancelButton} btn rounded-pill px-4 shadow-sm`} type="button">Cancel</button>
 			      </Link>
 			      </div>
 			    </form>

@@ -6,7 +6,7 @@ import {ArrowCounterclockwise} from 'react-bootstrap-icons'
 
 function ClearSearchBox({setSearchTerm}, shouldClearFilters) {
     return (
-        <div className="sui-search-box__close">
+        <div className="sui-search-box__close d-flex justify-content-center">
             <button className={`${styles.clearSearchBox} mb-4 btn px-4 rounded-pill shadow`} onClick={() => setSearchTerm("", {shouldClearFilters: true})}>
                 <ArrowCounterclockwise/>{' '}
                 Clear filters

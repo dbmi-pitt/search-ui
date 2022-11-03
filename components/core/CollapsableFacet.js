@@ -53,7 +53,7 @@ const CollapsableFacet = ({fields, filters, facet}) => {
     const column2Style = isExpanded ? 'text-end d-flex justify-content-end' : 'text-end d-flex align-items-center justify-content-end'
 
     return (<>
-        {isVisible && <Row className={`${styles.background} p-2 mt-4 shadow`}>
+        {isVisible && <Row className={`${styles.background} p-2 mt-4 shadow-sm`}>
             <Col className={column1Style}>
 
                 {isExpanded && <>
