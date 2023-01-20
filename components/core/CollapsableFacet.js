@@ -8,7 +8,7 @@ const CollapsableFacet = ({fields, filters, facet}) => {
     const conditional_facets = fields.conditionalFacets
     const facet_key = facet[0]
     const label = facet[1]["label"]
-    const [isExpanded, setIsExpanded] = useState(true)
+    const [isExpanded, setIsExpanded] = useState(facet[1].hasOwnProperty("isExpanded") ? facet[1]["isExpanded"] : true )
     const [isVisible, setIsVisible] = useState(true)
 
     const handleClick = () => {
