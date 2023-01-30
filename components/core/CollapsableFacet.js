@@ -55,126 +55,132 @@ const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
     }
 
     return (<>
-        {isVisible && <Row className={'pt-4'}>
-            <Col className={'col-9'}>
+        {isVisible &&
+            <Facet
+                key={facet_key}
+                field={facet_key}
+                filterType={facet[1]["filterType"]}
+                isFilterable={facet[1]["isFilterable"]}
+                className='js-gtm--facets'
+                // This utilizes search-ui's MultiCheckboxFacet function, but we override the values to support
+                // transforming organ codes to their full text names
+                view={({
+                           className,
+                           onMoreClick,
+                           onRemove,
+                           onSelect,
+                           options,
+                           showMore,
+                           showSearch,
+                           onSearch,
+                           searchPlaceholder
+                       }) => (
+                    <>
+                        {options.length > 0 &&
+                            <Row className={'pt-4'}>
+                                <Col className={'col-9'}>
+                                    {isExpanded &&
+                                        <>
+                                            <legend className={`${formatClassName(label)} ${styles.facetsHover}`}
+                                                    onClick={handleClick} tabIndex={0}>{label}</legend>
+                                            <fieldset className={"sui-facet" - className}>
 
-                {isExpanded && <>
-                    <legend className={`${formatClassName(label)} ${styles.facetsHover}`}
-                            onClick={handleClick} tabIndex={0}>{label}</legend>
-                    <Facet
-
-                        key={facet_key}
-                        field={facet_key}
-                        filterType={facet[1]["filterType"]}
-                        isFilterable={facet[1]["isFilterable"]}
-                        className='js-gtm--facets'
-                        // This utilizes search-ui's MultiCheckboxFacet function, but we override the values to support
-                        // transforming organ codes to their full text names
-                        view={({
-                                   className,
-                                   label,
-                                   onMoreClick,
-                                   onRemove,
-                                   onSelect,
-                                   options,
-                                   showMore,
-                                   showSearch,
-                                   onSearch,
-                                   searchPlaceholder
-                               }) => (
-                            <>
-                                <fieldset className={"sui-facet" - className}>
-                                    <legend className="sui-facet__title">{label}</legend>
-
-                                    {showSearch && (
-                                        <div className="sui-facet-search">
-                                            <input
-                                                className="sui-facet-search__text-input"
-                                                type="search"
-                                                placeholder={searchPlaceholder || "Search"}
-                                                onChange={(e) => {
-                                                    onSearch(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-
-                                    <div className="sui-multi-checkbox-facet">
-                                        {options.length < 1 && <div>No matching options</div>}
-                                        {options.map((option) => {
-                                            const checked = option.selected;
-                                            const value = option.value
-                                            return (
-                                                <label
-                                                    key={`${(option.value)}`}
-                                                    htmlFor={transformFunction ?
-                                                        `example_facet_${label}${transformFunction(
-                                                            option.value
-                                                        )}` :
-                                                        `example_facet_${label}
-                                                        ${option.value}`
-                                                    }
-                                                    className="sui-multi-checkbox-facet__option-label"
-                                                >
-                                                    <div className="sui-multi-checkbox-facet__option-input-wrapper">
+                                                {showSearch && (
+                                                    <div className="sui-facet-search">
                                                         <input
-                                                            data-transaction-name={`facet - ${label}`}
-                                                            id={transformFunction ?
-                                                                `example_facet_${label}${transformFunction(
-                                                                    option.value
-                                                                )}` :
-                                                                `example_facet_${label} ${option.value}`
-                                                            }
-                                                            type="checkbox"
-                                                            className="sui-multi-checkbox-facet__checkbox"
-                                                            checked={checked}
-                                                            onChange={() => (checked ? onRemove(value) : onSelect(value))}
+                                                            className="sui-facet-search__text-input"
+                                                            type="search"
+                                                            placeholder={searchPlaceholder || "Search"}
+                                                            onChange={(e) => {
+                                                                onSearch(e.target.value);
+                                                            }}
                                                         />
-                                                        <span className="sui-multi-checkbox-facet__input-text">
+                                                    </div>
+                                                )}
+
+                                                <div className="sui-multi-checkbox-facet">
+                                                    {options.length < 1 && <div>No matching options</div>}
+                                                    {options.map((option) => {
+                                                        const checked = option.selected;
+                                                        const value = option.value
+                                                        return (
+                                                            <label
+                                                                key={`${(option.value)}`}
+                                                                htmlFor={transformFunction ?
+                                                                    `example_facet_${label}${transformFunction(
+                                                                        option.value
+                                                                    )}` :
+                                                                    `example_facet_${label}
+                                                        ${option.value}`
+                                                                }
+                                                                className="sui-multi-checkbox-facet__option-label"
+                                                            >
+                                                                <div
+                                                                    className="sui-multi-checkbox-facet__option-input-wrapper">
+                                                                    <input
+                                                                        data-transaction-name={`facet - ${label}`}
+                                                                        id={transformFunction ?
+                                                                            `example_facet_${label}${transformFunction(
+                                                                                option.value
+                                                                            )}` :
+                                                                            `example_facet_${label} ${option.value}`
+                                                                        }
+                                                                        type="checkbox"
+                                                                        className="sui-multi-checkbox-facet__checkbox"
+                                                                        checked={checked}
+                                                                        onChange={() => (checked ? onRemove(value) : onSelect(value))}
+                                                                    />
+                                                                    <span
+                                                                        className="sui-multi-checkbox-facet__input-text">
                                                             {transformFunction ?
                                                                 transformFunction(option.value) :
                                                                 option.value
                                                             }
                                                         </span>
-                                                    </div>
-                                                    <span className="sui-multi-checkbox-facet__option-count">
+                                                                </div>
+                                                                <span
+                                                                    className="sui-multi-checkbox-facet__option-count">
                                                         {option.count.toLocaleString("en")}
                                                     </span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
+                                                            </label>
+                                                        );
+                                                    })}
+                                                </div>
 
-                                    {showMore && (
-                                        <button
-                                            type="button"
-                                            className="sui-facet-view-more"
-                                            onClick={onMoreClick}
-                                            aria-label="Show more options"
-                                        >
-                                            + More
-                                        </button>
-                                    )}
-                                </fieldset>
-                            </>
-                        )}
-                    />
-                </>}
-                {!isExpanded && <legend className={`${formatClassName(label)} ${styles.contracted}`}
-                                        onClick={handleClick} tabIndex={0}>{label}</legend>}
-            </Col>
-
-            <Col className={'text-end'}>
-                {isExpanded && <ChevronDown
-                    onClick={handleClick}
-                    className={`align-top ${styles.facetsHover}`}
-                />}
-                {!isExpanded && <ChevronRight
-                    onClick={handleClick}
-                    className={`align-top ${styles.contracted}`}
-                />}
-            </Col>
-        </Row>}
+                                                {showMore && (
+                                                    <button
+                                                        type="button"
+                                                        className="sui-facet-view-more"
+                                                        onClick={onMoreClick}
+                                                        aria-label="Show more options"
+                                                    >
+                                                        + More
+                                                    </button>
+                                                )}
+                                            </fieldset>
+                                        </>
+                                    }
+                                    {!isExpanded &&
+                                        <legend className={`${formatClassName(label)} ${styles.contracted}`}
+                                                onClick={handleClick} tabIndex={0}>{label}</legend>
+                                    }
+                                </Col>
+                                <Col className={'text-end'}>
+                                    {isExpanded && <ChevronDown
+                                        onClick={handleClick}
+                                        className={`align-top ${styles.facetsHover}`}
+                                    />}
+                                    {!isExpanded && <ChevronRight
+                                        onClick={handleClick}
+                                        className={`align-top ${styles.contracted}`}
+                                    />}
+                                </Col>
+                            </Row>
+                        }
+                    </>
+                )}
+            />
+        }
     </>);
 };
 
