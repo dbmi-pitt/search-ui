@@ -49,9 +49,10 @@ const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
         updateConditionalFacetVisibility(facet_key)
     })
 
+    const formatVal = (id) => id.replace(/\W+/g, "")
+
     const formatClassName = (label) => {
-        label = label.replace(/\s/g, '-')
-        return `sui-facet__title sui-facet__title--${label}`
+        return `sui-facet__title sui-facet__title--${formatVal(label)}`
     }
 
     return (<>
@@ -83,7 +84,7 @@ const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
                                         <>
                                             <legend className={`${formatClassName(label)} ${styles.facetsHover}`}
                                                     onClick={handleClick} tabIndex={0}>{label}</legend>
-                                            <fieldset className={"sui-facet" - className}>
+                                            <fieldset className={"sui-facet " + className}>
 
                                                 {showSearch && (
                                                     <div className="sui-facet-search">
@@ -106,25 +107,14 @@ const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
                                                         return (
                                                             <label
                                                                 key={`${(option.value)}`}
-                                                                htmlFor={transformFunction ?
-                                                                    `example_facet_${label}${transformFunction(
-                                                                        option.value
-                                                                    )}` :
-                                                                    `example_facet_${label}
-                                                        ${option.value}`
-                                                                }
+                                                                htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
                                                                 className="sui-multi-checkbox-facet__option-label"
                                                             >
                                                                 <div
                                                                     className="sui-multi-checkbox-facet__option-input-wrapper">
                                                                     <input
                                                                         data-transaction-name={`facet - ${label}`}
-                                                                        id={transformFunction ?
-                                                                            `example_facet_${label}${transformFunction(
-                                                                                option.value
-                                                                            )}` :
-                                                                            `example_facet_${label} ${option.value}`
-                                                                        }
+                                                                        id={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
                                                                         type="checkbox"
                                                                         className="sui-multi-checkbox-facet__checkbox"
                                                                         checked={checked}
