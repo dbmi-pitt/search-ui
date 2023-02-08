@@ -1,9 +1,8 @@
 import React from 'react'
 import log from "loglevel"
 import CollapsableFacet from "./CollapsableFacet";
-import {getOrganTypeFullName} from "../../../components/custom/js/functions";
 
-const Facets = ({fields, filters}) => {
+const Facets = ({fields, filters, transformFunction}) => {
     log.info('FACETS component props', fields, filters)
 
     return (<>
@@ -13,7 +12,7 @@ const Facets = ({fields, filters}) => {
                 facet={facet}
                 fields={fields}
                 filters={filters}
-                transformFunction={getOrganTypeFullName}
+                transformFunction={transformFunction}
             />))}
     </>)
 }
