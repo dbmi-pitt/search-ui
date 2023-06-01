@@ -3,7 +3,7 @@ import log from "loglevel"
 import CollapsableFacet from "./CollapsableFacet";
 import DateRangeFacet from "./DateRangeFacet";
 
-const Facets = ({fields, filters, transformFunction}) => {
+const Facets = ({fields, filters, transformFunction, clearInputs}) => {
     log.info('FACETS component props', fields, filters)
 
     return (<>
@@ -12,7 +12,8 @@ const Facets = ({fields, filters, transformFunction}) => {
                 if (facet[1].uiType === 'daterange') {
                     return <DateRangeFacet 
                         key={facet[0]}
-                        facet={facet} />
+                        facet={facet}
+                        clearInputs={clearInputs} />
                 } else {
                     return <CollapsableFacet
                         key={facet[0]}
