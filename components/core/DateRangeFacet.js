@@ -18,6 +18,23 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
     const [endMinDate, setEndMinDate] = useState('1970-01-01')
 
     useEffect(() => {
+        filters.forEach(filter => {
+            if (filter.field === field) {
+                filter.values.forEach(value => {
+                    if (value.hasOwnProperty("from")) {
+                        let date = new Date(value.from)
+                        setStartDate(date.toISOString().split('T')[0])
+                    }
+                    if (value.hasOwnProperty("to")) {
+                        let date = new Date(value.to)
+                        setEndDate(date.toISOString().split('T')[0])
+                    }
+                })
+            }
+        })
+    }, []);
+
+    useEffect(() => {
         if (clearInputs) {
             setStartDate('')
             setEndDate('')

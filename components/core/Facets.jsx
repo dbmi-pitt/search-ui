@@ -12,6 +12,7 @@ const Facets = ({fields, filters, transformFunction, clearInputs}) => {
                 if (facet[1].uiType === 'daterange') {
                     return <DateRangeFacet 
                         key={facet[0]}
+                        filters={filters}
                         facet={facet}
                         clearInputs={clearInputs} />
                 } else {
