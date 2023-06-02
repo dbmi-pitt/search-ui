@@ -45,15 +45,15 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
     useEffect(() => {
         const filter = {}
 
-        const startTimestamp = Date.parse(startDate)
+        const startTimestamp = Date.parse(`${startDate}T00:00:00.000Z`)
         if (startTimestamp && startTimestamp >= 0) {
             filter.from = startTimestamp
         }
 
-        const endTimestamp = Date.parse(endDate)
+        const endTimestamp = Date.parse(`${endDate}T00:00:00.000Z`)
         if (endTimestamp && endTimestamp >= 0) {
-            // Add 24 hours to the end date so inclusive of the end date
-            filter.to = endTimestamp + 24 * 60 * 60 * 1000
+            // Add 24 hours minus 1 ms to the end date so inclusive of the end date
+            filter.to = endTimestamp + 24 * 60 * 60 * 1000 - 1 
         }
 
         if (Object.keys(filter).length < 1) {
