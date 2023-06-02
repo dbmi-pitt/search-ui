@@ -3,6 +3,7 @@ import styles from '../../css/collapsableFacets.module.css'
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {Col, Row} from 'react-bootstrap'
 import {Facet} from "@elastic/react-search-ui";
+import CheckboxFacet from './CheckboxFacet';
 
 const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
     const conditional_facets = fields.conditionalFacets
@@ -102,38 +103,15 @@ const CollapsableFacet = ({fields, filters, facet, transformFunction}) => {
                                                 <div className="sui-multi-checkbox-facet">
                                                     {options.length < 1 && <div>No matching options</div>}
                                                     {options.map((option) => {
-                                                        const checked = option.selected;
-                                                        const value = option.value
-                                                        return (
-                                                            <label
-                                                                key={`${(option.value)}`}
-                                                                htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
-                                                                className="sui-multi-checkbox-facet__option-label"
-                                                            >
-                                                                <div
-                                                                    className="sui-multi-checkbox-facet__option-input-wrapper">
-                                                                    <input
-                                                                        data-transaction-name={`facet - ${label}`}
-                                                                        id={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
-                                                                        type="checkbox"
-                                                                        className="sui-multi-checkbox-facet__checkbox"
-                                                                        checked={checked}
-                                                                        onChange={() => (checked ? onRemove(value) : onSelect(value))}
-                                                                    />
-                                                                    <span
-                                                                        className="sui-multi-checkbox-facet__input-text">
-                                                            {transformFunction ?
-                                                                transformFunction(option.value) :
-                                                                option.value
-                                                            }
-                                                        </span>
-                                                                </div>
-                                                                <span
-                                                                    className="sui-multi-checkbox-facet__option-count">
-                                                        {option.count.toLocaleString("en")}
-                                                    </span>
-                                                            </label>
-                                                        );
+                                                        return <CheckboxFacet
+                                                                    key={`${(option.value)}`}
+                                                                    label={label}
+                                                                    option={option}
+                                                                    transformFunction={transformFunction}
+                                                                    formatVal={formatVal}
+                                                                    onRemove={onRemove}
+                                                                    onSelect={onSelect}
+                                                                 />
                                                     })}
                                                 </div>
 
