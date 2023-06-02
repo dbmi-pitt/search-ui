@@ -17,6 +17,9 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
 
     const [endMinDate, setEndMinDate] = useState('1970-01-01')
 
+    const [startDateError, setStartDateError] = useState('')
+    const [endDateError, setEndDateError] = useState('')
+
     useEffect(() => {
         filters.forEach(filter => {
             if (filter.field === field) {
@@ -78,6 +81,32 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
     }
 
     function handleDateChange(targetName, dateStr) {
+        // Validate date
+        const timestamp = Date.parse(`${dateStr}T00:00:00.000Z`)
+        const otherTimestamp = Date.parse(`${targetName === 'startdate' ? endDate : startDate}T00:00:00.000Z`)
+
+        if (timestamp && otherTimestamp) {
+            if (targetName === 'startdate') {
+                if (timestamp > otherTimestamp) {
+                    setStartDateError('Start date must be before end date')
+                    setEndDateError('')
+                } else {
+                    setStartDateError('')
+                    setEndDateError('')
+                }
+            }
+
+            if (targetName === 'enddate') {
+                if (timestamp < otherTimestamp) {
+                    setStartDateError('')
+                    setEndDateError('End date must be after start date')
+                } else {
+                    setStartDateError('')
+                    setEndDateError('')
+                }     
+            }
+        }
+
         if (targetName === 'startdate') {
             setStartDate(dateStr)
             setEndMinDate(dateStr)
@@ -98,12 +127,12 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
                         >
                             {label}
                         </legend>
-                        <div className='my-1 d-flex justify-content-lg-between'>
+                        <div className='my-1 d-flex justify-content-between'>
                             <span className='sui-multi-checkbox-facet'>Start Date</span>
                             <input
                                 data-transaction-name={`facet - ${label}`}
                                 id={`sui-facet--${formatVal(label)}-startdate`}
-                                className={'sui-multi-checkbox-facet'}
+                                className={`${startDateError ? styles.inputWarning : ''} sui-multi-checkbox-facet`}
                                 type='date'
                                 value={startDate}
                                 onChange={(e) => handleDateChange('startdate', e.target.value)}
@@ -111,12 +140,12 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
                                 pattern='\d{4}-\d{2}-\d{2}'
                             />
                         </div>
-                        <div className='my-1 d-flex justify-content-lg-between'>
+                        <div className='my-1 d-flex justify-content-between'>
                             <span className='sui-multi-checkbox-facet'>End Date</span>
                             <input
                                 data-transaction-name={`facet - ${label}`}
                                 id={`sui-facet--${formatVal(label)}-enddate`}
-                                className={'sui-multi-checkbox-facet'}
+                                className={`${endDateError ? styles.inputWarning : ''} sui-multi-checkbox-facet`}
                                 type='date'
                                 value={endDate}
                                 min={endMinDate}
@@ -124,6 +153,12 @@ const DateRangeFacet = ({ facet, clearInputs, filters, setFilter, removeFilter }
                                 required
                                 pattern='\d{4}-\d{2}-\d{2}'
                             />
+                        </div>
+                        <div>
+                            {startDateError && (
+                                <span className='sui-multi-checkbox-facet text-danger'>{startDateError}</span>)}
+                            {endDateError && (
+                                <span className='sui-multi-checkbox-facet text-danger'>{endDateError}</span>)}
                         </div>
                     </>
                 )}
