@@ -1,4 +1,4 @@
-const CheckboxFacet = ({
+const CheckboxOptionFacet = ({
     label,
     option,
     transformFunction,
@@ -6,8 +6,8 @@ const CheckboxFacet = ({
     onSelect,
     onRemove,
 }) => {
-    const checked = option.selected
-    const value = option.value
+    const checked = option.selected;
+    const value = option.value;
 
     return (
         <label
@@ -34,4 +34,4 @@ const CheckboxFacet = ({
     )
 }
 
-export default CheckboxFacet
+export default CheckboxOptionFacet
