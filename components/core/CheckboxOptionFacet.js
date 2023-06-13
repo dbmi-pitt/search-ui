@@ -17,6 +17,21 @@ const CheckboxOptionFacet = ({
         return selected
     }
 
+    const clearCheck = (value) => {
+        let filters = Sui.getFilters()
+        filters[value].selected = false
+        Sui.saveFilters(filters)
+        Sui.removeFilter(option.key, value)
+        onRemove(value)
+    }
+
+    const setCheck = (value) => {
+        let filters = Sui.getFilters()
+        filters[value].selected = true
+        Sui.saveFilters(filters)
+        onSelect(value)
+    }
+
     return (
         <label
             htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
@@ -29,7 +44,7 @@ const CheckboxOptionFacet = ({
                     type='checkbox'
                     className='sui-multi-checkbox-facet__checkbox'
                     checked={getChecked()}
-                    onChange={() => (getChecked() ? onRemove(value) : onSelect(value))}
+                    onChange={() => (getChecked() ? clearCheck(value) : setCheck(value))}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>
                     {transformFunction ? transformFunction(option.value) : option.value}
