@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { withSearch } from "@elastic/react-search-ui";
 import styles from "../../css/collapsableFacets.module.css";
 import CollapsableLayout from "./CollapsableLayout";
+import {Sui} from "../../lib/search-tools";
 
 const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, setFilter, removeFilter }) => {
     const label = facet[1].label;
     const field = facet[1].field.split(".")[0];
-    const [isExpanded, setIsExpanded] = useState(facet[1].hasOwnProperty("isExpanded") ? facet[1]["isExpanded"] : true);
+    const [isExpanded, setIsExpanded] = useState(Sui.isExpandedDateCategory(facet, field));
 
     // States
 
@@ -40,6 +41,17 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             setStartDate("")
             setEndDate("")
             setEndMinDate("1970-01-01")
+        } else {
+            const filters = Sui.getFilters()
+            const start = filters[`${field}.startdate`]
+            const end = filters[`${field}.enddate`]
+            if (start) {
+                setStartDate(start)
+                setEndMinDate(start)
+            }
+            if (end) {
+                setEndDate(end)
+            }
         }
     }, [clearInputs])
 
@@ -101,6 +113,9 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
         } else {
             setEndDate(dateStr)
         }
+        let filters = Sui.getFilters()
+        filters[`${field}.${targetName}`] = dateStr
+        Sui.saveFilters(filters)
     }
 
     return (
