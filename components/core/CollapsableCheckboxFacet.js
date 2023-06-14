@@ -2,11 +2,12 @@ import { useState } from "react";
 import CheckboxOptionFacet from "./CheckboxOptionFacet";
 import { Facet } from "@elastic/react-search-ui";
 import CollapsableLayout from "./CollapsableLayout";
+import {Sui} from "../../lib/search-tools";
 
 const CollapsableCheckboxFacet = ({facet, transformFunction, formatVal}) => {
     const label = facet[1].label;
     const facetKey = facet[0];
-    const [isExpanded, setIsExpanded] = useState(facet[1].hasOwnProperty("isExpanded") ? facet[1]["isExpanded"] : true);
+    const [isExpanded, setIsExpanded] = useState(Sui.isExpandedFacetCategory(facet, facetKey));
 
     return <Facet
         key={facetKey}
@@ -53,7 +54,7 @@ const CollapsableCheckboxFacet = ({facet, transformFunction, formatVal}) => {
                                 return <CheckboxOptionFacet
                                     key={`${(option.value)}`}
                                     label={label}
-                                    option={option}
+                                    option={{...option, key: facetKey}}
                                     transformFunction={transformFunction}
                                     formatVal={formatVal}
                                     onSelect={onSelect}
