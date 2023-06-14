@@ -1,3 +1,4 @@
+import {Sui} from "../../lib/search-tools";
 const CheckboxOptionFacet = ({
     label,
     option,
@@ -6,8 +7,30 @@ const CheckboxOptionFacet = ({
     onSelect,
     onRemove,
 }) => {
-    const checked = option.selected;
     const value = option.value;
+
+    const getChecked = () => {
+        let filters = Sui.getFilters()
+        const selected = filters[option.value]?.selected || option.selected
+        filters[option.value] = {selected, key: option.key}
+        Sui.saveFilters(filters)
+        return selected
+    }
+
+    const clearCheck = (value) => {
+        let filters = Sui.getFilters()
+        filters[value].selected = false
+        Sui.saveFilters(filters)
+        Sui.removeFilter(option.key, value)
+        onRemove(value)
+    }
+
+    const setCheck = (value) => {
+        let filters = Sui.getFilters()
+        filters[value].selected = true
+        Sui.saveFilters(filters)
+        onSelect(value)
+    }
 
     return (
         <label
@@ -20,8 +43,8 @@ const CheckboxOptionFacet = ({
                     id={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
                     type='checkbox'
                     className='sui-multi-checkbox-facet__checkbox'
-                    checked={checked}
-                    onChange={() => (checked ? onRemove(value) : onSelect(value))}
+                    checked={getChecked()}
+                    onChange={() => (getChecked() ? clearCheck(value) : setCheck(value))}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>
                     {transformFunction ? transformFunction(option.value) : option.value}
