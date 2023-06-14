@@ -8,12 +8,17 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
     const field = facet[1].field.split(".")[0];
     const [isExpanded, setIsExpanded] = useState(facet[1].hasOwnProperty("isExpanded") ? facet[1]["isExpanded"] : true);
 
-    // States
+    // default dates
+    const DEFAULT_MIN_DATE = "1970-01-01";
+    const DEFAULT_MAX_DATE = "2300-01-01";
 
+    // States
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
-    const [endMinDate, setEndMinDate] = useState("1970-01-01");
+    // These initial values constrain the date input to 4 digit years. Inputs will change widths without them.
+    const [startMaxDate, setStartMaxDate] = useState(DEFAULT_MAX_DATE);
+    const [endMinDate, setEndMinDate] = useState(DEFAULT_MIN_DATE);
 
     const [startDateError, setStartDateError] = useState("");
     const [endDateError, setEndDateError] = useState("");
@@ -39,7 +44,8 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
         if (clearInputs) {
             setStartDate("")
             setEndDate("")
-            setEndMinDate("1970-01-01")
+            setStartMaxDate(DEFAULT_MAX_DATE)
+            setEndMinDate(DEFAULT_MIN_DATE)
         }
     }, [clearInputs])
 
@@ -97,9 +103,14 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
 
         if (targetName === "startdate") {
             setStartDate(dateStr)
-            setEndMinDate(dateStr)
+            if (timestamp) {
+                setEndMinDate(dateStr)
+            }
         } else {
             setEndDate(dateStr)
+            if (timestamp) {
+                setStartMaxDate(dateStr)
+            }
         }
     }
 
@@ -119,6 +130,8 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
                     className={`${startDateError ? styles.inputWarning : ""} sui-multi-checkbox-facet`}
                     type="date"
                     value={startDate}
+                    min={DEFAULT_MIN_DATE}
+                    max={startMaxDate}
                     onChange={(e) => handleDateChange("startdate", e.target.value)}
                     required
                     pattern="\d{4}-\d{2}-\d{2}"
@@ -133,6 +146,7 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
                     type="date"
                     value={endDate}
                     min={endMinDate}
+                    max={DEFAULT_MAX_DATE}
                     onChange={(e) => handleDateChange("enddate", e.target.value)}
                     required
                     pattern="\d{4}-\d{2}-\d{2}"
