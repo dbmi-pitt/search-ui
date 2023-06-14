@@ -21,7 +21,9 @@ const CheckboxOptionFacet = ({
         let filters = Sui.getFilters()
         filters[value].selected = false
         Sui.saveFilters(filters)
-        Sui.removeFilter(option.key, value)
+        if (Sui.removeFilter) {
+            Sui.removeFilter(option.key, value)
+        }
         onRemove(value)
     }
 
