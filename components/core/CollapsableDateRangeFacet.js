@@ -24,6 +24,13 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
     const [startDateError, setStartDateError] = useState("");
     const [endDateError, setEndDateError] = useState("");
 
+    const handleExpanded = () => {
+        let filters = Sui.getFilters()
+        filters[field] = !isExpanded
+        Sui.saveFilters(filters)
+        setIsExpanded(!isExpanded)
+    }
+
     useEffect(() => {
         filters.forEach((filter) => {
             if (filter.field === field) {
@@ -133,7 +140,7 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
         <CollapsableLayout
             key={facet[0]}
             isExpanded={isExpanded}
-            setIsExpanded={setIsExpanded}
+            setIsExpanded={handleExpanded}
             label={label}
             formatVal={formatVal}>
 
