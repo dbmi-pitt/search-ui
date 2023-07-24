@@ -1,12 +1,14 @@
 import {Sui} from "../../lib/search-tools";
+
 const CheckboxOptionFacet = ({
-    label,
-    option,
-    transformFunction,
-    formatVal,
-    onSelect,
-    onRemove,
-}) => {
+                                 label,
+                                 option,
+                                 transformFunction,
+                                 formatVal,
+                                 onSelect,
+                                 onRemove,
+                                 conditionalFacets
+                             }) => {
     const value = option.value;
 
     const getChecked = () => {
@@ -23,6 +25,18 @@ const CheckboxOptionFacet = ({
         Sui.saveFilters(filters)
         if (Sui.removeFilter) {
             Sui.removeFilter(option.key, value)
+        }
+        for (const filter in filters) {
+            if (filters[filter].selected === true) {
+                if (conditionalFacets.hasOwnProperty(filters[filter].key)) {
+                    filters[filter].selected = false
+                    Sui.saveFilters(filters)
+                    if (Sui.removeFilter) {
+                        Sui.removeFilter(filters[filter].key, filter)
+                    }
+                    onRemove(filter)
+                }
+            }
         }
         onRemove(value)
     }
