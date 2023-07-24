@@ -4,7 +4,7 @@ import { Facet } from "@elastic/react-search-ui";
 import CollapsableLayout from "./CollapsableLayout";
 import {Sui} from "../../lib/search-tools";
 
-const CollapsableCheckboxFacet = ({facet, transformFunction, formatVal}) => {
+const CollapsableCheckboxFacet = ({facet, transformFunction, formatVal, conditionalFacets}) => {
     const label = facet[1].label;
     const facetKey = facet[0];
     const [isExpanded, setIsExpanded] = useState(Sui.isExpandedFacetCategory(facet, facetKey));
@@ -59,6 +59,7 @@ const CollapsableCheckboxFacet = ({facet, transformFunction, formatVal}) => {
                                     formatVal={formatVal}
                                     onSelect={onSelect}
                                     onRemove={onRemove}
+                                    conditionalFacets={conditionalFacets}
                                 /> 
                             })}
                         </div>
