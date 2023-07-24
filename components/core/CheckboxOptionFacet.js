@@ -26,6 +26,8 @@ const CheckboxOptionFacet = ({
         if (Sui.removeFilter) {
             Sui.removeFilter(option.key, value)
         }
+
+        // Remove selected filters if the facet that this is conditional has been deselected
         for (const filter in filters) {
             if (filters[filter].selected === true) {
                 if (conditionalFacets.hasOwnProperty(filters[filter].key)) {
