@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import log from "loglevel";
 import CollapsableCheckboxFacet from "./CollapsableCheckboxFacet";
 import CollapsableDateRangeFacet from "./CollapsableDateRangeFacet";
+import CollapsableNumericRangeFacet from "./CollapsableNumericRangeFacet";
 
 const Facets = ({fields, filters, transformFunction, clearInputs}) => {
     log.info("FACETS component props", fields, filters);
@@ -9,7 +10,10 @@ const Facets = ({fields, filters, transformFunction, clearInputs}) => {
     const conditionalFacets = fields.conditionalFacets;
 
     function formatVal(id) {
-        return id.replace(/\W+/g, "")
+        if (typeof id === "string") {
+          return id.replace(/\W+/g, "")
+        }
+        return id
     }
 
     function isConditionalFacet(facetKey) {
@@ -45,6 +49,11 @@ const Facets = ({fields, filters, transformFunction, clearInputs}) => {
                         key={facet[0]}
                         facet={facet}
                         clearInputs={clearInputs}
+                        formatVal={formatVal} />
+                } else if (facet[1].uiType === "numrange") {
+                    return <CollapsableNumericRangeFacet
+                        key={facet[0]}
+                        facet={facet}
                         formatVal={formatVal} />
                 } else {
                     return <CollapsableCheckboxFacet
