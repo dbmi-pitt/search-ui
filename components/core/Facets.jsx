@@ -60,7 +60,9 @@ const Facets = ({fields, filters, transformFunction, clearInputs}) => {
                         key={facet[0]}
                         facet={facet}
                         transformFunction={transformFunction}
-                        formatVal={formatVal} />
+                        formatVal={formatVal}
+                        conditionalFacets={conditionalFacets}
+                    />
                 }
             }
         )}
