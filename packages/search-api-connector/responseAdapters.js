@@ -99,6 +99,7 @@ export function transformResults(records, indexName, state) {
   let hits = records["hits"]["hits"].map(transform);
   docType[indexName] = hits
   result["records"] = docType
+  result["aggregations"] = records.aggregations
 
   // set info block
   let info = new Object();
