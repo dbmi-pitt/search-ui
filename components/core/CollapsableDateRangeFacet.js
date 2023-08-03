@@ -6,7 +6,7 @@ import {Sui} from "../../lib/search-tools";
 
 const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, setFilter, removeFilter }) => {
     const label = facet[1].label;
-    const field = facet[1].field.split(".")[0];
+    const field = facet[1].field.replace(".keyword", "");
     const [isExpanded, setIsExpanded] = useState(Sui.isExpandedDateCategory(facet, field));
 
     // default dates
@@ -25,9 +25,13 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
     const [endDateError, setEndDateError] = useState("");
 
     const handleExpanded = () => {
-        let filters = Sui.getFilters()
-        filters[field] = !isExpanded
-        Sui.saveFilters(filters)
+        let f = Sui.getFilters()
+        if (!f[field]) {
+            f[field] = { key: field }
+        }
+        f[field].key = field
+        f[field].isExpanded = !isExpanded
+        Sui.saveFilters(f)
         setIsExpanded(!isExpanded)
     }
 
@@ -56,8 +60,10 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             setEndMinDate(DEFAULT_MIN_DATE)
         } else {
             const filters = Sui.getFilters()
-            const start = filters[`${field}.startdate`]
-            const end = filters[`${field}.enddate`]
+            const filter = filters[field]
+            if (!filter) return
+            const start = filter.startdate
+            const end = filter.enddate
             if (start) {
                 setStartDate(start)
                 setEndMinDate(start)
@@ -131,9 +137,17 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
                 setStartMaxDate(dateStr)
             }
         }
-        let filters = Sui.getFilters()
-        filters[`${field}.${targetName}`] = dateStr
-        Sui.saveFilters(filters)
+        let f = Sui.getFilters()
+        if (!f[field]) {
+            f[field] = { key: field }
+        }
+        if (dateStr) {
+            f[field].key = field
+            f[field][targetName] = dateStr
+        } else {
+            delete f[field][targetName]
+        }
+        Sui.saveFilters(f)
     }
 
     return (

@@ -21,26 +21,34 @@ const CheckboxOptionFacet = ({
 
     const clearCheck = (value) => {
         let filters = Sui.getFilters()
-        filters[value].selected = false
-        Sui.saveFilters(filters)
-        if (Sui.removeFilter) {
-            Sui.removeFilter(option.key, value)
-        }
 
         // Remove selected filters if the facet that this is conditional has been deselected
         for (const filter in filters) {
             if (filters[filter].selected === true) {
                 if (conditionalFacets.hasOwnProperty(filters[filter].key)) {
                     filters[filter].selected = false
-                    Sui.saveFilters(filters)
                     if (Sui.removeFilter) {
-                        Sui.removeFilter(filters[filter].key, filter)
+                        Sui.removeFilter(filters[filter].key)
                     }
-                    onRemove(filter)
+                }
+            }
+            if (filters[filter].min || filters[filter].max) {
+                if (conditionalFacets.hasOwnProperty(filter)) {
+                    filters[filter].isExpanded = false
+                    delete filters[filter].min
+                    delete filters[filter].max
+                    if (Sui.removeFilter) {
+                        Sui.removeFilter(filter)
+                    }
                 }
             }
         }
-        onRemove(value)
+
+        filters[value].selected = false
+        Sui.saveFilters(filters)
+        if (Sui.removeFilter) {
+            Sui.removeFilter(option.key, value)
+        }
     }
 
     const setCheck = (value) => {
