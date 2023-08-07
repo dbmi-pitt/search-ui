@@ -1,11 +1,22 @@
-import { useState } from "react"
-import { withSearch } from "@elastic/react-search-ui"
+import {useState} from "react"
+import {withSearch} from "@elastic/react-search-ui"
 import CollapsableLayout from "./CollapsableLayout"
-import { Sui } from "../../lib/search-tools"
+import {Sui} from "../../lib/search-tools"
 import Slider from "@mui/material/Slider"
 import FacetContainer from "./FacetContainer"
+import Histogram from "./Histogram";
 
-const NumericRangeFacet = ({ label, field, facetKey, valueRange, formatVal, filters, onChange, onRemove }) => {
+const NumericRangeFacet = ({
+                               label,
+                               field,
+                               facetKey,
+                               valueRange,
+                               aggregations,
+                               formatVal,
+                               filters,
+                               onChange,
+                               onRemove
+                           }) => {
     const [values, setValues] = useState(getInitialValues())
 
     function getInitialValues() {
@@ -31,7 +42,7 @@ const NumericRangeFacet = ({ label, field, facetKey, valueRange, formatVal, filt
 
         let f = Sui.getFilters()
         if (!f[field]) {
-            f[field] = { key: field }
+            f[field] = {key: field}
         }
 
         if (Object.keys(filter).length < 1) {
@@ -85,9 +96,13 @@ const NumericRangeFacet = ({ label, field, facetKey, valueRange, formatVal, filt
         <>
             <div>
                 <div className='mx-1'>
+                    <Histogram
+                        data={aggregations}
+                        values={values}
+                    />
                     <Slider
                         onChangeCommitted={handleSliderCommitted}
-                        style={{ color: "#0d6efd" }}
+                        style={{color: "#0d6efd"}}
                         size='small'
                         getAriaLabel={() => {
                             label
@@ -133,8 +148,9 @@ const NumericRangeFacet = ({ label, field, facetKey, valueRange, formatVal, filt
     )
 }
 
-const CollapsableNumericRangeFacet = ({ facet, formatVal, filters }) => {
+const CollapsableNumericRangeFacet = ({facet, rawResponse, formatVal, filters}) => {
     const label = facet[1].label
+    const aggregations = rawResponse["aggregations"][facet[0] + "_histogram"]["buckets"]
     const field = facet[1].field.replace(".keyword", "")
     const facetKey = facet[0]
     const [isExpanded, setIsExpanded] = useState(Sui.isExpandedNumericCategory(facet, facetKey))
@@ -142,7 +158,7 @@ const CollapsableNumericRangeFacet = ({ facet, formatVal, filters }) => {
     const handleExpanded = () => {
         let f = Sui.getFilters()
         if (!f[field]) {
-            f[field] = { key: field }
+            f[field] = {key: field}
         }
         f[field].key = field
         f[field].isExpanded = !isExpanded
@@ -158,7 +174,7 @@ const CollapsableNumericRangeFacet = ({ facet, formatVal, filters }) => {
             isFilterable={facet[1]["isFilterable"]}
             className='js-gtm--facets'
             uiType='numrange'
-            view={({ className, onChange, onRemove }) => (
+            view={({className, onChange, onRemove}) => (
                 <CollapsableLayout
                     key={facet[0]}
                     isExpanded={isExpanded}
@@ -173,6 +189,7 @@ const CollapsableNumericRangeFacet = ({ facet, formatVal, filters }) => {
                                 field={field}
                                 facetKey={facetKey}
                                 valueRange={facet[1].uiRange}
+                                aggregations={aggregations}
                                 formatVal={formatVal}
                                 filters={filters}
                                 onChange={onChange}
@@ -186,7 +203,7 @@ const CollapsableNumericRangeFacet = ({ facet, formatVal, filters }) => {
     )
 }
 
-export default withSearch(({ filters, setFilter, removeFilter }) => ({
+export default withSearch(({filters, setFilter, removeFilter}) => ({
     filters,
     setFilter,
     removeFilter,

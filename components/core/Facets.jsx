@@ -4,7 +4,7 @@ import CollapsableCheckboxFacet from "./CollapsableCheckboxFacet";
 import CollapsableDateRangeFacet from "./CollapsableDateRangeFacet";
 import CollapsableNumericRangeFacet from "./CollapsableNumericRangeFacet";
 
-const Facets = ({fields, filters, transformFunction, clearInputs}) => {
+const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) => {
     log.info("FACETS component props", fields, filters);
     
     const conditionalFacets = fields.conditionalFacets;
@@ -54,6 +54,7 @@ const Facets = ({fields, filters, transformFunction, clearInputs}) => {
                     return <CollapsableNumericRangeFacet
                         key={facet[0]}
                         facet={facet}
+                        rawResponse={rawResponse}
                         formatVal={formatVal} />
                 } else {
                     return <CollapsableCheckboxFacet
