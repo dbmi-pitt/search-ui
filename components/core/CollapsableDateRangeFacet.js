@@ -25,13 +25,13 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
     const [endDateError, setEndDateError] = useState("");
 
     const handleExpanded = () => {
-        let f = Sui.getFilters()
-        if (!f[field]) {
-            f[field] = { key: field }
+        let filters = Sui.getFilters()
+        if (typeof filters[field] !== "object") {
+            filters[field] = {}
         }
-        f[field].key = field
-        f[field].isExpanded = !isExpanded
-        Sui.saveFilters(f)
+        filters[field].key = field
+        filters[field].isExpanded = !isExpanded
+        Sui.saveFilters(filters)
         setIsExpanded(!isExpanded)
     }
 
@@ -60,10 +60,11 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             setEndMinDate(DEFAULT_MIN_DATE)
         } else {
             const filters = Sui.getFilters()
-            const filter = filters[field]
-            if (!filter) return
-            const start = filter.startdate
-            const end = filter.enddate
+            if (typeof filters[field] !== "object") {
+                filters[field] = {}
+            }
+            const start = filters[field].startdate
+            const end = filters[field].enddate
             if (start) {
                 setStartDate(start)
                 setEndMinDate(start)
@@ -137,17 +138,13 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
                 setStartMaxDate(dateStr)
             }
         }
-        let f = Sui.getFilters()
-        if (!f[field]) {
-            f[field] = { key: field }
+        let filters = Sui.getFilters()
+        if (typeof filters[field] !== "object") {
+            filters[field] = {}
         }
-        if (dateStr) {
-            f[field].key = field
-            f[field][targetName] = dateStr
-        } else {
-            delete f[field][targetName]
-        }
-        Sui.saveFilters(f)
+        filters[field].key = field
+        filters[field][targetName === "startdate" ? "min" : "max"] = dateStr
+        Sui.saveFilters(filters)
     }
 
     return (
