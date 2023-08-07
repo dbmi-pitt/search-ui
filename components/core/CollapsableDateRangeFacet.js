@@ -26,7 +26,11 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
 
     const handleExpanded = () => {
         let filters = Sui.getFilters()
-        filters[field] = !isExpanded
+        if (typeof filters[field] !== "object") {
+            filters[field] = {}
+        }
+        filters[field].key = field
+        filters[field].isExpanded = !isExpanded
         Sui.saveFilters(filters)
         setIsExpanded(!isExpanded)
     }
@@ -56,8 +60,11 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             setEndMinDate(DEFAULT_MIN_DATE)
         } else {
             const filters = Sui.getFilters()
-            const start = filters[`${field}.startdate`]
-            const end = filters[`${field}.enddate`]
+            if (typeof filters[field] !== "object") {
+                filters[field] = {}
+            }
+            const start = filters[field].startdate
+            const end = filters[field].enddate
             if (start) {
                 setStartDate(start)
                 setEndMinDate(start)
@@ -132,7 +139,11 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             }
         }
         let filters = Sui.getFilters()
-        filters[`${field}.${targetName}`] = dateStr
+        if (typeof filters[field] !== "object") {
+            filters[field] = {}
+        }
+        filters[field].key = field
+        filters[field][targetName === "startdate" ? "min" : "max"] = dateStr
         Sui.saveFilters(filters)
     }
 
