@@ -27,6 +27,17 @@ const NumericRangeFacet = ({
         return [parseInt(min), parseInt(max)]
     }
 
+    const marks = [
+            {
+                value: valueRange[0],
+                label: valueRange[0],
+            },
+            {
+                value: valueRange[1],
+                label: valueRange[1],
+            }
+        ]
+
     function updateFilters(values) {
         const minValue = values[0] !== "" ? values[0] : valueRange[0]
         const maxValue = values[1] !== "" ? values[1] : valueRange[1]
@@ -107,6 +118,7 @@ const NumericRangeFacet = ({
                         getAriaLabel={() => {
                             label
                         }}
+                        marks={marks}
                         value={values}
                         min={valueRange[0]}
                         max={valueRange[1]}
@@ -115,34 +127,34 @@ const NumericRangeFacet = ({
                         getAriaValueText={valueText}
                     />
                 </div>
-                <div className='d-flex justify-content-between '>
-                    <input
-                        data-transaction-name={`facet - ${label} - min`}
-                        id={`sui-facet--${formatVal(label)}-min`}
-                        className={"sui-multi-checkbox-facet mt-0"}
-                        type='number'
-                        value={values[0]}
-                        min={valueRange[0]}
-                        max={valueRange[1]}
-                        onKeyDown={(e) => handleInputSubmit(e, "min")}
-                        onBlur={(e) => handleInputSubmit(e, "min", true)}
-                        onChange={(e) => handleInputChange(e.target.value, "min")}
-                        required
-                    />
-                    <input
-                        data-transaction-name={`facet - ${label} - max`}
-                        id={`sui-facet--${formatVal(label)}-max`}
-                        className={"sui-multi-checkbox-facet mt-0"}
-                        type='number'
-                        value={values[1]}
-                        min={valueRange[0]}
-                        max={valueRange[1]}
-                        onKeyDown={(e) => handleInputSubmit(e, "max")}
-                        onBlur={(e) => handleInputSubmit(e, "max", true)}
-                        onChange={(e) => handleInputChange(e.target.value, "max")}
-                        required
-                    />
-                </div>
+                {/*<div className='d-flex justify-content-between '>*/}
+                {/*    <input*/}
+                {/*        data-transaction-name={`facet - ${label} - min`}*/}
+                {/*        id={`sui-facet--${formatVal(label)}-min`}*/}
+                {/*        className={"sui-multi-checkbox-facet mt-0"}*/}
+                {/*        type='number'*/}
+                {/*        value={values[0]}*/}
+                {/*        min={valueRange[0]}*/}
+                {/*        max={valueRange[1]}*/}
+                {/*        onKeyDown={(e) => handleInputSubmit(e, "min")}*/}
+                {/*        onBlur={(e) => handleInputSubmit(e, "min", true)}*/}
+                {/*        onChange={(e) => handleInputChange(e.target.value, "min")}*/}
+                {/*        required*/}
+                {/*    />*/}
+                {/*    <input*/}
+                {/*        data-transaction-name={`facet - ${label} - max`}*/}
+                {/*        id={`sui-facet--${formatVal(label)}-max`}*/}
+                {/*        className={"sui-multi-checkbox-facet mt-0"}*/}
+                {/*        type='number'*/}
+                {/*        value={values[1]}*/}
+                {/*        min={valueRange[0]}*/}
+                {/*        max={valueRange[1]}*/}
+                {/*        onKeyDown={(e) => handleInputSubmit(e, "max")}*/}
+                {/*        onBlur={(e) => handleInputSubmit(e, "max", true)}*/}
+                {/*        onChange={(e) => handleInputChange(e.target.value, "max")}*/}
+                {/*        required*/}
+                {/*    />*/}
+                {/*</div>*/}
             </div>
         </>
     )

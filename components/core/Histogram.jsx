@@ -1,5 +1,15 @@
 import React from "react";
+import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip} from 'chart.js';
 import {Bar} from "react-chartjs-2";
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 class Histogram extends React.Component {
     render() {
@@ -14,12 +24,14 @@ class Histogram extends React.Component {
             labels: Object.keys(counts),
             datasets: [
                 {
+                    barPercentage: 1,
+                    barThickness: 10,
                     backgroundColor: Object.keys(counts).map((i) =>
                         i >= values[0] && i <= values[1]
-                            ? "rgba(135, 206, 235, 1)"
-                            : "rgba(255, 99, 132, 0.2)"
+                            ? "#0d6efd"
+                            : "#a0c5fc"
                     ),
-                    hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                    hoverBackgroundColor: "#0b5ed7",
                     data: Object.values(counts)
                 }
             ]
@@ -27,23 +39,21 @@ class Histogram extends React.Component {
 
         const options = {
             responsive: true,
-            legend: {
-                display: false
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: false
+                }
             },
             scales: {
-                xAxes: [
-                    {
-                        display: false
-                    }
-                ],
-                yAxes: [
-                    {
-                        display: false,
-                        ticks: {
-                            min: 0
-                        }
-                    }
-                ]
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false,
+                }
             }
         };
         return <Bar data={barData} options={options}/>;
