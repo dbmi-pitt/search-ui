@@ -3,7 +3,6 @@ import { withSearch } from "@elastic/react-search-ui";
 import styles from "../../css/collapsableFacets.module.css";
 import CollapsableLayout from "./CollapsableLayout";
 import {Sui} from "../../lib/search-tools";
-import { set } from "lodash";
 
 const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, setFilter, removeFilter }) => {
     const label = facet[1].label;
