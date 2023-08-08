@@ -32,11 +32,11 @@ const CheckboxOptionFacet = ({
                     }
                 }
             }
-            if (filters[filter].min || filters[filter].max) {
+            if (filters[filter].from || filters[filter].to) {
                 if (conditionalFacets.hasOwnProperty(filter)) {
                     filters[filter].isExpanded = false
-                    delete filters[filter].min
-                    delete filters[filter].max
+                    delete filters[filter].from
+                    delete filters[filter].to
                     if (Sui.removeFilter) {
                         Sui.removeFilter(filter)
                     }

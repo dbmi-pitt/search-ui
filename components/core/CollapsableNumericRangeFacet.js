@@ -22,8 +22,8 @@ const NumericRangeFacet = ({
     function getInitialValues() {
         const filters = Sui.getFilters()
         const filter = filters[field] ?? {}
-        const min = filter.min ?? valueRange[0]
-        const max = filter.max ?? valueRange[1]
+        const min = filter.from ?? valueRange[0]
+        const max = filter.to ?? valueRange[1]
         return [parseInt(min), parseInt(max)]
     }
 
@@ -67,8 +67,8 @@ const NumericRangeFacet = ({
             filter.name = field
             onChange(filter)
             f[field].key = field
-            f[field].min = minValue
-            f[field].max = maxValue
+            f[field].from = minValue
+            f[field].to = maxValue
         }
         Sui.saveFilters(f)
     }
