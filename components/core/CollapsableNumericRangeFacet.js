@@ -150,7 +150,10 @@ const NumericRangeFacet = ({
 
 const CollapsableNumericRangeFacet = ({facet, rawResponse, formatVal, filters}) => {
     const label = facet[1].label
-    const aggregations = rawResponse["aggregations"][facet[0] + "_histogram"]["buckets"]
+    let aggregations = null
+    if (rawResponse.hasOwnProperty("aggregations") && rawResponse["aggregations"].hasOwnProperty([facet[0] + "_histogram"])) {
+        aggregations = rawResponse["aggregations"][facet[0] + "_histogram"]["buckets"]
+    }
     const field = facet[1].field.replace(".keyword", "")
     const facetKey = facet[0]
     const [isExpanded, setIsExpanded] = useState(Sui.isExpandedNumericCategory(facet, facetKey))
