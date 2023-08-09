@@ -3,6 +3,7 @@ import { withSearch } from "@elastic/react-search-ui";
 import styles from "../../css/collapsableFacets.module.css";
 import CollapsableLayout from "./CollapsableLayout";
 import {Sui} from "../../lib/search-tools";
+import { set } from "lodash";
 
 const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, setFilter, removeFilter }) => {
     const label = facet[1].label;
@@ -26,26 +27,30 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
 
     const handleExpanded = () => {
         let filters = Sui.getFilters()
-        filters[field] = !isExpanded
+        if (typeof filters[field] !== "object") {
+            filters[field] = {}
+        }
+        filters[field].key = field
+        filters[field].isExpanded = !isExpanded
         Sui.saveFilters(filters)
         setIsExpanded(!isExpanded)
     }
 
     useEffect(() => {
-        filters.forEach((filter) => {
-            if (filter.field === field) {
-                filter.values.forEach((value) => {
-                    if (value.hasOwnProperty("from")) {
-                        let date = new Date(value.from)
-                        setStartDate(date.toISOString().split("T")[0])
-                    }
-                    if (value.hasOwnProperty("to")) {
-                        let date = new Date(value.to)
-                        setEndDate(date.toISOString().split("T")[0])
-                    }
-                })
+        const sui = Sui.getFilters()
+        for (let f in sui) {
+            if (sui[f].key === field) {
+                if (sui[f].hasOwnProperty("from")) {
+                    const start = new Date(sui[f].from).toISOString().split("T")[0]
+                    setStartDate(start)
+                }
+                if (sui[f].hasOwnProperty("to")) {
+                    const end = new Date(sui[f].to).toISOString().split("T")[0]
+                    setEndDate(end)
+                }
+                setIsExpanded(sui[f].isExpanded ?? false)
             }
-        })
+        }
     }, [])
 
     useEffect(() => {
@@ -56,14 +61,20 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             setEndMinDate(DEFAULT_MIN_DATE)
         } else {
             const filters = Sui.getFilters()
-            const start = filters[`${field}.startdate`]
-            const end = filters[`${field}.enddate`]
+            if (typeof filters[field] !== "object") {
+                filters[field] = {}
+            }
+            const start = filters[field].from
+            const end = filters[field].to
+
             if (start) {
-                setStartDate(start)
-                setEndMinDate(start)
+                const startStr = new Date(start).toISOString().split("T")[0]
+                setStartDate(startStr)
+                setEndMinDate(startStr)
             }
             if (end) {
-                setEndDate(end)
+                const endStr = new Date(end).toISOString().split("T")[0]
+                setEndDate(endStr)
             }
         }
     }, [clearInputs])
@@ -82,15 +93,23 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
             filter.to = endTimestamp + 24 * 60 * 60 * 1000 - 1
         }
 
+        const sui = Sui.getFilters()
+        if (typeof sui[field] !== "object") {
+            sui[field] = {}
+        }
+
         if (Object.keys(filter).length < 1) {
             const found = filters.find((f) => f.field === field)
             if (found) {
                 removeFilter(field)
+                sui[field] = { key: field, isExpanded: sui[field].isExpanded ?? false}
             }
         } else {
+            sui[field] = {...filter, key: field, isExpanded: sui[field].isExpanded ?? false}
             filter.name = field
             setFilter(field, filter)
         }
+        Sui.saveFilters(sui)
     }, [startDate, endDate])
 
     function handleDateChange(targetName, dateStr) {
@@ -131,9 +150,6 @@ const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, set
                 setStartMaxDate(dateStr)
             }
         }
-        let filters = Sui.getFilters()
-        filters[`${field}.${targetName}`] = dateStr
-        Sui.saveFilters(filters)
     }
 
     return (
