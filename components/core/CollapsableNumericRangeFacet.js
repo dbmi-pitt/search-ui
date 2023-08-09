@@ -5,7 +5,6 @@ import {Sui} from "../../lib/search-tools"
 import Slider from "@mui/material/Slider"
 import FacetContainer from "./FacetContainer"
 import Histogram from "./Histogram";
-import { boxSizing } from "@mui/system"
 
 const NumericRangeFacet = ({
                                label,
@@ -74,12 +73,10 @@ const NumericRangeFacet = ({
     }
 
     function handleSliderChange(_, newValues) {
-        console.log("=====", newValues)
         setValues(newValues)
     }
 
     function handleSliderCommitted(_, newValues) {
-        console.log("=====commit", newValues)
         updateFilters(newValues)
     }
 
