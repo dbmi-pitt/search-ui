@@ -9,10 +9,8 @@ import Histogram from "./Histogram";
 const NumericRangeFacet = ({
                                label,
                                field,
-                               facetKey,
                                valueRange,
                                aggregations,
-                               formatVal,
                                filters,
                                onChange,
                                onRemove
@@ -81,24 +79,6 @@ const NumericRangeFacet = ({
         updateFilters(newValues)
     }
 
-    function handleInputChange(newValue, whichInput) {
-        if (whichInput === "min") {
-            setValues([newValue, values[1]])
-        } else {
-            setValues([values[0], newValue])
-        }
-    }
-
-    function handleInputSubmit(event, whichInput, unfocused = false) {
-        if (unfocused || event.key === "Enter") {
-            if (whichInput === "min") {
-                updateFilters([event.target.value, values[1]])
-            } else {
-                updateFilters([values[0], event.target.value])
-            }
-        }
-    }
-
     function valueText(value) {
         return `${value}`
     }
@@ -127,34 +107,6 @@ const NumericRangeFacet = ({
                         getAriaValueText={valueText}
                     />
                 </div>
-                {/*<div className='d-flex justify-content-between '>*/}
-                {/*    <input*/}
-                {/*        data-transaction-name={`facet - ${label} - min`}*/}
-                {/*        id={`sui-facet--${formatVal(label)}-min`}*/}
-                {/*        className={"sui-multi-checkbox-facet mt-0"}*/}
-                {/*        type='number'*/}
-                {/*        value={values[0]}*/}
-                {/*        min={valueRange[0]}*/}
-                {/*        max={valueRange[1]}*/}
-                {/*        onKeyDown={(e) => handleInputSubmit(e, "min")}*/}
-                {/*        onBlur={(e) => handleInputSubmit(e, "min", true)}*/}
-                {/*        onChange={(e) => handleInputChange(e.target.value, "min")}*/}
-                {/*        required*/}
-                {/*    />*/}
-                {/*    <input*/}
-                {/*        data-transaction-name={`facet - ${label} - max`}*/}
-                {/*        id={`sui-facet--${formatVal(label)}-max`}*/}
-                {/*        className={"sui-multi-checkbox-facet mt-0"}*/}
-                {/*        type='number'*/}
-                {/*        value={values[1]}*/}
-                {/*        min={valueRange[0]}*/}
-                {/*        max={valueRange[1]}*/}
-                {/*        onKeyDown={(e) => handleInputSubmit(e, "max")}*/}
-                {/*        onBlur={(e) => handleInputSubmit(e, "max", true)}*/}
-                {/*        onChange={(e) => handleInputChange(e.target.value, "max")}*/}
-                {/*        required*/}
-                {/*    />*/}
-                {/*</div>*/}
             </div>
         </>
     )
