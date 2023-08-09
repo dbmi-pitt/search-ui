@@ -87,7 +87,7 @@ const NumericRangeFacet = ({
     return (
         <>
             <div>
-                <div className='mx-1' style={{boxSizing: "content-box"}}>
+                <div className='mx-1'>
                     <Histogram
                         data={aggregations}
                         values={values}
