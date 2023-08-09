@@ -5,6 +5,7 @@ import {Sui} from "../../lib/search-tools"
 import Slider from "@mui/material/Slider"
 import FacetContainer from "./FacetContainer"
 import Histogram from "./Histogram";
+import { boxSizing } from "@mui/system"
 
 const NumericRangeFacet = ({
                                label,
@@ -55,27 +56,30 @@ const NumericRangeFacet = ({
         }
 
         if (Object.keys(filter).length < 1) {
+            delete f[field].from
+            delete f[field].to
+            Sui.saveFilters(f)
             const found = filters.find((f) => f.field === field)
             if (found) {
                 found.values.forEach((val) => onRemove(val))
             }
-            delete f[field].min
-            delete f[field].max
         } else {
             filter.name = field
-            onChange(filter)
             f[field].key = field
             f[field].from = minValue
             f[field].to = maxValue
+            Sui.saveFilters(f)
+            onChange(filter)
         }
-        Sui.saveFilters(f)
     }
 
     function handleSliderChange(_, newValues) {
+        console.log("=====", newValues)
         setValues(newValues)
     }
 
     function handleSliderCommitted(_, newValues) {
+        console.log("=====commit", newValues)
         updateFilters(newValues)
     }
 
@@ -86,7 +90,7 @@ const NumericRangeFacet = ({
     return (
         <>
             <div>
-                <div className='mx-1'>
+                <div className='mx-1' style={{boxSizing: "content-box"}}>
                     <Histogram
                         data={aggregations}
                         values={values}
