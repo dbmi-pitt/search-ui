@@ -6,8 +6,7 @@ const CheckboxOptionFacet = ({
                                  transformFunction,
                                  formatVal,
                                  onSelect,
-                                 onRemove,
-                                 conditionalFacets
+                                 onRemove
                              }) => {
     const value = option.value;
 
@@ -21,34 +20,13 @@ const CheckboxOptionFacet = ({
 
     const clearCheck = (value) => {
         let filters = Sui.getFilters()
-
-        // Remove selected filters if the facet that this is conditional has been deselected
-        for (const filter in filters) {
-            if (filters[filter].selected === true) {
-                if (conditionalFacets.hasOwnProperty(filters[filter].key)) {
-                    filters[filter].selected = false
-                    if (Sui.removeFilter) {
-                        Sui.removeFilter(filters[filter].key)
-                    }
-                }
-            }
-            if (filters[filter].from || filters[filter].to) {
-                if (conditionalFacets.hasOwnProperty(filter)) {
-                    filters[filter].isExpanded = false
-                    delete filters[filter].from
-                    delete filters[filter].to
-                    if (Sui.removeFilter) {
-                        Sui.removeFilter(filter)
-                    }
-                }
-            }
-        }
-
         filters[value].selected = false
         Sui.saveFilters(filters)
         if (Sui.removeFilter) {
             Sui.removeFilter(option.key, value)
         }
+
+        onRemove(value)
     }
 
     const setCheck = (value) => {

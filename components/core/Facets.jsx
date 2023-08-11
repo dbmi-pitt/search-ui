@@ -1,13 +1,14 @@
 import React, { Fragment } from "react";
 import log from "loglevel";
+import { withSearch } from "@elastic/react-search-ui";
 import CollapsableCheckboxFacet from "./CollapsableCheckboxFacet";
 import CollapsableDateRangeFacet from "./CollapsableDateRangeFacet";
 import CollapsableNumericRangeFacet from "./CollapsableNumericRangeFacet";
+import {Sui} from "../../lib/search-tools";
 
-const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) => {
-    log.info("FACETS component props", fields, filters);
-    
+const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, removeFilter}) => {
     const conditionalFacets = fields.conditionalFacets;
+    const conditionalFacetDefinitions = fields.conditionalFacetDefinitions;
 
     function formatVal(id) {
         if (typeof id === "string") {
@@ -34,6 +35,16 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) 
                 result = false
             }
         }
+        if (!result && filters && filters.filter(e => e.field === facetKey).length > 0) {
+            let filterKey = filters.filter(e => e.field === facetKey)[0].values[0]
+            let suiFilters = Sui.getFilters()
+            if(suiFilters.hasOwnProperty(filterKey)) {
+                suiFilters[filterKey].selected = false
+                Sui.saveFilters(suiFilters)
+                Sui.removeFilter(filterKey)
+            }
+            removeFilter(facetKey)
+        }
         return result
     }
 
@@ -43,7 +54,7 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) 
                 if (!isFacetVisible(facet[0])) {
                     return <Fragment key={facet[0]}></Fragment>
                 }
-                
+
                 if (facet[1].uiType === "daterange") {
                     return <CollapsableDateRangeFacet
                         key={facet[0]}
@@ -62,7 +73,6 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) 
                         facet={facet}
                         transformFunction={transformFunction}
                         formatVal={formatVal}
-                        conditionalFacets={conditionalFacets}
                     />
                 }
             }
@@ -70,4 +80,6 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs}) 
     </>)
 }
 
-export default Facets;
+export default withSearch(({ removeFilter }) => ({
+    removeFilter
+}))(Facets)
