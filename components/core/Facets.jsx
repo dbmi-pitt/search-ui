@@ -42,7 +42,7 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, r
             if(suiFilters.hasOwnProperty(filterKey)) {
                 suiFilters[filterKey].selected = false
                 Sui.saveFilters(suiFilters)
-                Sui.removeFilter(filterKey)
+                Sui.removeFilter(filterKey, facetKey)
             }
             removeFilter(facetKey)
         }
