@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {Sui} from "../../lib/search-tools";
 
 const CheckboxOptionFacet = ({
@@ -12,26 +13,22 @@ const CheckboxOptionFacet = ({
 
     const getChecked = () => {
         let filters = Sui.getFilters()
-        const selected = filters[option.value]?.selected || option.selected
-        filters[option.value] = {selected, key: option.key}
+        const selected = filters[`${option.key}.${option.value}`]?.selected || option.selected
+        filters[`${option.key}.${option.value}`] = {selected, key: option.key}
         Sui.saveFilters(filters)
         return selected
     }
 
     const clearCheck = (value) => {
         let filters = Sui.getFilters()
-        filters[value].selected = false
+        filters[`${option.key}.${option.value}`].selected = false
         Sui.saveFilters(filters)
-        if (Sui.removeFilter) {
-            Sui.removeFilter(option.key, value)
-        }
-
         onRemove(value)
     }
 
     const setCheck = (value) => {
         let filters = Sui.getFilters()
-        filters[value].selected = true
+        filters[`${option.key}.${option.value}`].selected = true
         Sui.saveFilters(filters)
         onSelect(value)
     }
