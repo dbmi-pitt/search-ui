@@ -7,6 +7,7 @@ import {Sui} from "../../lib/search-tools";
 
 const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, removeFilter}) => {
     const conditionalFacets = fields.conditionalFacets;
+    const conditionalFacetDefinitions = fields.conditionalFacetDefinitions;
 
     function formatVal(id) {
         if (typeof id === "string") {
