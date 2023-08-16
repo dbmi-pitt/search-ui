@@ -7,7 +7,7 @@ import { set } from "lodash";
 
 const CollapsableDateRangeFacet = ({ facet, clearInputs, formatVal, filters, setFilter, removeFilter }) => {
     const label = facet[1].label;
-    const field = facet[1].field.split(".")[0];
+    const field = facet[1].field.replace(".keyword", "");
     const [isExpanded, setIsExpanded] = useState(Sui.isExpandedDateCategory(facet, field));
 
     // default dates
