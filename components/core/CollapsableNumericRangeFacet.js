@@ -53,10 +53,10 @@ const NumericRangeFacet = ({
         if (!f[field]) {
             f[field] = {key: field}
         }
+        delete f[field].from
+        delete f[field].to
 
         if (Object.keys(filter).length < 1) {
-            delete f[field].from
-            delete f[field].to
             Sui.saveFilters(f)
             const found = filters.find((f) => f.field === field)
             if (found) {
@@ -65,9 +65,14 @@ const NumericRangeFacet = ({
         } else {
             filter.name = field
             f[field].key = field
-            f[field].from = minValue
-            f[field].to = maxValue
+            if (filter.from) {
+                f[field].from = minValue
+            }
+            if (filter.to) {
+                f[field].to = maxValue
+            }
             Sui.saveFilters(f)
+            filter.name = field
             onChange(filter)
         }
     }
