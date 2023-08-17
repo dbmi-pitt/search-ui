@@ -5,8 +5,9 @@ import CollapsableDateRangeFacet from "./CollapsableDateRangeFacet";
 import CollapsableNumericRangeFacet from "./CollapsableNumericRangeFacet";
 import {Sui} from "../../lib/search-tools";
 
-const Facets = ({fields, filters, rawResponse, transformFunction, removeFilter}) => {
+const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, removeFilter}) => {
     const conditionalFacets = fields.conditionalFacets;
+    const conditionalFacetDefinitions = fields.conditionalFacetDefinitions;
 
     function formatVal(id) {
         if (typeof id === "string") {
@@ -66,6 +67,7 @@ const Facets = ({fields, filters, rawResponse, transformFunction, removeFilter})
                     return <CollapsableDateRangeFacet
                         key={facet[0]}
                         facet={facet}
+                        clearInputs={clearInputs}
                         formatVal={formatVal} />
                 } else if (facet[1].uiType === "numrange") {
                     return <CollapsableNumericRangeFacet
