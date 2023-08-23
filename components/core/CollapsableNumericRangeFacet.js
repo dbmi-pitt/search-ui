@@ -72,7 +72,6 @@ const NumericRangeFacet = ({
                 f[field].to = maxValue
             }
             Sui.saveFilters(f)
-            filter.name = field
             onChange(filter)
         }
     }
