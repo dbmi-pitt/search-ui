@@ -1,15 +1,12 @@
 import React, { Fragment } from "react";
-import log from "loglevel";
 import { withSearch } from "@elastic/react-search-ui";
 import CollapsableCheckboxFacet from "./CollapsableCheckboxFacet";
 import CollapsableDateRangeFacet from "./CollapsableDateRangeFacet";
+import CollapsableNumericRangeFacet from "./CollapsableNumericRangeFacet";
 import {Sui} from "../../lib/search-tools";
 
-const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, removeFilter}) => {
-    log.info("FACETS component props", fields, filters);
-
+const Facets = ({fields, filters, rawResponse, transformFunction, removeFilter}) => {
     const conditionalFacets = fields.conditionalFacets;
-    const conditionalFacetDefinitions = fields.conditionalFacetDefinitions;
 
     function formatVal(id) {
         if (typeof id === "string") {
@@ -38,12 +35,21 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, r
         }
         if (!result && filters && filters.filter(e => e.field === facetKey).length > 0) {
             let filterKey = filters.filter(e => e.field === facetKey)[0].values[0]
-            let suiFilters = Sui.getFilters()
-            if(suiFilters.hasOwnProperty(filterKey)) {
-                suiFilters[filterKey].selected = false
-                Sui.saveFilters(suiFilters)
-                Sui.removeFilter(filterKey, facetKey)
+            if (filterKey.hasOwnProperty("name")) {
+                // Date or numeric range facet
+                filterKey = filterKey.name
             }
+            const suiFilters = Sui.getFilters()
+            if (suiFilters.hasOwnProperty(`${facetKey}.${filterKey}`)) {
+                // Checkbox facet
+                suiFilters[`${facetKey}.${filterKey}`].selected = false
+                Sui.saveFilters(suiFilters)
+            } else if (suiFilters.hasOwnProperty(filterKey)) {
+                // Date or numeric range facet
+                delete suiFilters[filterKey]["from"]
+                delete suiFilters[filterKey]["to"]
+            }
+            Sui.saveFilters(suiFilters)
             removeFilter(facetKey)
         }
         return result
@@ -60,7 +66,12 @@ const Facets = ({fields, filters, rawResponse, transformFunction, clearInputs, r
                     return <CollapsableDateRangeFacet
                         key={facet[0]}
                         facet={facet}
-                        clearInputs={clearInputs}
+                        formatVal={formatVal} />
+                } else if (facet[1].uiType === "numrange") {
+                    return <CollapsableNumericRangeFacet
+                        key={facet[0]}
+                        facet={facet}
+                        rawResponse={rawResponse}
                         formatVal={formatVal} />
                 } else {
                     return <CollapsableCheckboxFacet
