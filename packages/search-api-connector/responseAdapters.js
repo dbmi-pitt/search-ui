@@ -63,7 +63,7 @@ export function getFacets(results) {
           buckets = agg[1].buckets
       } else {
           let keys = Object.keys(agg[1])
-          keys = keys.filter(val => val !== "doc_count");
+          keys = keys.filter(val => val !== "doc_count" && val !== "meta");
           buckets = agg[1][keys[0]].buckets
       }
 
