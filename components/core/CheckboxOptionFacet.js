@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {Sui} from "../../lib/search-tools";
 
 const CheckboxOptionFacet = ({
@@ -6,46 +7,28 @@ const CheckboxOptionFacet = ({
                                  transformFunction,
                                  formatVal,
                                  onSelect,
-                                 onRemove,
-                                 conditionalFacets
+                                 onRemove
                              }) => {
     const value = option.value;
 
     const getChecked = () => {
         let filters = Sui.getFilters()
-        const selected = filters[option.value]?.selected || option.selected
-        filters[option.value] = {selected, key: option.key}
+        const selected = filters[`${option.key}.${option.value}`]?.selected || option.selected
+        filters[`${option.key}.${option.value}`] = {selected, key: option.key}
         Sui.saveFilters(filters)
         return selected
     }
 
     const clearCheck = (value) => {
         let filters = Sui.getFilters()
-        filters[value].selected = false
+        filters[`${option.key}.${option.value}`].selected = false
         Sui.saveFilters(filters)
-        if (Sui.removeFilter) {
-            Sui.removeFilter(option.key, value)
-        }
-
-        // Remove selected filters if the facet that this is conditional has been deselected
-        for (const filter in filters) {
-            if (filters[filter].selected === true) {
-                if (conditionalFacets.hasOwnProperty(filters[filter].key)) {
-                    filters[filter].selected = false
-                    Sui.saveFilters(filters)
-                    if (Sui.removeFilter) {
-                        Sui.removeFilter(filters[filter].key, filter)
-                    }
-                    onRemove(filter)
-                }
-            }
-        }
         onRemove(value)
     }
 
     const setCheck = (value) => {
         let filters = Sui.getFilters()
-        filters[value].selected = true
+        filters[`${option.key}.${option.value}`].selected = true
         Sui.saveFilters(filters)
         onSelect(value)
     }

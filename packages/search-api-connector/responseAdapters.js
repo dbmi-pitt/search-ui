@@ -58,7 +58,15 @@ export function getFacets(results) {
   agg_list.forEach((agg) => {
       let aggregate = []
       let facet_name = agg[0]
-      let buckets = agg[1].buckets
+      let buckets = null
+      if(agg[1].hasOwnProperty("buckets")) {
+          buckets = agg[1].buckets
+      } else {
+          let keys = Object.keys(agg[1])
+          keys = keys.filter(val => val !== "doc_count" && val !== "meta");
+          buckets = agg[1][keys[0]].buckets
+      }
+
 
       let bucket_list = [];
       let i = 0
