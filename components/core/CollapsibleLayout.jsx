@@ -1,16 +1,15 @@
-import React from "react";
 import styles from "../../css/collapsableFacets.module.css";
 import { ChevronDown, ChevronRight } from "react-bootstrap-icons";
 import { Col, Row } from "react-bootstrap";
 
-const CollapsableLayout = ({ isExpanded, setIsExpanded, label, formatVal, children }) => {
+const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, children }) => {
 
     function formatClassName(label) {
         return `sui-facet__title sui-facet__title--${formatVal(label)}`
     }
 
     function handleExpandClick() {
-        setIsExpanded((previous) => !previous)
+        setIsExpanded(!isExpanded)
     }
 
     return (
@@ -37,4 +36,4 @@ const CollapsableLayout = ({ isExpanded, setIsExpanded, label, formatVal, childr
     )
 }
 
-export default CollapsableLayout
+export default CollapsibleLayout
