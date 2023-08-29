@@ -140,11 +140,35 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         driver.actions.addFilter(field, value, facet.filterType)
     }
 
+    /**
+     * Remove a specific filter value in a given field
+     * @param  {string} field The facet field
+     * @param  {string} value The filter value to be removed
+     * 
+     * @example
+     * // Remove the filter value "Dataset" from the "entity_type" facet
+     * removeFilter("entity_type", "Dataset")
+     * 
+     * // Remove the range filter value from the "created_timestamp" facet
+     * removeFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }})
+     */ 
     function removeFilter(field, value) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
         if (!facet) return
         driver.actions.removeFilter(field, value, facet.filterType)
+    }
+
+    /**
+     * Remove all filter values associated with a given field
+     * @param  {string} field The facet field
+     */
+    function removeFiltersForField(field) {
+        const filter = getFilter(field)
+        if (!filter) return
+        filter.values.forEach((value) => {
+            removeFilter(field, value)
+        })
     }
 
     function setFilter(field, value) {
@@ -190,6 +214,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
                 filterExists,
                 addFilter,
                 removeFilter,
+                removeFiltersForField,
                 setFilter,
                 isFacetExpanded,
                 setFacetExpanded,
