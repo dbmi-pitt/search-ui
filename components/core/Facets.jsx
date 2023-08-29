@@ -5,7 +5,7 @@ import CheckboxFacet from './CheckboxFacet'
 import DateRangeFacet from './DateRangeFacet'
 
 const Facets = ({ transformFunction }) => {
-    const { getFacets, getConditionalFacets, getFilters } = useContext(SearchUIContext)
+    const { getFacets, getConditionalFacets, filters } = useContext(SearchUIContext)
 
     function formatVal(id) {
         if (typeof id === 'string') {
@@ -18,7 +18,6 @@ const Facets = ({ transformFunction }) => {
         const conditionalFacets = getConditionalFacets()
         if (conditionalFacets.hasOwnProperty(field)) {
             const predicate = conditionalFacets[field]
-            const filters = getFilters()
             if (filters) {
                 return predicate({ filters })
             } else {

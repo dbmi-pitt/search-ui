@@ -76,7 +76,7 @@ export class CollapsibleFacetContainer extends React.Component {
         const facetData = facetsForField[0];
 
         // markSelectedFacetValuesFromFilters looks for type to compare filterType
-        const filters = this.context.getFilters().map((filter) => {
+        const filters = this.context.filters.map((filter) => {
             return {
                 field: filter.field,
                 type: filter.filterType,

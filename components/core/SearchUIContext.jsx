@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { SearchContext } from '@elastic/react-search-ui'
 
 const SearchUIContext = createContext()
@@ -50,6 +50,8 @@ const SearchUIContext = createContext()
 export function SearchUIProvider({ children, name = 'new.entities' }) {
     const { driver } = useContext(SearchContext)
 
+    const [filters, setFilters] = useState(getFilters())
+
     useEffect(() => {
         if (driver.state.filters && driver.state.filters.length > 0) return
         const localFilters = getLocalFilters()
@@ -62,7 +64,8 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     }, [])
 
     useEffect(() => {
-        console.log('=====Saving filters to local storage=====', driver.state.filters)
+        if (driver.state.isLoading) return
+        setFilters(getFilters())
         localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
         removeInvalidConditionalFacets()
     }, [driver.state])
@@ -209,7 +212,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
                 getFacets,
                 getConditionalFacets,
                 getFacetData,
-                getFilters,
+                filters,
                 getFilter,
                 filterExists,
                 addFilter,
