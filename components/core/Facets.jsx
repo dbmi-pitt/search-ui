@@ -3,6 +3,7 @@ import SearchUIContext from './SearchUIContext'
 import CollapsibleFacetContainer from './CollapsibleFacetContainer'
 import CheckboxFacet from './CheckboxFacet'
 import DateRangeFacet from './DateRangeFacet'
+import NumericRangeFacet from './NumericRangeFacet'
 
 const Facets = ({ transformFunction }) => {
     const { getFacets, getConditionalFacets, filters } = useContext(SearchUIContext)
@@ -46,7 +47,16 @@ const Facets = ({ transformFunction }) => {
                         />
                     )
                 } else if (facet.uiType === 'numrange') {
-                    return <Fragment key={field}></Fragment>
+                    return (
+                        <CollapsibleFacetContainer
+                            key={field}
+                            field={field}
+                            facet={facet}
+                            transformFunction={transformFunction}
+                            formatVal={formatVal}
+                            view={NumericRangeFacet}
+                        />
+                    )                
                 } else {
                     return (
                         <CollapsibleFacetContainer
