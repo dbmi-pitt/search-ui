@@ -53,6 +53,8 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     const [filters, setFilters] = useState(getFilters())
     const [aggregations, setAggregations] = useState({})
 
+    const [filterChangeCallbacks, setFilterChangeCallbacks] = useState({})
+
     useEffect(() => {
         if (driver.state.filters && driver.state.filters.length > 0) return
         const localFilters = getLocalFilters()
@@ -103,6 +105,17 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
 
     // Filters
 
+    function registerFilterChangeCallback(field, callback) {
+        setFilterChangeCallbacks({ ...filterChangeCallbacks, [field]: callback })
+    }
+
+    function unregisterFilterChangeCallback(field) {
+        setFilterChangeCallbacks(current => {
+            delete current[field]
+            return current;
+        })
+    }
+
     function getFilters() {
         const facets = driver.searchQuery.facets || {}
         return driver.state.filters.map((filter) => {
@@ -146,11 +159,14 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         return includes
     }
 
-    function addFilter(field, value) {
+    function addFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
         if (!facet) return
         driver.actions.addFilter(field, value, facet.filterType)
+        if (filterChangeCallbacks.hasOwnProperty(field)) {
+            filterChangeCallbacks[field](value, changedBy || field)
+        }
     }
 
     /**
@@ -165,30 +181,40 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
      * // Remove the range filter value from the "created_timestamp" facet
      * removeFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }})
      */
-    function removeFilter(field, value) {
+    function removeFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
         if (!facet) return
         driver.actions.removeFilter(field, value, facet.filterType)
+        if (filterChangeCallbacks.hasOwnProperty(field)) {
+            filterChangeCallbacks[field](value, changedBy || field)
+        }
     }
 
     /**
      * Remove all filter values associated with a given field
      * @param  {string} field The facet field
      */
-    function removeFiltersForField(field) {
+    function removeFiltersForField(field, changedBy) {
         const filter = getFilter(field)
         if (!filter) return
         filter.values.forEach((value) => {
             removeFilter(field, value)
         })
+        if (filterChangeCallbacks.hasOwnProperty(field)) {
+            const value = filter.values[0]
+            filterChangeCallbacks[field](value, changedBy || field)
+        }
     }
 
-    function setFilter(field, value) {
+    function setFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
         if (!facet) return
         driver.actions.setFilter(field, value, facet.filterType)
+        if (filterChangeCallbacks.hasOwnProperty(field)) {
+            filterChangeCallbacks[field](value, changedBy || field)
+        }
     }
 
     // Local storage functions
@@ -222,6 +248,8 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
                 getFacets,
                 getConditionalFacets,
                 getFacetData,
+                registerFilterChangeCallback,
+                unregisterFilterChangeCallback,
                 filters,
                 getFilter,
                 filterExists,

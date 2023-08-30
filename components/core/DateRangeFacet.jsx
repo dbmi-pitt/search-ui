@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import SearchUIContext from './SearchUIContext'
 import styles from '../../css/collapsableFacets.module.css'
 
@@ -7,9 +7,9 @@ const DateRangeFacet = ({ field, label, formatVal }) => {
     const DEFAULT_MIN_DATE = '1970-01-01'
     const DEFAULT_MAX_DATE = '2300-01-01'
 
-    const { getFilter, setFilter, removeFiltersForField } = useContext(SearchUIContext)
+    const { registerFilterChangeCallback, unregisterFilterChangeCallback, getFilter, setFilter, removeFiltersForField, filterExists } = useContext(SearchUIContext)
 
-    const [values, setValues] = useState(getInitialValues())
+    const [values, setValues] = useState(getValuesFromFilter())
     const [errorValues, setErrorValues] = useState({
         start: '',
         end: ''
@@ -19,7 +19,15 @@ const DateRangeFacet = ({ field, label, formatVal }) => {
         endMin: DEFAULT_MIN_DATE
     })
 
-    function getInitialValues() {
+    useEffect(() => {
+        registerFilterChangeCallback(field, (value, changedBy) => {
+            if (changedBy === field) return
+            handleDateChange(getValuesFromFilter(), 'start')
+        })
+        return () => { unregisterFilterChangeCallback(field) }
+    }, [])
+
+    function getValuesFromFilter() {
         const filter = getFilter(field)
         if (!filter) return { start: '', end: '' }
         return {
@@ -38,7 +46,7 @@ const DateRangeFacet = ({ field, label, formatVal }) => {
     }
 
     function handleDateChange(newValues, targetName) {
-        const filter = {}
+        const filter = { name: field }
 
         const startTimestamp = convertStringToTimestamp(newValues.start)
         if (startTimestamp && startTimestamp >= 0) {
@@ -60,13 +68,14 @@ const DateRangeFacet = ({ field, label, formatVal }) => {
             }
         } else {
             // values are valid
-            if (Object.keys(filter).length === 0) {
+            if (!filter.from && !filter.to) {
                 // remove filter
                 removeFiltersForField(field)
             } else {
-                // set new filter
-                filter.name = field
-                setFilter(field, filter)
+                // set new filter if it doesn't exist
+                if (!filterExists(field, filter)) { 
+                    setFilter(field, filter)
+                }
             }
             setErrorValues({ start: '', end: '' })
             setDateConstraints({
@@ -111,8 +120,8 @@ const DateRangeFacet = ({ field, label, formatVal }) => {
                 />
             </div>
             <div>
-                {Object.values(errorValues).map((error) => {
-                    return <span className='sui-multi-checkbox-facet text-danger'>{error}</span>
+                {Object.values(errorValues).map((error, idx) => {
+                    return <span key={idx} className='sui-multi-checkbox-facet text-danger'>{error}</span>
                 })}
             </div>
         </>
