@@ -5,7 +5,7 @@ import Histogram from './Histogram'
 
 const NumericRangeFacet = ({ field, label, facet }) => {
     const valueRange = facet.uiRange
-    const { getFilter, setFilter, removeFiltersForField, aggregations } = useContext(SearchUIContext)
+    const {registerFilterChangeCallback, unregisterFilterChangeCallback, getFilter, setFilter, removeFiltersForField, aggregations } = useContext(SearchUIContext)
 
     const [values, setValues] = useState(getInitialValues())
     const [histogramData, setHistogramData] = useState([])
@@ -21,6 +21,14 @@ const NumericRangeFacet = ({ field, label, facet }) => {
         if (!filter) return facet.uiRange
         return [filter.values[0].from || facet.uiRange[0], filter.values[0].to || facet.uiRange[1]]
     }
+
+    useEffect(() => {
+        registerFilterChangeCallback(field, (value, changedBy) => {
+            if (changedBy === field) return
+            setValues(getInitialValues())
+        })
+        return () => { unregisterFilterChangeCallback(field) }
+    }, [])
 
     const marks = [
         {
