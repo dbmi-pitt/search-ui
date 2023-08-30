@@ -96,7 +96,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     function getConditionalFacets() {
         return driver.searchQuery.conditionalFacets || {}
     }
-    
+
     function getFacetData() {
         return driver.state.facets
     }
@@ -134,7 +134,15 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     function filterExists(field, value) {
         const filter = getFilter(field)
         if (!filter) return false
-        const includes = filter.values.includes(value)
+        let includes = false
+        if (filter.type === 'range') {
+            // compare range values manually because JavaScript
+            includes = filter.values.some((range) => {
+                return range.name == value.name && range.from === value.from && range.to === value.to
+            })
+        } else {
+            includes = filter.values.includes(value)
+        }
         return includes
     }
 
@@ -149,14 +157,14 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
      * Remove a specific filter value in a given field
      * @param  {string} field The facet field
      * @param  {string} value The filter value to be removed
-     * 
+     *
      * @example
      * // Remove the filter value "Dataset" from the "entity_type" facet
      * removeFilter("entity_type", "Dataset")
-     * 
+     *
      * // Remove the range filter value from the "created_timestamp" facet
      * removeFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }})
-     */ 
+     */
     function removeFilter(field, value) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
