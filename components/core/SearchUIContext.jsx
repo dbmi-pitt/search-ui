@@ -48,6 +48,8 @@ const SearchUIContext = createContext()
 //
 
 export function SearchUIProvider({ children, name = 'new.entities' }) {
+    const LOCAL_SCHEMA_VERSION = 1
+
     const { driver } = useContext(SearchContext)
 
     const [filters, setFilters] = useState(getFilters())
@@ -57,6 +59,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     const [filterChangeCallbacks, setFilterChangeCallbacks] = useState({})
 
     useEffect(() => {
+        checkLocalStorageSchema()
         if (driver.state.filters && driver.state.filters.length > 0) return
         const localFilters = getLocalFilters()
         console.log('=====Loading filters from local storage=====', localFilters)
@@ -233,6 +236,14 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     }
 
     // Local storage functions
+
+    function checkLocalStorageSchema() {
+        const schemaVersion = localStorage.getItem('schemaVersion') || 0
+        if (schemaVersion < LOCAL_SCHEMA_VERSION) {
+            localStorage.clear()
+            localStorage.setItem('schemaVersion', LOCAL_SCHEMA_VERSION)
+        }
+    }
 
     function getLocalFilters() {
         return JSON.parse(localStorage.getItem(`${name}.filters`)) || []
