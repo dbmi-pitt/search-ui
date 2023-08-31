@@ -169,6 +169,19 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         }
     }
 
+    function clearSearchTerm(shouldClearFilters = true) {
+        driver.actions.setSearchTerm("", {shouldClearFilters})
+        if (!shouldClearFilters) return
+
+        filters.forEach((filter) => {
+            if (filterChangeCallbacks.hasOwnProperty(filter.field)) {
+                filter.values.forEach((value) => {
+                    filterChangeCallbacks[filter.field](value, "clearSearchTerm")
+                })
+            }
+        })
+    }
+
     /**
      * Remove a specific filter value in a given field
      * @param  {string} field The facet field
@@ -257,10 +270,11 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
                 removeFilter,
                 removeFiltersForField,
                 setFilter,
+                clearSearchTerm,
                 aggregations,
                 isFacetExpanded,
                 setFacetExpanded,
-                a11yNotify: driver.a11yNotify
+                a11yNotify: driver.a11yNotify,
             }}
         >
             {children}
