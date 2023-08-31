@@ -54,7 +54,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
 
     const [filters, setFilters] = useState(getFilters())
     const [aggregations, setAggregations] = useState({})
-    const [wasSearched, setWasSearched] = useState(false)
+    const [wasSearched, setWasSearched] = useState(driver.state.wasSearched)
 
     const [filterChangeCallbacks, setFilterChangeCallbacks] = useState({})
 
