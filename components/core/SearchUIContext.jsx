@@ -306,7 +306,11 @@ export function SearchUIProvider({ name, children }) {
     function checkLocalStorageSchema() {
         const schemaVersion = localStorage.getItem('schemaVersion') || 0
         if (schemaVersion < LOCAL_SCHEMA_VERSION) {
-            localStorage.clear()
+            Object.keys(localStorage).forEach((key) => {
+                if (key.endsWith('.filters') || key.endsWith('.settings')) {
+                    localStorage.removeItem(key)
+                }
+            })
             localStorage.setItem('schemaVersion', LOCAL_SCHEMA_VERSION)
         }
     }
