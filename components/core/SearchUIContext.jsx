@@ -54,6 +54,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
 
     const [filters, setFilters] = useState(getFilters())
     const [aggregations, setAggregations] = useState({})
+    const [rawResponse, setRawResponse] = useState(driver.state.rawResponse)
     const [wasSearched, setWasSearched] = useState(driver.state.wasSearched)
 
     const [filterChangeCallbacks, setFilterChangeCallbacks] = useState({})
@@ -74,6 +75,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         if (driver.state.isLoading) return
         setFilters(getFilters())
         setAggregations(driver.state.rawResponse.aggregations || {})
+        setRawResponse(driver.state.rawResponse)
         setWasSearched(driver.state.wasSearched)
         localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
         removeInvalidConditionalFacets()
@@ -286,6 +288,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
                 wasSearched,
                 clearSearchTerm,
                 aggregations,
+                rawResponse,
                 isFacetExpanded,
                 setFacetExpanded,
                 a11yNotify: driver.a11yNotify,
