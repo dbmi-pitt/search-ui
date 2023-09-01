@@ -3,51 +3,12 @@ import { SearchContext } from '@elastic/react-search-ui'
 
 const SearchUIContext = createContext()
 
-// Filter type from SearchContext
-//
-// value filter
-// {
-//     field: "entity_type",
-//     type: "all",
-//     values: ["Dataset"]
-// }
-//
-// range filter
-// {
-//     field: "created_timestamp",
-//     type: "all",
-//     values: [
-//         { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }
-//     ]
-// }
-//
-
-// Filter type returns from useSearchUI
-//
-// value filter
-// {
-//     field: "entity_type",
-//     filterType: "all",
-//     label: "Entity Type",
-//     type: "value",
-//     uiType: "checkbox",
-//     values: ["Dataset"]
-// }
-//
-// range filter
-// {
-//     field: "created_timestamp",
-//     filterType: "all",
-//     label: "Created Timestamp",
-//     type: "range",
-//     uiType: "date",
-//     values: [
-//         { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }
-//     ]
-// }
-//
-
-export function SearchUIProvider({ children, name = 'new.entities' }) {
+/**
+ * Provider to get access to the SearchUIContext
+ * @param {string} name The name of the search UI. This is used to namespace local storage.
+ */
+export function SearchUIProvider({ name, children }) {
+    // Used to check if local storage should be cleared
     const LOCAL_SCHEMA_VERSION = 1
 
     const { driver } = useContext(SearchContext)
@@ -63,7 +24,6 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         checkLocalStorageSchema()
         if (driver.state.filters && driver.state.filters.length > 0) return
         const localFilters = getLocalFilters()
-        console.log('=====Loading filters from local storage=====', localFilters)
         localFilters.forEach((filter) => {
             filter.values.forEach((value) => {
                 addFilter(filter.field, value)
@@ -73,10 +33,12 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
 
     useEffect(() => {
         if (driver.state.isLoading) return
+
         setFilters(getFilters())
         setAggregations(driver.state.rawResponse.aggregations || {})
         setRawResponse(driver.state.rawResponse)
         setWasSearched(driver.state.wasSearched)
+
         localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
         removeInvalidConditionalFacets()
     }, [driver.state])
@@ -98,24 +60,50 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
 
     // Facets
 
+    /**
+     * Get an object of all facets. Facets are defined in the search config file passed to SearchUIContainer or SearchProvider.
+     * @return {object} An object of facet objects.
+     */
     function getFacets() {
         return driver.searchQuery.facets || {}
     }
 
+    /**
+     * Get an object of all conditional facets. Conditional facets are defined in the search config file passed to SearchUIContainer or SearchProvider.
+     * @return {object} An object of conditional facet objects.
+     */
     function getConditionalFacets() {
         return driver.searchQuery.conditionalFacets || {}
     }
 
+    /**
+     * Get an object of all facet data. Facet data is returned from the search API.
+     * @returns {object} An object of facet data objects. See SearchState.facets in @elastic/search-ui for object structure.
+     */
     function getFacetData() {
         return driver.state.facets
     }
 
     // Filters
 
+    /**
+     * 
+     * @param {string} field The facet field to receive callbacks for
+     * @param {function} callback The callback function to be called when a filter value changes
+     * Callback function should have the following signature:
+     * 
+     * See filterExists for value structure. changedBy is the identifier of the calling component.
+     * @example
+     * (value: (string|object), changedBy: string) => {}
+     */
     function registerFilterChangeCallback(field, callback) {
         setFilterChangeCallbacks({ ...filterChangeCallbacks, [field]: callback })
     }
 
+    /**
+     * 
+     * @param {string} field The facet field to unregister callbacks for
+     */
     function unregisterFilterChangeCallback(field) {
         setFilterChangeCallbacks(current => {
             delete current[field]
@@ -123,6 +111,10 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         })
     }
 
+    /**
+     * Get an array of all filters
+     * @return {Array} An array of filter objects. See getFilter for object structure.
+     */
     function getFilters() {
         const facets = driver.searchQuery.facets || {}
         return driver.state.filters.map((filter) => {
@@ -137,6 +129,34 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         })
     }
 
+    /**
+     * Get an specific filter by field
+     * @param  {string} field The facet field
+     * @return {object|null} The specific filter or null if doesn't exist
+     * 
+     * Values filters will have a structure similar to:
+     * {
+     *     field: "entity_type",
+     *     filterType: "all",
+     *     label: "Entity Type",
+     *     type: "value",
+     *     uiType: "checkbox",
+     *     values: ["Dataset"]
+     * }
+     * 
+     * Range filters will have a structure similar to:
+     * {
+     *     field: "created_timestamp",
+     *     filterType: "all",
+     *     label: "Created Timestamp",
+     *     type: "range",
+     *     uiType: "date",
+     *     values: [
+     *         // object will have either from or to; or both
+     *         { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }
+     *     ]
+     * }
+     */
     function getFilter(field) {
         const filter = driver.state.filters.find((f) => f.field === field)
         if (!filter) return null
@@ -151,6 +171,18 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         }
     }
 
+    /**
+     * Check if a specific filter value exists for a given field
+     * @param  {string} field The facet field
+     * @param  {string | object} value The specific filter value to check for
+     * 
+     * Values filter values should a have structure similar to:
+     * "Dataset"
+     * 
+     * Range filters will have a structure similar to:
+     * Object can have either from or to; or both
+     * { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }
+     */
     function filterExists(field, value) {
         const filter = getFilter(field)
         if (!filter) return false
@@ -166,6 +198,19 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         return includes
     }
 
+    /**
+     * Add a specific filter value for a given field 
+     * @param  {string} field The facet field
+     * @param  {string | object} value The specific filter value to add. See filterExists for object structure.
+     * @param  {string} changedBy The identifier of the calling component. This is used for filterChangeCallback.
+     * 
+     * @example
+     * // Add the filter value "Dataset" from the "entity_type" facet
+     * addFilter("entity_type", "Dataset", "MyComponent")
+     *
+     * // Add the range filter value from the "created_timestamp" facet
+     * addFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }, "MyComponent")
+     */
     function addFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
@@ -176,6 +221,10 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         }
     }
 
+    /**
+     * Clear the search term and optionally clear all filters
+     * @param  {boolean} shouldClearFilters Whether or not to clear all filters (default: true)
+     */
     function clearSearchTerm(shouldClearFilters = true) {
         driver.actions.setSearchTerm("", {shouldClearFilters})
         if (!shouldClearFilters) return
@@ -193,13 +242,14 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
      * Remove a specific filter value in a given field
      * @param  {string} field The facet field
      * @param  {string} value The filter value to be removed
+     * @param  {string} changedBy The identifier of the calling component. This is used for filterChangeCallback.
      *
      * @example
      * // Remove the filter value "Dataset" from the "entity_type" facet
-     * removeFilter("entity_type", "Dataset")
+     * removeFilter("entity_type", "Dataset", "MyComponent")
      *
      * // Remove the range filter value from the "created_timestamp" facet
-     * removeFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }})
+     * removeFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }, "MyComponent")
      */
     function removeFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
@@ -214,6 +264,7 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     /**
      * Remove all filter values associated with a given field
      * @param  {string} field The facet field
+     * @param  {string} changedBy The identifier of the calling component. This is used for filterChangeCallback.
      */
     function removeFiltersForField(field, changedBy) {
         const filter = getFilter(field)
@@ -227,6 +278,19 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         }
     }
 
+    /**
+     * Set a specific filter value in a given field
+     * @param  {string} field The facet field
+     * @param  {string} value The filter value to be set
+     * @param  {string} changedBy The identifier of the calling component. This is used for filterChangeCallback.
+     *
+     * @example
+     * // Set the filter value "Dataset" from the "entity_type" facet
+     * setFilter("entity_type", "Dataset", "MyComponent")
+     *
+     * // Set the range filter value from the "created_timestamp" facet
+     * setFilter("created_timestamp", { from: 1690156800000, to: 1692921599999, name: "created_timestamp" }, "MyComponent")
+     */
     function setFilter(field, value, changedBy) {
         const facets = driver.searchQuery.facets || {}
         const facet = facets[field]
@@ -254,7 +318,11 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
     function getLocalSettings() {
         return JSON.parse(localStorage.getItem(`${name}.settings`)) || {}
     }
-
+    
+    /**
+     * @param {string} field The facet field
+     * @returns {boolean} Whether or not the facet is expanded 
+     */
     function isFacetExpanded(field) {
         const settings = getLocalSettings()
         if (settings.hasOwnProperty(field)) {
@@ -264,6 +332,10 @@ export function SearchUIProvider({ children, name = 'new.entities' }) {
         }
     }
 
+    /**
+     * @param {string} field The facet field
+     * @param {boolean} value Whether or not the facet should be expanded
+     */
     function setFacetExpanded(field, value) {
         const settings = getLocalSettings()
         settings[field] = { isExpanded: value }
