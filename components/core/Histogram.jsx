@@ -38,6 +38,9 @@ class Histogram extends React.Component {
         };
 
         const options = {
+            animation: {
+                duration: 0
+            },
             responsive: true,
             plugins: {
                 legend: {
