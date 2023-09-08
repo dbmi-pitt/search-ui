@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from 'react'
 import SearchUIContext from './SearchUIContext'
 import styles from '../../css/collapsableFacets.module.css'
 
-const DateRangeFacet = ({ field, label, formatVal }) => {
+const DateRangeFacet = ({ field, facet, formatVal }) => {
     // default dates
     const DEFAULT_MIN_DATE = '1970-01-01'
     const DEFAULT_MAX_DATE = '2300-01-01'
+
+    const label = facet.label
 
     const { registerFilterChangeCallback, unregisterFilterChangeCallback, getFilter, setFilter, removeFiltersForField, filterExists } = useContext(SearchUIContext)
 
