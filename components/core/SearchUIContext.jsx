@@ -317,9 +317,15 @@ export function SearchUIProvider({ name, children }) {
         }
     }
 
+    /**
+     * Get the local filters from local storage in the given namespace
+     * @return {Array} An array of ES filter objects. See filterExists for object structures.
+     */
     function getLocalFilters() {
         if (!name) return []
-        return JSON.parse(localStorage.getItem(`${name}.filters`)) || []
+        const localFilters = JSON.parse(localStorage.getItem(`${name}.filters`)) || []
+        if (!Array.isArray(localFilters)) return []
+        return localFilters
     }
 
     function getLocalSettings() {
