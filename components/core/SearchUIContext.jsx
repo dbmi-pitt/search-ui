@@ -5,7 +5,7 @@ const SearchUIContext = createContext()
 
 /**
  * Provider to get access to the SearchUIContext
- * @param {string} name The name of the search UI. This is used to namespace local storage.
+ * @param {string} name The name of the search UI. This is used to namespace local storage. If not provided, local storage will not be used.
  */
 export function SearchUIProvider({ name, children }) {
     // Used to check if local storage should be cleared
@@ -39,7 +39,9 @@ export function SearchUIProvider({ name, children }) {
         setRawResponse(driver.state.rawResponse)
         setWasSearched(driver.state.wasSearched)
 
-        localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
+        if (name) {
+            localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
+        }
         removeInvalidConditionalFacets()
     }, [driver.state])
 
@@ -315,11 +317,19 @@ export function SearchUIProvider({ name, children }) {
         }
     }
 
+    /**
+     * Get the local filters from local storage in the given namespace
+     * @return {Array} An array of ES filter objects. See filterExists for object structures.
+     */
     function getLocalFilters() {
-        return JSON.parse(localStorage.getItem(`${name}.filters`)) || []
+        if (!name) return []
+        const localFilters = JSON.parse(localStorage.getItem(`${name}.filters`)) || []
+        if (!Array.isArray(localFilters)) return []
+        return localFilters
     }
 
     function getLocalSettings() {
+        if (!name) return {}
         return JSON.parse(localStorage.getItem(`${name}.settings`)) || {}
     }
     
@@ -341,6 +351,7 @@ export function SearchUIProvider({ name, children }) {
      * @param {boolean} value Whether or not the facet should be expanded
      */
     function setFacetExpanded(field, value) {
+        if (!name) return
         const settings = getLocalSettings()
         settings[field] = { isExpanded: value }
         localStorage.setItem(`${name}.settings`, JSON.stringify(settings))

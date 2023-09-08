@@ -3,7 +3,7 @@ import SearchUIContext from './SearchUIContext'
 import Slider from '@mui/material/Slider'
 import Histogram from './Histogram'
 
-const NumericRangeFacet = ({ field, label, facet }) => {
+const NumericRangeFacet = ({ field, facet }) => {
     const valueRange = facet.uiRange
     const {registerFilterChangeCallback, unregisterFilterChangeCallback, getFilter, setFilter, removeFiltersForField, aggregations } = useContext(SearchUIContext)
 
@@ -85,9 +85,7 @@ const NumericRangeFacet = ({ field, label, facet }) => {
                         onChangeCommitted={handleSliderCommitted}
                         style={{ color: '#0d6efd' }}
                         size='small'
-                        getAriaLabel={() => {
-                            label
-                        }}
+                        getAriaLabel={() => { facet.label }}
                         marks={marks}
                         value={values}
                         min={valueRange[0]}
