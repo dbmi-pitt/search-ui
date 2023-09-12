@@ -56,6 +56,13 @@ const CheckboxFacet = ({
     onSearch,
     onMoreClick
 }) => {
+    const getSortedOptions = () => {
+        if (options.length == 2 && options[0].value == 'false' && options[1].value == 'true') {
+            return [...options].reverse()
+        }
+        return options
+    }
+
     return (
         <fieldset className={'sui-facet js-gtm--facets'}>
             {showSearch && (
@@ -73,7 +80,7 @@ const CheckboxFacet = ({
 
             <div className='sui-multi-checkbox-facet'>
                 {options.length < 1 && <div>No matching options</div>}
-                {options.map((option) => {
+                {getSortedOptions().map((option) => {
                     return (
                         <CheckboxOptionFacet
                             key={`${option.value}`}
