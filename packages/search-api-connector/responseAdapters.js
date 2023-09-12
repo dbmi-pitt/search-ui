@@ -49,12 +49,10 @@ export function getFacets(results) {
   if (!results.aggregations) return {};
 
   log.info('aggs', results.aggregations)
-  //let facets =  []
   let facet = {}
 
   let agg_list = Object.entries(results.aggregations);
   
-  let cnt = 0
   agg_list.forEach((agg) => {
       let aggregate = []
       let facet_name = agg[0]
@@ -71,25 +69,30 @@ export function getFacets(results) {
       let bucket_list = [];
       let i = 0
       let compound = {}
-      buckets.forEach((b) => {
-        let x = {}
-        let k = b["key"]
-        let c = b["doc_count"]
-        //x[k] = t;
-        bucket_list[i] = {"value": k, "count": c};
 
-        i += 1
-      });
+      if (Array.isArray(buckets)) {
+        buckets.forEach((b) => {
+          const k = b["key"]
+          const c = b["doc_count"]
+          bucket_list[i] = {"value": k, "count": c};
+          i += 1
+        });
+      } else if (typeof buckets === 'object' && buckets !== null) {
+        Object.entries(buckets).forEach(([key, value]) => {
+          const k = key
+          const c = value["doc_count"]
+          bucket_list[i] = {"value": k, "count": c};
+          i += 1
+        });
+      }
+
       compound["field"] = facet_name
       compound["data"] = bucket_list
       compound["type"] = "value"
       aggregate[0] = compound
-    //facets[cnt++] = aggregate
-    facet[facet_name] = aggregate
-
+      facet[facet_name] = aggregate
   });
 
-  //log.info(facet)
   return facet
 }
 
@@ -157,9 +160,4 @@ export function getResults(records, indexName) {
       }
       return result;
   });
-
-  
 }
-
-
-
