@@ -2,7 +2,8 @@ import React from "react";
 import { MultiCheckboxFacet } from "@elastic/react-search-ui-views";
 import { helpers } from "@elastic/search-ui";
 
-import { accentFold, withSearch } from "@elastic/react-search-ui"
+import { withSearch } from "@elastic/react-search-ui"
+import { accentFold } from "../../lib/utils";
 
 const { markSelectedFacetValuesFromFilters } = helpers;
 
