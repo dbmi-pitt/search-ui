@@ -1,10 +1,11 @@
 import React from 'react'
 import { helpers } from '@elastic/search-ui'
 
-import { accentFold, withSearch } from '@elastic/react-search-ui'
+import { withSearch } from '@elastic/react-search-ui'
 import SearchUIContext from './SearchUIContext'
 import CollapsibleLayout from './CollapsibleLayout'
 import CheckboxFacet from './CheckboxFacet'
+import { accentFold } from '../../lib/utils'
 
 const { markSelectedFacetValuesFromFilters } = helpers
 
