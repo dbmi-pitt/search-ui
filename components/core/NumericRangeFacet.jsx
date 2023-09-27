@@ -79,7 +79,7 @@ const NumericRangeFacet = ({ field, facet }) => {
     return (
         <>
             <div>
-                <div className='mx-1'>
+                <div className='mx-1 js-gtm--numericFacets'>
                     <Histogram data={histogramData} values={values} />
                     <Slider
                         onChangeCommitted={handleSliderCommitted}
