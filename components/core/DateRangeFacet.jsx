@@ -91,7 +91,7 @@ const DateRangeFacet = ({ field, facet, formatVal }) => {
 
     return (
         <>
-            <div className='my-1 d-flex justify-content-between'>
+            <div className='my-1 d-flex justify-content-between js-gtm--dateFacets'>
                 <span className='sui-multi-checkbox-facet'>Start Date</span>
                 <input
                     data-transaction-name={`facet - ${label}`}
@@ -106,7 +106,7 @@ const DateRangeFacet = ({ field, facet, formatVal }) => {
                     pattern='\d{4}-\d{2}-\d{2}'
                 />
             </div>
-            <div className='my-1 d-flex justify-content-between'>
+            <div className='my-1 d-flex justify-content-between js-gtm--dateFacets'>
                 <span className='sui-multi-checkbox-facet'>End Date</span>
                 <input
                     data-transaction-name={`facet - ${label}`}
