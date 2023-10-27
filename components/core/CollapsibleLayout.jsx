@@ -14,7 +14,7 @@ const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, childr
 
     return (
         <Row className={"pt-4"}>
-            <Col className={"col-9"}>
+            <Col className={`col-10 sui-facet__${formatVal(label)}`}>
                 <legend
                     className={`${formatClassName(label)} ${isExpanded ? styles.facetsHover : styles.contracted}`}
                     onClick={handleExpandClick}
