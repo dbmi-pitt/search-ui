@@ -81,6 +81,9 @@ const CheckboxFacet = ({
             <div className='sui-multi-checkbox-facet'>
                 {options.length < 1 && <div>No matching options</div>}
                 {getSortedOptions().map((option) => {
+                    if (option.value == '') {
+                        return null
+                    }
                     return (
                         <CheckboxOptionFacet
                             key={`${option.value}`}

@@ -87,6 +87,7 @@ const NumericRangeFacet = ({ field, facet }) => {
                         size='small'
                         getAriaLabel={() => { facet.label }}
                         marks={marks}
+                        step={facet.uiInterval || 1}
                         value={values}
                         min={valueRange[0]}
                         max={valueRange[1]}

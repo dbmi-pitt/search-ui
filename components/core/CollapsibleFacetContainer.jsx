@@ -56,7 +56,13 @@ export class CollapsibleFacetContainer extends React.Component {
         if (facet.type == 'range') {
             return true
         }
-        return options.length > 0
+        if (options.length < 1) {
+            return false
+        }
+        if (options.length == 1 && options[0].value == '') {
+            return false
+        }
+        return true
     }
 
     render() {
