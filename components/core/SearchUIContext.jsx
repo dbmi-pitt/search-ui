@@ -372,6 +372,7 @@ export function SearchUIProvider({ name, children }) {
                 removeFilter,
                 removeFiltersForField,
                 setFilter,
+                isLoading: driver.state.isLoading,
                 wasSearched,
                 clearSearchTerm,
                 aggregations,
