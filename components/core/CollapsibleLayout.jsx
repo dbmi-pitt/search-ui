@@ -1,5 +1,4 @@
 import styles from "../../css/collapsableFacets.module.css";
-import { ChevronDown, ChevronRight } from "react-bootstrap-icons";
 import { Col, Row } from "react-bootstrap";
 
 const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, children }) => {
@@ -26,10 +25,10 @@ const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, childr
             </Col>
             <Col className={"text-end"}>
                 {isExpanded && (
-                    <ChevronDown onClick={handleExpandClick} className={`align-top ${styles.facetsHover}`} />
+                    <i onClick={handleExpandClick} className={`bi bi-chevron-down align-top ${styles.facetsHover}`} />
                 )}
                 {!isExpanded && (
-                    <ChevronRight onClick={handleExpandClick} className={`align-top ${styles.contracted}`} />
+                    <i onClick={handleExpandClick} className={`bi bi-chevron-right align-top ${styles.contracted}`} />
                 )}
             </Col>
         </Row>
