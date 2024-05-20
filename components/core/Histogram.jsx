@@ -11,9 +11,8 @@ ChartJS.register(
     Legend
 );
 
-class Histogram extends React.Component {
-    render() {
-        const {data, values} = this.props;
+const Histogram = ({data, values}) => {
+    const render = () => {
 
         // calculate frequency of data
         let counts = {};
@@ -61,6 +60,8 @@ class Histogram extends React.Component {
         };
         return <Bar data={barData} options={options}/>;
     }
+
+    return render()
 }
 
 export default Histogram;
