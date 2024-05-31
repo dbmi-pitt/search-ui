@@ -99,7 +99,9 @@ export function SearchUIProvider({ name, children }) {
      * (value: (string|object), changedBy: string) => {}
      */
     function registerFilterChangeCallback(field, callback) {
-        setFilterChangeCallbacks({ ...filterChangeCallbacks, [field]: callback })
+        setFilterChangeCallbacks(current => {
+            return { ...current, [field]: callback }
+        })
     }
 
     /**

@@ -1,8 +1,12 @@
-import styles from "../../css/collapsableFacets.module.css";
-import { Col, Row } from "react-bootstrap";
+import styles from '../../css/collapsableFacets.module.css'
 
-const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, children }) => {
-
+const CollapsibleLayout = ({
+    isExpanded,
+    setIsExpanded,
+    label,
+    formatVal,
+    children
+}) => {
     function formatClassName(label) {
         return `sui-facet__title sui-facet__title--${formatVal(label)}`
     }
@@ -12,26 +16,33 @@ const CollapsibleLayout = ({ isExpanded, setIsExpanded, label, formatVal, childr
     }
 
     return (
-        <Row className={"pt-4"}>
-            <Col className={`col-10 sui-facet__${formatVal(label)}`}>
-                <legend
-                    className={`${formatClassName(label)} ${isExpanded ? styles.facetsHover : styles.contracted}`}
-                    onClick={handleExpandClick}
-                    tabIndex={0}
-                >
-                    {label}
-                </legend>
-                {isExpanded && children}
-            </Col>
-            <Col className={"text-end"}>
-                {isExpanded && (
-                    <i onClick={handleExpandClick} className={`bi bi-chevron-down align-top ${styles.facetsHover}`} />
-                )}
-                {!isExpanded && (
-                    <i onClick={handleExpandClick} className={`bi bi-chevron-right align-top ${styles.contracted}`} />
-                )}
-            </Col>
-        </Row>
+        <>
+            <div className='pt-4 d-flex flex-row'>
+                <div className={`sui-facet__${formatVal(label)} flex-grow-1`}>
+                    <legend
+                        className={`${formatClassName(label)} ${isExpanded ? styles.facetsHover : styles.contracted}`}
+                        onClick={handleExpandClick}
+                        tabIndex={0}
+                    >
+                        {label}
+                    </legend>
+                </div>
+                <div>
+                    {isExpanded ? (
+                        <i
+                            className={`bi bi-chevron-down align-top ${styles.facetsHover}`}
+                            onClick={handleExpandClick}
+                        />
+                    ) : (
+                        <i
+                            className={`bi bi-chevron-right align-top ${styles.contracted}`}
+                            onClick={handleExpandClick}
+                        />
+                    )}
+                </div>
+            </div>
+            {isExpanded && children}
+        </>
     )
 }
 

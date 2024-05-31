@@ -5,21 +5,33 @@ import Histogram from './Histogram'
 
 const NumericRangeFacet = ({ field, facet }) => {
     const valueRange = facet.uiRange
-    const {registerFilterChangeCallback, unregisterFilterChangeCallback, getFilter, setFilter, removeFiltersForField, aggregations } = useContext(SearchUIContext)
+    const {
+        registerFilterChangeCallback,
+        unregisterFilterChangeCallback,
+        getFilter,
+        setFilter,
+        removeFiltersForField,
+        aggregations
+    } = useContext(SearchUIContext)
 
     const [values, setValues] = useState(getInitialValues())
     const [histogramData, setHistogramData] = useState([])
 
     useEffect(() => {
         if (aggregations && aggregations.hasOwnProperty(`${field}_histogram`)) {
-            setHistogramData(aggregations[`${field}_histogram`]['buckets'] || [])
+            setHistogramData(
+                aggregations[`${field}_histogram`]['buckets'] || []
+            )
         }
     }, [aggregations])
 
     function getInitialValues() {
         const filter = getFilter(field)
         if (!filter) return facet.uiRange
-        return [filter.values[0].from || facet.uiRange[0], filter.values[0].to || facet.uiRange[1]]
+        return [
+            filter.values[0].from || facet.uiRange[0],
+            filter.values[0].to || facet.uiRange[1]
+        ]
     }
 
     useEffect(() => {
@@ -27,7 +39,9 @@ const NumericRangeFacet = ({ field, facet }) => {
             if (changedBy === field) return
             setValues(getInitialValues())
         })
-        return () => { unregisterFilterChangeCallback(field) }
+        return () => {
+            unregisterFilterChangeCallback(field)
+        }
     }, [])
 
     const marks = [
@@ -78,24 +92,24 @@ const NumericRangeFacet = ({ field, facet }) => {
 
     return (
         <>
-            <div>
-                <div className='mx-1 js-gtm--numericFacets'>
-                    <Histogram data={histogramData} values={values} />
-                    <Slider
-                        onChangeCommitted={handleSliderCommitted}
-                        style={{ color: '#0d6efd' }}
-                        size='small'
-                        getAriaLabel={() => { facet.label }}
-                        marks={marks}
-                        step={facet.uiInterval || 1}
-                        value={values}
-                        min={valueRange[0]}
-                        max={valueRange[1]}
-                        onChange={handleSliderChange}
-                        valueLabelDisplay='auto'
-                        getAriaValueText={valueText}
-                    />
-                </div>
+            <div className='mx-1 me-5 js-gtm--numericFacets'>
+                <Histogram data={histogramData} values={values} />
+                <Slider
+                    onChangeCommitted={handleSliderCommitted}
+                    style={{ color: '#0d6efd' }}
+                    size='small'
+                    getAriaLabel={() => {
+                        facet.label
+                    }}
+                    marks={marks}
+                    step={facet.uiInterval || 1}
+                    value={values}
+                    min={valueRange[0]}
+                    max={valueRange[1]}
+                    onChange={handleSliderChange}
+                    valueLabelDisplay='auto'
+                    getAriaValueText={valueText}
+                />
             </div>
         </>
     )
