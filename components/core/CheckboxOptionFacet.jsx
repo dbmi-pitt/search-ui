@@ -45,7 +45,7 @@ const CheckboxOptionFacet = ({
                     {transformFunction ? transformFunction(value) : value}
                 </span>
             </div>
-            <span className='sui-multi-checkbox-facet__option-count'>
+            <span className='sui-multi-checkbox-facet__option-count me-5'>
                 {option.count.toLocaleString('en')}
             </span>
         </label>
