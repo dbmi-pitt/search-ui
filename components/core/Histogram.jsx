@@ -59,7 +59,7 @@ class Histogram extends React.Component {
                 }
             }
         };
-        return <Bar data={barData} options={options}/>;
+        return <Bar className="w-100" data={barData} options={options}/>;
     }
 }
 
