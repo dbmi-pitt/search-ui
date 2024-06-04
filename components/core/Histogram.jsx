@@ -58,7 +58,7 @@ const Histogram = ({data, values}) => {
                 }
             }
         };
-        return <Bar data={barData} options={options}/>;
+        return <Bar className="w-100" data={barData} options={options}/>;
     }
 
     return render()

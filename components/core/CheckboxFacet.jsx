@@ -1,48 +1,5 @@
-import { useContext } from 'react'
-import SearchUIContext from './SearchUIContext'
-
-const CheckboxOptionFacet = ({ field, option, label, formatVal, transformFunction }) => {
-    const { filterExists, addFilter, removeFilter } = useContext(SearchUIContext)
-
-    const value = option.value
-
-    const handleCheckboxChange = (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        if (filterExists(field, value)) {
-            removeFilter(field, value)
-        } else {
-            addFilter(field, value)
-        }
-    }
-
-    const doesFilterExist = () => {
-        const exists = filterExists(field, value)
-        return exists
-    }
-
-    return (
-        <label
-            htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
-            className='sui-multi-checkbox-facet__option-label'
-        >
-            <div className='sui-multi-checkbox-facet__option-input-wrapper'>
-                <input
-                    // data-transaction-name={`facet - ${label}`}
-                    id={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
-                    type='checkbox'
-                    className='sui-multi-checkbox-facet__checkbox'
-                    checked={doesFilterExist()}
-                    onChange={handleCheckboxChange}
-                />
-                <span className='sui-multi-checkbox-facet__input-text'>
-                    {transformFunction ? transformFunction(value) : value}
-                </span>
-            </div>
-            <span className='sui-multi-checkbox-facet__option-count'>{option.count.toLocaleString('en')}</span>
-        </label>
-    )
-}
+import CheckboxOptionFacet from './CheckboxOptionFacet'
+import HierarchicalCheckboxOptionFacet from './HierarchicalCheckboxOptionFacet'
 
 const CheckboxFacet = ({
     field,
@@ -56,11 +13,37 @@ const CheckboxFacet = ({
     onSearch,
     onMoreClick
 }) => {
-    const getSortedOptions = () => {
-        if (options.length == 2 && options[0].value == 'false' && options[1].value == 'true') {
-            return [...options].reverse()
+    const getSortedOptions = (opts) => {
+        if (
+            opts.length == 2 &&
+            opts[0].value == 'false' &&
+            opts[1].value == 'true'
+        ) {
+            opts.reverse()
         }
-        return options
+        return opts
+    }
+
+    const getGroupedOptions = (opts) => {
+        opts = getSortedOptions(opts)
+
+        if (!facet.groupedOptions) {
+            return opts
+        }
+
+        return opts.reduce((acc, option) => {
+            if (facet.groupedOptions[option.value]) {
+                const group = facet.groupedOptions[option.value]
+                if (!acc[group]) {
+                    acc[group] = []
+                }
+                acc[group].push(option)
+            } else {
+                acc[option.value] = option
+            }
+
+            return acc
+        }, {})
     }
 
     return (
@@ -80,21 +63,38 @@ const CheckboxFacet = ({
 
             <div className='sui-multi-checkbox-facet'>
                 {options.length < 1 && <div>No matching options</div>}
-                {getSortedOptions().map((option) => {
-                    if (option.value == '') {
-                        return null
+
+                {Object.entries(getGroupedOptions(options)).map(
+                    ([key, option]) => {
+                        // check if the option is an array
+                        if (Array.isArray(option)) {
+                            return (
+                                <HierarchicalCheckboxOptionFacet
+                                    key={`${key}`}
+                                    field={field}
+                                    options={option}
+                                    label={key}
+                                    formatVal={formatVal}
+                                    transformFunction={transformFunction}
+                                />
+                            )
+                        } else {
+                            if (option.value == '') {
+                                return null
+                            }
+                            return (
+                                <CheckboxOptionFacet
+                                    key={`${option.value}`}
+                                    field={field}
+                                    option={option}
+                                    label={facet.label}
+                                    formatVal={formatVal}
+                                    transformFunction={transformFunction}
+                                />
+                            )
+                        }
                     }
-                    return (
-                        <CheckboxOptionFacet
-                            key={`${option.value}`}
-                            field={field}
-                            option={option}
-                            label={facet.label}
-                            formatVal={formatVal}
-                            transformFunction={transformFunction}
-                        />
-                    )
-                })}
+                )}
             </div>
 
             {showMore && (
