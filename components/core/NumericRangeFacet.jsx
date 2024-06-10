@@ -18,10 +18,8 @@ const NumericRangeFacet = ({ field, facet }) => {
     const [histogramData, setHistogramData] = useState([])
 
     useEffect(() => {
-        if (aggregations && aggregations.hasOwnProperty(`${field}_histogram`)) {
-            setHistogramData(
-                aggregations[`${field}_histogram`]['buckets'] || []
-            )
+        if (aggregations && aggregations.hasOwnProperty(field)) {
+            setHistogramData(aggregations[field]['buckets'] || [])
         }
     }, [aggregations])
 
