@@ -30,6 +30,7 @@ const NumericRangeFacet = ({ field, facet }) => {
             const filledBuckets = fillZeroBuckets(buckets, valueInterval, max)
             setHistogramData(filledBuckets)
             if (facet.uiRange === undefined && max) {
+                // If the range is not set in the config, automatically set it to the max aggregation value
                 setValueRange([0, max])
             }
         }
@@ -46,7 +47,9 @@ const NumericRangeFacet = ({ field, facet }) => {
     const fillZeroBuckets = (buckets, interval, max) => {
         const decimalPlace = interval < 1 ? 10 : 1
 
-        // Fill in the missing buckets with 0 doc_count
+        // Fill in the missing buckets with 0 doc_count.
+        // This is necessary because the aggregation may not return buckets with 0 doc_count.
+        // This is required to ensure the histogram lines up with the slider.
         const filledBuckets = []
         let i = 0
         while (i <= max) {
@@ -56,6 +59,7 @@ const NumericRangeFacet = ({ field, facet }) => {
             } else {
                 filledBuckets.push({ key: i, doc_count: 0 })
             }
+            // Round to avoid floating point problems
             i = round(i + interval, decimalPlace)
         }
 
