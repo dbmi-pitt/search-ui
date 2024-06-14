@@ -4,31 +4,70 @@ import Slider from '@mui/material/Slider'
 import Histogram from './Histogram'
 
 const NumericRangeFacet = ({ field, facet }) => {
-    const valueRange = facet.uiRange
     const {
         registerFilterChangeCallback,
         unregisterFilterChangeCallback,
+        filters,
         getFilter,
         setFilter,
         removeFiltersForField,
         aggregations
     } = useContext(SearchUIContext)
 
+    const valueInterval =
+        typeof facet.uiInterval == 'function'
+            ? facet.uiInterval(filters)
+            : (facet.uiInterval || 1)
+
+    const [valueRange, setValueRange] = useState(facet.uiRange || [0, 100])
     const [values, setValues] = useState(getInitialValues())
     const [histogramData, setHistogramData] = useState([])
 
     useEffect(() => {
         if (aggregations && aggregations.hasOwnProperty(field)) {
-            setHistogramData(aggregations[field]['buckets'] || [])
+            const buckets = aggregations[field]['buckets'] || []
+            const max = Math.max(...buckets.map((b) => b.key))
+            const filledBuckets = fillZeroBuckets(buckets, valueInterval, max)
+            setHistogramData(filledBuckets)
+            if (facet.uiRange === undefined && max) {
+                setValueRange([0, max])
+            }
         }
     }, [aggregations])
 
+    useEffect(() => {
+        setValues(getInitialValues())
+    }, [valueRange])
+
+    const round = (num, decimalPlace=1) => {
+        return Math.round(num * decimalPlace) / decimalPlace
+    }
+
+    const fillZeroBuckets = (buckets, interval, max) => {
+        const decimalPlace = interval < 1 ? 10 : 1
+
+        // Fill in the missing buckets with 0 doc_count
+        const filledBuckets = []
+        let i = 0
+        while (i <= max) {
+            const bucket = buckets.find((b) => b.key === i)
+            if (bucket) {
+                filledBuckets.push(bucket)
+            } else {
+                filledBuckets.push({ key: i, doc_count: 0 })
+            }
+            i = round(i + interval, decimalPlace)
+        }
+
+        return filledBuckets
+    }
+
     function getInitialValues() {
         const filter = getFilter(field)
-        if (!filter) return facet.uiRange
+        if (!filter) return valueRange
         return [
-            filter.values[0].from || facet.uiRange[0],
-            filter.values[0].to || facet.uiRange[1]
+            filter.values[0].from || valueRange[0],
+            filter.values[0].to || valueRange[1]
         ]
     }
 
@@ -42,7 +81,7 @@ const NumericRangeFacet = ({ field, facet }) => {
         }
     }, [])
 
-    const marks = [
+    const marks = () => [
         {
             value: valueRange[0],
             label: valueRange[0]
@@ -99,8 +138,8 @@ const NumericRangeFacet = ({ field, facet }) => {
                     getAriaLabel={() => {
                         facet.label
                     }}
-                    marks={marks}
-                    step={facet.uiInterval || 1}
+                    marks={marks()}
+                    step={valueInterval ?? 1}
                     value={values}
                     min={valueRange[0]}
                     max={valueRange[1]}

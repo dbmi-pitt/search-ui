@@ -14,27 +14,30 @@ ChartJS.register(
 const Histogram = ({data, values}) => {
     const render = () => {
 
-        // calculate frequency of data
-        let counts = {};
-        for (let i = 0; i < data.length; i++)
-            counts[data[i]['key']] = data[i]['doc_count']
+        const bins = Array(data.length)
+        const counts = Array(data.length)
+        for (let i = 0; i < data.length; i++) {
+            bins[i] = data[i]['key']
+            counts[i] = data[i]['doc_count']
+        }
 
         const barData = {
-            labels: Object.keys(counts),
+            labels: bins,
             datasets: [
                 {
                     barPercentage: 1,
                     barThickness: 10,
-                    backgroundColor: Object.keys(counts).map((i) =>
+                    backgroundColor: bins.map((i) =>
                         i >= values[0] && i <= values[1]
                             ? "#0d6efd"
                             : "#a0c5fc"
                     ),
                     hoverBackgroundColor: "#0b5ed7",
-                    data: Object.values(counts)
+                    data: counts
                 }
             ]
         };
+        barData.labels.sort()
 
         const options = {
             animation: {
@@ -54,7 +57,7 @@ const Histogram = ({data, values}) => {
                     display: false
                 },
                 y: {
-                    display: false,
+                    display: false
                 }
             }
         };
