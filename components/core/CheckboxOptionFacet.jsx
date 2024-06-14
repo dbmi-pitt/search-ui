@@ -31,7 +31,7 @@ const CheckboxOptionFacet = ({
     return (
         <label
             htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
-            className='sui-multi-checkbox-facet__option-label'
+            className={`sui-multi-checkbox-facet__option-label sui-facet__${formatVal(label)}`}
         >
             <div className='sui-multi-checkbox-facet__option-input-wrapper'>
                 <input
