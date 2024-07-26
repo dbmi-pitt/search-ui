@@ -54,6 +54,7 @@ const CheckboxFacet = ({
                         {options.map((option) => {
                             if (isHierarchicalOption(option)) {
                                 return <HierarchicalCheckboxOptionFacet
+                                    key={`${option.value}`}
                                     field={field}
                                     option={option}
                                     label={option.value}
