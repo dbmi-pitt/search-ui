@@ -5,46 +5,7 @@ const addEachKeyValueToObject = (acc, [key, value]) => ({
   [key]: value
 });
 
-// export function getFacetsORG(docInfo) {
-//   if (!docInfo.facets) return {};
-
-// return Object.entries(docInfo.facets)
-//     .map(([facetName, facetValue]) => {
-//       return [
-//         facetName,
-//         [
-//           {
-//             field: facetName,
-//             data: Object.entries(facetValue).map(([value, count]) => ({
-//               value,
-//               count
-//             })),
-//             // Site Search does not support any other type of facet
-//             type: "value"
-//           }
-//         ]
-//       ];
-//     })
-//     .reduce(addEachKeyValueToObject, {});
-// }
-
-// transforms the standard ES DSL 'aggregate' element into format that search-ui format:'
-// {
-//     "experimental_approach": [
-//         {
-//             "field": "experimental_approach",
-//             "data": [
-//                 {
-//                     "value": "RNAseq",
-//                     "count": 1
-//                 }
-//             ],
-//             "type": "value"
-//         }
-//     ]
-// }
 export function getFacets(results) {
-
   // this follows the Elasticsearch DSL return results
   if (!results.aggregations) return {};
 
@@ -65,7 +26,6 @@ export function getFacets(results) {
           buckets = agg[1][keys[0]].buckets
       }
 
-
       let bucket_list = [];
       let i = 0
       let compound = {}
@@ -75,6 +35,15 @@ export function getFacets(results) {
           const k = b["key"]
           const c = b["doc_count"]
           bucket_list[i] = {"value": k, "count": c};
+
+          if (b.hasOwnProperty("sub_aggs")) {
+            const sub_aggs = b["sub_aggs"].buckets
+            const sub_bucket_list = sub_aggs.map((sb) => {
+              return {"value": sb["key"], "count": sb["doc_count"]}; 
+            });
+            bucket_list[i]["subvalues"] = sub_bucket_list
+          }
+
           i += 1
         });
       } else if (typeof buckets === 'object' && buckets !== null) {
