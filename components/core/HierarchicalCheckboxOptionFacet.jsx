@@ -10,7 +10,7 @@ const HierarchicalCheckboxOptionFacet = ({
     transformFunction
 }) => {
     const { filterExists, addFilter, removeFilter } = useContext(SearchUIContext)
-    const [isExpanded, setIsExpanded] = useState(true)
+    const [isExpanded, setIsExpanded] = useState(false)
 
     const getOptionCheckedState = () => {
         let checked = true
