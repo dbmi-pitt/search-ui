@@ -64,10 +64,13 @@ const HierarchicalCheckboxOptionFacet = ({
     }
 
     return (
-        <div className='sui-multi-checkbox-facet__option-label d-flex flex-column align-items-start w-100'>
+        <div className='d-flex flex-column align-items-start w-100'>
             {/* Label and checkbox */}
             <div className='sui-multi-checkbox-facet__option-input-wrapper d-flex flex-row w-100'>
-                <label htmlFor={`sui-facet--${formatVal(label)}`} className='d-flex flex-row w-100'>
+                <label
+                    htmlFor={`sui-facet--${formatVal(label)}`}
+                    className={`sui-multi-checkbox-facet__option-label sui-facet__${formatVal(label)} w-100`}
+                >
                     <input
                         id={`sui-facet--${formatVal(label)}`}
                         type='checkbox'
