@@ -24,30 +24,19 @@ const CheckboxFacet = ({
         return opts
     }
 
-    const getGroupedOptions = (opts) => {
-        opts = getSortedOptions(opts)
-
-        if (!facet.groupedOptions) {
-            return opts
+    const isHierarchicalOption = (option) => {
+        if (
+            facet.groupAll == false &&
+            option.subvalues.length == 1 &&
+            option.value == transformFunction(option.subvalues[0].value)
+        ) {
+            return false
         }
-
-        return opts.reduce((acc, option) => {
-            if (facet.groupedOptions[option.value]) {
-                const group = facet.groupedOptions[option.value]
-                if (!acc[group]) {
-                    acc[group] = []
-                }
-                acc[group].push(option)
-            } else {
-                acc[option.value] = option
-            }
-
-            return acc
-        }, {})
+        return true
     }
 
     return (
-        <fieldset className={'sui-facet js-gtm--facets'}>
+        <fieldset className='sui-facet js-gtm--facets'>
             {showSearch && (
                 <div className='sui-facet-search'>
                     <input
@@ -64,21 +53,30 @@ const CheckboxFacet = ({
             <div className='sui-multi-checkbox-facet'>
                 {options.length < 1 && <div>No matching options</div>}
 
-                {Object.entries(getGroupedOptions(options)).map(
-                    ([key, option]) => {
-                        // check if the option is an array
-                        if (Array.isArray(option)) {
-                            return (
-                                <HierarchicalCheckboxOptionFacet
-                                    key={`${key}`}
+                {options.length > 0 && options[0].subvalues ? (
+                    <>
+                        {options.map((option) => {
+                            if (isHierarchicalOption(option)) {
+                                return <HierarchicalCheckboxOptionFacet
+                                    key={`${option.value}`}
                                     field={field}
-                                    options={option}
-                                    label={key}
+                                    option={option}
+                                    label={option.value}
                                     formatVal={formatVal}
-                                    transformFunction={transformFunction}
-                                />
-                            )
-                        } else {
+                                    transformFunction={transformFunction} />
+                            }
+                            return <CheckboxOptionFacet
+                                key={`${option.value}`}
+                                field={field}
+                                option={option.subvalues[0]}
+                                label={option.value}
+                                formatVal={formatVal}
+                                transformFunction={transformFunction} />
+                        })}
+                    </>
+                ) : (
+                    <>
+                        {getSortedOptions(options).map((option) => {
                             if (option.value == '') {
                                 return null
                             }
@@ -92,8 +90,8 @@ const CheckboxFacet = ({
                                     transformFunction={transformFunction}
                                 />
                             )
-                        }
-                    }
+                        })}
+                    </>
                 )}
             </div>
 
