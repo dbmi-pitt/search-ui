@@ -57,7 +57,9 @@ const HierarchicalCheckboxOptionFacet = ({
         }
     }
 
-    const handleExpandClick = () => {
+    const handleExpandClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setIsExpanded(!isExpanded)
     }
 
