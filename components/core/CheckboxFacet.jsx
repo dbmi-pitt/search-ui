@@ -25,7 +25,11 @@ const CheckboxFacet = ({
     }
 
     const isHierarchicalOption = (option) => {
-        if (option.subvalues.length == 1 && option.value == transformFunction(option.subvalues[0].value)) {
+        if (
+            facet.groupAll == false &&
+            option.subvalues.length == 1 &&
+            option.value == transformFunction(option.subvalues[0].value)
+        ) {
             return false
         }
         return true
