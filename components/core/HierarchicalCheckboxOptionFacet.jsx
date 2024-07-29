@@ -64,28 +64,27 @@ const HierarchicalCheckboxOptionFacet = ({
     }
 
     return (
-        <label
-            htmlFor={`sui-facet--${formatVal(label)}}`}
-            className='sui-multi-checkbox-facet__option-label d-flex flex-column align-items-start w-100'
-        >
+        <div className='sui-multi-checkbox-facet__option-label d-flex flex-column align-items-start w-100'>
             {/* Label and checkbox */}
             <div className='sui-multi-checkbox-facet__option-input-wrapper d-flex flex-row w-100'>
-                <input
-                    id={`sui-facet--${formatVal(label)}`}
-                    type='checkbox'
-                    className='sui-multi-checkbox-facet__checkbox'
-                    checked={getOptionCheckedState()}
-                    onChange={handleOptionCheckboxChange}
-                />
-                <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
-                    {transformFunction ? transformFunction(label) : label}
-                </span>
-                <span
-                    className='sui-multi-checkbox-facet__option-count'
-                    style={{ marginRight: '1.95rem' }}
-                >
-                    {option.count.toLocaleString('en')}
-                </span>
+                <label htmlFor={`sui-facet--${formatVal(label)}`} className='d-flex flex-row w-100'>
+                    <input
+                        id={`sui-facet--${formatVal(label)}`}
+                        type='checkbox'
+                        className='sui-multi-checkbox-facet__checkbox'
+                        checked={getOptionCheckedState()}
+                        onChange={handleOptionCheckboxChange}
+                    />
+                    <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
+                        {transformFunction ? transformFunction(label) : label}
+                    </span>
+                    <span
+                        className='sui-multi-checkbox-facet__option-count'
+                        style={{ marginRight: '1.95rem' }}
+                    >
+                        {option.count.toLocaleString('en')}
+                    </span>
+                </label>
                 {/* Expanding button */}
                 {isExpanded ? (
                     <i
@@ -133,7 +132,7 @@ const HierarchicalCheckboxOptionFacet = ({
                     ))}
                 </>
             )}
-        </label>
+        </div>
     )
 }
 
