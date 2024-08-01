@@ -4,20 +4,18 @@ import SearchUIContext from './SearchUIContext'
 
 const HierarchicalCheckboxOptionFacet = ({
     field,
-    options,
+    option,
     label,
     formatVal,
     transformFunction
 }) => {
-    const { filterExists, addFilter, removeFilter } =
-        useContext(SearchUIContext)
+    const { filterExists, addFilter, removeFilter } = useContext(SearchUIContext)
+    const [isExpanded, setIsExpanded] = useState(false)
 
-    const [isExpanded, setIsExpanded] = useState(true)
-
-    const getLabelCheckedState = () => {
+    const getOptionCheckedState = () => {
         let checked = true
-        for (const option of options) {
-            if (!filterExists(field, option.value)) {
+        for (const subval of option.subvalues) {
+            if (!filterExists(field, subval.value)) {
                 checked = false
                 break
             }
@@ -25,64 +23,72 @@ const HierarchicalCheckboxOptionFacet = ({
         return checked
     }
 
-    const handleExpandClick = () => {
-        setIsExpanded(!isExpanded)
-    }
-
-    const handleLabelCheckboxChange = (event) => {
+    const handleOptionCheckboxChange = (event) => {
         event.preventDefault()
         event.stopPropagation()
-        for (const option of options) {
-            if (filterExists(field, option.value)) {
-                removeFilter(field, option.value)
-            } else {
-                addFilter(field, option.value)
+        const currentlyChecked = getOptionCheckedState()
+        if (currentlyChecked) {
+            for (const subval of option.subvalues) {
+                if (filterExists(field, subval.value)) {
+                    removeFilter(field, subval.value)
+                }
+            }
+        } else {
+            for (const subval of option.subvalues) {
+                if (!filterExists(field, subval.value)) {
+                    addFilter(field, subval.value)
+                }
             }
         }
     }
 
-    const handleOptionCheckboxChange = (event, option) => {
-        event.preventDefault()
-        event.stopPropagation()
-        if (filterExists(field, option.value)) {
-            removeFilter(field, option.value)
-        } else {
-            addFilter(field, option.value)
-        }
-    }
-
-    const doesFilterExist = (field, value) => {
-        const exists = filterExists(field, value)
+    const getSuboptionCheckedState = (suboption) => {
+        const exists = filterExists(field, suboption.value)
         return exists
     }
 
-    const totalOptionCount = options.reduce(
-        (acc, option) => acc + option.count,
-        0
-    )
+    const handleSuboptionCheckboxChange = (event, suboption) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (filterExists(field, suboption.value)) {
+            removeFilter(field, suboption.value)
+        } else {
+            addFilter(field, suboption.value)
+        }
+    }
+
+    const handleExpandClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setIsExpanded(!isExpanded)
+    }
 
     return (
-        <label
-            htmlFor={`sui-facet--${formatVal(label)}}`}
-            className='sui-multi-checkbox-facet__option-label d-flex flex-column align-items-start w-100'
-        >
+        <div className='d-flex flex-column align-items-start w-100'>
+            {/* Label and checkbox */}
             <div className='sui-multi-checkbox-facet__option-input-wrapper d-flex flex-row w-100'>
-                <input
-                    id={`sui-facet--${formatVal(label)}`}
-                    type='checkbox'
-                    className='sui-multi-checkbox-facet__checkbox'
-                    checked={getLabelCheckedState()}
-                    onChange={handleLabelCheckboxChange}
-                />
-                <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
-                    {transformFunction ? transformFunction(label) : label}
-                </span>
-                <span
-                    className='sui-multi-checkbox-facet__option-count'
-                    style={{ marginRight: '1.95rem' }}
+                <label
+                    htmlFor={`sui-facet--${formatVal(label)}`}
+                    className={`sui-multi-checkbox-facet__option-label sui-facet__${formatVal(label)} w-100`}
                 >
-                    {totalOptionCount.toLocaleString('en')}
-                </span>
+                    <input
+                        id={`sui-facet--${formatVal(label)}`}
+                        type='checkbox'
+                        className='sui-multi-checkbox-facet__checkbox'
+                        checked={getOptionCheckedState()}
+                        onChange={handleOptionCheckboxChange}
+                    />
+                    <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
+                        {transformFunction ? transformFunction(label) : label}
+                    </span>
+                    <span
+                        className='sui-multi-checkbox-facet__option-count'
+                        style={{ marginRight: '1.95rem' }}
+                    >
+                        {option.count.toLocaleString('en')}
+                    </span>
+                </label>
+                {/* Expanding button */}
                 {isExpanded ? (
                     <i
                         onClick={handleExpandClick}
@@ -96,44 +102,40 @@ const HierarchicalCheckboxOptionFacet = ({
                 )}
             </div>
 
+            {/* Options */}
             {isExpanded && (
                 <>
-                    {options.map((option) => (
+                    {option.subvalues.map((suboption) => (
                         <label
-                            key={option.value}
-                            htmlFor={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
+                            key={suboption.value}
+                            htmlFor={`sui-facet--${formatVal(label)}-${formatVal(suboption.value)}`}
                             className='sui-multi-checkbox-facet__option-label d-flex flex-row w-100'
                         >
                             <div className='sui-multi-checkbox-facet__option-input-wrapper'>
                                 <input
-                                    id={`sui-facet--${formatVal(label)}-${formatVal(option.value)}`}
+                                    id={`sui-facet--${formatVal(label)}-${formatVal(suboption.value)}`}
                                     type='checkbox'
                                     className='sui-multi-checkbox-facet__checkbox'
                                     style={{
                                         marginLeft: '1.25rem'
                                     }}
-                                    checked={doesFilterExist(
-                                        field,
-                                        option.value
-                                    )}
-                                    onChange={(e) =>
-                                        handleOptionCheckboxChange(e, option)
-                                    }
+                                    checked={getSuboptionCheckedState(suboption)}
+                                    onChange={(e) => handleSuboptionCheckboxChange(e, suboption)}
                                 />
                                 <span className='sui-multi-checkbox-facet__input-text'>
                                     {transformFunction
-                                        ? transformFunction(option.value)
-                                        : option.value}
+                                        ? transformFunction(suboption.value)
+                                        : suboption.value}
                                 </span>
                             </div>
                             <span className='sui-multi-checkbox-facet__option-count me-4'>
-                                {option.count.toLocaleString('en')}
+                                {suboption.count.toLocaleString('en')}
                             </span>
                         </label>
                     ))}
                 </>
             )}
-        </label>
+        </div>
     )
 }
 
