@@ -1,11 +1,11 @@
-import React from 'react'
 import { helpers } from '@elastic/search-ui'
+import React from 'react'
 
 import { withSearch } from '@elastic/react-search-ui'
-import SearchUIContext from './SearchUIContext'
-import CollapsibleLayout from './CollapsibleLayout'
-import CheckboxFacet from './CheckboxFacet'
 import { accentFold } from '../../lib/utils'
+import CheckboxFacet from './CheckboxFacet'
+import CollapsibleLayout from './CollapsibleLayout'
+import SearchUIContext from './SearchUIContext'
 
 const { markSelectedFacetValuesFromFilters } = helpers
 
@@ -28,7 +28,9 @@ export class CollapsibleFacetContainer extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ isExpanded: this.context.isFacetExpanded(this.props.field) })
+        this.setState({
+            isExpanded: this.context.isFacetExpanded(this.props.field)
+        })
     }
 
     handleSetIsExpanded = (isExpanded) => {
@@ -42,7 +44,10 @@ export class CollapsibleFacetContainer extends React.Component {
             const showingAll = visibleOptionsCount >= totalOptions
             if (showingAll) visibleOptionsCount = totalOptions
 
-            this.context.a11yNotify('moreFilters', { visibleOptionsCount, showingAll })
+            this.context.a11yNotify('moreFilters', {
+                visibleOptionsCount,
+                showingAll
+            })
 
             return { more: visibleOptionsCount }
         })
@@ -67,75 +72,96 @@ export class CollapsibleFacetContainer extends React.Component {
 
     render() {
         const { more, searchTerm } = this.state
-        const {
-            field,
-            facet,
-            transformFunction,
-            formatVal,
-            view,
-            ...rest
-        } = this.props
-        const facets = this.context.getFacetData()
-        const facetsForField = facets[field];
+        const { field, facet, transformFunction, formatVal, view, ...rest } =
+            this.props
 
-        if (!facetsForField) return null;
+        let viewProps
+        if (facet.uiType !== 'daterange') {
+            const facets = this.context.getFacetData()
+            const facetsForField = facets[field]
 
-        const facetData = facetsForField[0];
+            if (!facetsForField) return null
 
-        // markSelectedFacetValuesFromFilters looks for type to compare filterType
-        const filters = this.context.filters.map((filter) => {
-            return {
-                field: filter.field,
-                type: filter.filterType,
-                values: filter.values
-            }
-        })
+            const facetData = facetsForField[0]
 
-        let facetValues = markSelectedFacetValuesFromFilters(facetData, filters, field, facet.filterType).data
-
-        if (searchTerm.trim()) {
-            facetValues = facetValues.filter((option) => {
-                let valueToSearch
-                switch (typeof option.value) {
-                    case 'string':
-                        valueToSearch = accentFold(option.value).toLowerCase()
-                        break
-                    case 'number':
-                        valueToSearch = option.value.toString()
-                        break
-                    case 'object':
-                        valueToSearch =
-                            typeof option?.value?.name === 'string' ? accentFold(option.value.name).toLowerCase() : ''
-                        break
-
-                    default:
-                        valueToSearch = ''
-                        break
+            // markSelectedFacetValuesFromFilters looks for type to compare filterType
+            const filters = this.context.filters.map((filter) => {
+                return {
+                    field: filter.field,
+                    type: filter.filterType,
+                    values: filter.values
                 }
-                return valueToSearch.includes(accentFold(searchTerm).toLowerCase())
             })
+
+            let facetValues = markSelectedFacetValuesFromFilters(
+                facetData,
+                filters,
+                field,
+                facet.filterType
+            ).data
+
+            if (searchTerm.trim()) {
+                facetValues = facetValues.filter((option) => {
+                    let valueToSearch
+                    switch (typeof option.value) {
+                        case 'string':
+                            valueToSearch = accentFold(
+                                option.value
+                            ).toLowerCase()
+                            break
+                        case 'number':
+                            valueToSearch = option.value.toString()
+                            break
+                        case 'object':
+                            valueToSearch =
+                                typeof option?.value?.name === 'string'
+                                    ? accentFold(
+                                          option.value.name
+                                      ).toLowerCase()
+                                    : ''
+                            break
+
+                        default:
+                            valueToSearch = ''
+                            break
+                    }
+                    return valueToSearch.includes(
+                        accentFold(searchTerm).toLowerCase()
+                    )
+                })
+            }
+
+            viewProps = {
+                field: field,
+                facet: facet,
+                options: facetValues.slice(0, more),
+                formatVal: formatVal,
+                transformFunction: transformFunction,
+                showMore: facetValues.length > more,
+                showSearch: facet.isFilterable,
+                searchPlaceholder: `Filter ${facet.label}`,
+                onSearch: (value) => {
+                    this.handleFacetSearch(value)
+                },
+                onMoreClick: this.handleClickMore.bind(
+                    this,
+                    facetValues.length
+                ),
+                ...rest
+            }
+        } else {
+            viewProps = {
+                field: field,
+                facet: facet,
+                formatVal: formatVal,
+                optionals: 1
+            }
         }
 
         const View = view || CheckboxFacet
 
-        const viewProps = {
-            field: field,
-            facet: facet,
-            options: facetValues.slice(0, more),
-            formatVal: formatVal,
-            transformFunction: transformFunction,
-            showMore: facetValues.length > more,
-            showSearch: facet.isFilterable,
-            searchPlaceholder: `Filter ${facet.label}`,
-            onSearch: (value) => {
-                this.handleFacetSearch(value)
-            },
-            onMoreClick: this.handleClickMore.bind(this, facetValues.length),
-            ...rest
-        }
-
         return (
-            this.isFacetVisible(field, viewProps.options) && (
+            this.isFacetVisible(facet, viewProps.options) && (
                 <CollapsibleLayout
                     isExpanded={this.state.isExpanded}
                     setIsExpanded={this.handleSetIsExpanded}
@@ -149,4 +175,6 @@ export class CollapsibleFacetContainer extends React.Component {
     }
 }
 
-export default withSearch(({ facets }) => ({ facets }))(CollapsibleFacetContainer);
+export default withSearch(({ facets }) => ({ facets }))(
+    CollapsibleFacetContainer
+)

@@ -29,6 +29,14 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "json-loader": "^0.5.7"
+    "json-loader": "^0.5.7",
+    "prettier": "^3.3.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "semi": false,
+    "tabWidth": 4,
+    "trailingComma": "none"
   }
 }
