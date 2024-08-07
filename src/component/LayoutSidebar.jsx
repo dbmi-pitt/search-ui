@@ -17,7 +17,7 @@ import { appendClassName } from '../util/view'
  *
  * @extends {React.Component<LayoutSidebarProps, LayoutSidebarState>}
  */
-class LayoutSidebar extends React.Component {
+export default class LayoutSidebar extends React.Component {
     /**
      * Creates an instance of LayoutSidebar.
      *
@@ -83,5 +83,3 @@ class LayoutSidebar extends React.Component {
         )
     }
 }
-
-export default LayoutSidebar

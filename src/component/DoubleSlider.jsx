@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import '../css/slider.css'
 import SliderBubble from './SliderBubble'
 
@@ -54,7 +54,8 @@ export default function DoubleSlider({
      * @param {React.MouseEvent | React.TouchEvent | React.KeyboardEvent} e - The start event from the slider input.
      */
     function handleSliderStart(e) {
-        const { name } = e.target
+        const target = /** @type {HTMLInputElement} */ (e.target)
+        const { name } = target
         if (name === 'min') {
             setBubbleValue(minValue)
         } else {
@@ -66,7 +67,7 @@ export default function DoubleSlider({
      * Handles the end event for the slider input.
      * @param {React.MouseEvent | React.TouchEvent | React.KeyboardEvent} e - The end event from the slider input.
      */
-    function handleSliderEnd(_) {
+    function handleSliderEnd(e) {
         setBubbleValue(undefined)
         onRangeChange?.({ min: minValue, max: maxValue })
     }

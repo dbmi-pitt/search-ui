@@ -19,7 +19,7 @@ import LayoutSidebar from './LayoutSidebar'
  * @param {LayoutProps} props - Properties to configure the layout.
  * @returns {JSX.Element} The rendered layout component.
  */
-function Layout({
+export default function Layout({
     className,
     children,
     header,
@@ -56,5 +56,3 @@ function Layout({
         </div>
     )
 }
-
-export default Layout
