@@ -1,0 +1,61 @@
+@include block('paging') {
+    font-size: 12px;
+
+    .rc-pagination-prev,
+    .rc-pagination-next,
+    .rc-pagination-item {
+        border: none;
+        background: transparent;
+
+        .rc-pagination-item-link {
+            font-size: 18px;
+        }
+
+        > a,
+        > button {
+            border: none;
+            background: transparent;
+            color: $facetLinkColor;
+
+            &:hover {
+                color: $facetLinkColor;
+                background: $pagingHoverBackground;
+            }
+        }
+    }
+
+    .rc-pagination-disabled {
+        .rc-pagination-item-link {
+            color: #ccc;
+            opacity: 0.8;
+
+            &:hover {
+                color: #ccc;
+            }
+        }
+    }
+
+    .rc-pagination-item {
+        a {
+            color: $linkColor;
+            text-decoration: none;
+        }
+    }
+
+    .rc-pagination-item-active {
+        a {
+            color: $facetLinkColor;
+            font-weight: $fontWeightBold;
+        }
+
+        &:hover {
+            background: transparent;
+            cursor: not-allowed;
+
+            a {
+                color: $facetLinkColor;
+                cursor: not-allowed;
+            }
+        }
+    }
+}

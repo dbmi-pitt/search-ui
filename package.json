@@ -10,7 +10,8 @@
         "src"
     ],
     "scripts": {
-        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css}\""
+        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,scss}\"",
+        "sass-build": "sass src/styles/styles.scss src/css/styles.css --style compressed"
     },
     "dependencies": {
         "bootstrap": "^5.3.3",
@@ -19,7 +20,8 @@
         "react": "^18.3.1"
     },
     "devDependencies": {
-        "prettier": "^3.3.3"
+        "prettier": "^3.3.3",
+        "sass": "^1.77.8"
     },
     "prettier": {
         "singleQuote": true,
