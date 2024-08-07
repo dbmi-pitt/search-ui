@@ -1,0 +1,18 @@
+.facetsHover:hover {
+    cursor: pointer;
+    color: #0d6efd;
+}
+
+.contracted {
+    cursor: pointer;
+    color: #8b9bad;
+}
+
+.inputWarning {
+    border-color: var(--bs-danger);
+}
+
+.inputWarning:focus {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0.25rem 0.15rem var(--bs-danger);
+}
