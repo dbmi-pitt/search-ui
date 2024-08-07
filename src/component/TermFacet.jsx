@@ -34,7 +34,7 @@ export default function TermFacet({ config }) {
                     const isOptionVisible =
                         (typeof config.isOptionVisible === 'function'
                             ? config.isOptionVisible(
-                                  option.value,
+                                  option,
                                   filters,
                                   aggregations
                               )

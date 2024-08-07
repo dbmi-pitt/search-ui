@@ -65,7 +65,7 @@ export type FacetConfig = {
     isOptionVisible?:
         | boolean
         | ((
-              option: string,
+              option: AggregationBucket,
               filters: Record<string, Filter>,
               aggregations: Record<string, AggregationBucket[]>
           ) => boolean)
