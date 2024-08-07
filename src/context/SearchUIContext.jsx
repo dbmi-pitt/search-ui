@@ -31,6 +31,8 @@ import { executeSearch } from '../core/search'
  * @property {(sortConfig: SortConfig) => void} setSort
  * @property {(page: number) => void} setPageNumber
  * @property {(size: number) => void} setPageSize
+ * @property {(term: string) => void} searchWithTerm
+ * @property {() => void} clearSearchTerm
  */
 
 /**
@@ -105,7 +107,7 @@ export function SearchUIProvider({ config, children }) {
     /**
      * State variable for storing the sort configuration.
      *
-     * @type {[SortConfig, React.Dispatch<React.SetStateAction<SortConfig>>]}
+     * @type {[SortConfig | undefined, React.Dispatch<React.SetStateAction<SortConfig | undefined>>]}
      */
     const [sort, setSort] = useState(config.initial?.sort)
 
@@ -125,9 +127,16 @@ export function SearchUIProvider({ config, children }) {
      */
     const [pageSize, setPageSize] = useState(config.initial?.pageSize ?? 10)
 
+    /**
+     * State variable for storing the search term.
+     *
+     * @type {[string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>]}
+     */
+    const [searchTerm, setSearchTerm] = useState()
+
     useEffect(() => {
         searchWithCurrentState()
-    }, [filters, sort, pageNumber, pageSize])
+    }, [filters, sort, pageNumber, pageSize, searchTerm])
 
     /**
      * Gets the filter by name.
@@ -197,6 +206,23 @@ export function SearchUIProvider({ config, children }) {
     }
 
     /**
+     * Initiates a search using the provided search term.
+     * @param {string} term - The search term to use.
+     */
+    function searchWithTerm(term) {
+        setFilters({})
+        setSort(undefined)
+        setSearchTerm(term)
+    }
+
+    /**
+     * Clears the search term.
+     */
+    function clearSearchTerm() {
+        setSearchTerm(undefined)
+    }
+
+    /**
      * Initiates a search using the current state of filters, configuration, and pagination.
      *
      * This function collects the current filters, configuration, and pagination details,
@@ -206,7 +232,8 @@ export function SearchUIProvider({ config, children }) {
         search(Object.values(filters), config, {
             sort,
             from: (pageNumber - 1) * pageSize,
-            size: pageSize
+            size: pageSize,
+            searchTerm: searchTerm
         })
     }
 
@@ -275,7 +302,9 @@ export function SearchUIProvider({ config, children }) {
                 clearFilters,
                 setSort,
                 setPageNumber,
-                setPageSize
+                setPageSize,
+                searchWithTerm,
+                clearSearchTerm
             }}
         >
             {children}

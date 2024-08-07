@@ -72,7 +72,10 @@ function createSearchBody(filters, config, params) {
     }
 
     // Include
-    if (config.include && config.include.length > 0) {
+    if (params.searchTerm) {
+        const search = esb.multiMatchQuery(config.searchFields, params.searchTerm)
+        query = query.must(search)
+    } else if (config.include && config.include.length > 0) {
         const included = mapFilters(config.include)
         query = query.must(included)
     } else {

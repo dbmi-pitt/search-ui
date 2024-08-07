@@ -86,6 +86,7 @@ export type Config = {
     facets?: FacetConfig[]
     include?: Filter[]
     exclude?: Filter[]
+    searchFields?: string[]
     sourceFields?: string[]
     trackTotalHits?: boolean
     connection: ConnectionConfig
@@ -124,4 +125,5 @@ export type SearchParams = {
     sort: SortConfig | undefined
     from: number
     size: number
+    searchTerm: string | undefined
 }
