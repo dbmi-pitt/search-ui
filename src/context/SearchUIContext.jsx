@@ -110,12 +110,12 @@ export function SearchUIProvider({ config, children }) {
     const [sort, setSort] = useState(config.initial?.sort)
 
     /**
-     * State variable for storing the current page number.
+     * State variable for storing the current page number (1-indexed).
      *
      * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
      */
     const [pageNumber, setPageNumber] = useState(
-        config.initial?.pageNumber ?? 0
+        config.initial?.pageNumber ?? 1
     )
 
     /**
@@ -205,7 +205,7 @@ export function SearchUIProvider({ config, children }) {
     function searchWithCurrentState() {
         search(Object.values(filters), config, {
             sort,
-            from: pageNumber * pageSize,
+            from: (pageNumber - 1) * pageSize,
             size: pageSize
         })
     }
