@@ -95,6 +95,7 @@ export type Config = {
     searchFields?: string[]
     sourceFields?: string[]
     trackTotalHits?: boolean
+    trackUrlState?: boolean
     connection: ConnectionConfig
     initial?: {
         filters?: Record<string, Filter>

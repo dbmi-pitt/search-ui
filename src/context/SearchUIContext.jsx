@@ -272,6 +272,9 @@ export function SearchUIProvider({ config, authenticated, children }) {
                     hits: newHits,
                     totalHits: numberOfHits
                 })
+                if (config.trackUrlState ?? false) {
+                    // TODO: Update URL with filters, sort, page, etc.
+                }
             })
             .catch((error) => {
                 console.error(error)
