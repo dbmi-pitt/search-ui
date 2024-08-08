@@ -21,6 +21,7 @@ import { executeSearch } from '../core/search'
  * @property {SortConfig} [sort]
  * @property {number} pageNumber
  * @property {number} pageSize
+ * @property {string} [searchTerm]
  * @property {(name: string) => Filter | undefined} getFilter
  * @property {(name: string) => boolean} hasFilter
  * @property {(name: string, filter: Filter) => void} addFilter
@@ -287,6 +288,7 @@ export function SearchUIProvider({ config, children }) {
                 sort: state.sort,
                 pageNumber: state.pageNumber,
                 pageSize: state.pageSize,
+                searchTerm: state.searchTerm,
                 getFilter,
                 hasFilter,
                 addFilter,
