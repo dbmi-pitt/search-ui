@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import '../css/facet.css'
 import { formatValue } from '../util/string'
 
 /**

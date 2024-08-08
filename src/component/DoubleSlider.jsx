@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import '../css/slider.css'
 import SliderBubble from './SliderBubble'
 
 /**
