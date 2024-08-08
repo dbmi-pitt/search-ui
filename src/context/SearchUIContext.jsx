@@ -31,8 +31,8 @@ import { executeSearch } from '../core/search'
  * @property {(sortConfig: SortConfig) => void} setSort
  * @property {(page: number) => void} setPageNumber
  * @property {(size: number) => void} setPageSize
- * @property {(term: string) => void} searchWithTerm
- * @property {() => void} clearSearchTerm
+ * @property {(term: string) => void} setSearchTerm
+ * @property {(clearFilters?: boolean) => void} clearSearchTerm
  */
 
 /**
@@ -59,6 +59,19 @@ export function useSearchUIContext() {
 }
 
 /**
+ * @typedef {Object} SearchUIState
+ * @property {boolean} loading
+ * @property {Record<string, Filter>} filters
+ * @property {Record<string, AggregationBucket[]>} aggregations
+ * @property {Record<string, any>[]} hits
+ * @property {number} totalHits
+ * @property {SortConfig | undefined} sort
+ * @property {number} pageNumber
+ * @property {number} pageSize
+ * @property {string | undefined} searchTerm
+ */
+
+/**
  * Provider component for the SearchUIContext.
  *
  * @param {Object} props - The properties object.
@@ -69,74 +82,24 @@ export function useSearchUIContext() {
  */
 export function SearchUIProvider({ config, children }) {
     /**
-     * State variable for loading status.
-     *
-     * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+     * State variable for managing the search UI state.
+     * @type {[SearchUIState, React.Dispatch<React.SetStateAction<SearchUIState>>]}
      */
-    const [loading, setLoading] = useState(false)
-
-    /**
-     * State variable for storing search filters.
-     *
-     * @type {[Record<string, Filter>, React.Dispatch<React.SetStateAction<Record<string, Filter>>>]}
-     * @default {Record<string, Filter>} {}
-     */
-    const [filters, setFilters] = useState(config.initial?.filters ?? {})
-
-    /**
-     * State variable for storing aggregation buckets.
-     *
-     * @type {[Record<string, AggregationBucket[]>, React.Dispatch<React.SetStateAction<Record<string, AggregationBucket[]>>>]}
-     */
-    const [aggregations, setAggregations] = useState({})
-
-    /**
-     * State variable for storing search hits.
-     *
-     * @type {[Record<string, any>[], React.Dispatch<React.SetStateAction<Record<string, any>[]>>]}
-     */
-    const [hits, setHits] = useState([])
-
-    /**
-     * State variable for storing the total number of hits.
-     *
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
-     */
-    const [totalHits, setTotalHits] = useState(0)
-
-    /**
-     * State variable for storing the sort configuration.
-     *
-     * @type {[SortConfig | undefined, React.Dispatch<React.SetStateAction<SortConfig | undefined>>]}
-     */
-    const [sort, setSort] = useState(config.initial?.sort)
-
-    /**
-     * State variable for storing the current page number (1-indexed).
-     *
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
-     */
-    const [pageNumber, setPageNumber] = useState(
-        config.initial?.pageNumber ?? 1
-    )
-
-    /**
-     * State variable for storing the current page size.
-     *
-     * @type {[number, React.Dispatch<React.SetStateAction<number>>]}
-     */
-    const [pageSize, setPageSize] = useState(config.initial?.pageSize ?? 10)
-
-    /**
-     * State variable for storing the search term.
-     *
-     * @type {[string | undefined, React.Dispatch<React.SetStateAction<string | undefined>>]}
-     */
-    const [searchTerm, setSearchTerm] = useState()
+    const [state, setState] = useState({
+        loading: false,
+        filters: config.initial?.filters ?? {},
+        aggregations: {},
+        hits: [],
+        totalHits: 0,
+        sort: config.initial?.sort,
+        pageNumber: config.initial?.pageNumber ?? 1,
+        pageSize: config.initial?.pageSize ?? 10,
+        searchTerm: undefined
+    })
 
     useEffect(() => {
         searchWithCurrentState()
-    }, [filters, sort, pageNumber, pageSize, searchTerm])
+    }, [state])
 
     /**
      * Gets the filter by name.
@@ -144,7 +107,7 @@ export function SearchUIProvider({ config, children }) {
      * @returns {Filter | undefined} The filter value.
      */
     function getFilter(name) {
-        return filters[name]
+        return state.filters[name]
     }
 
     /**
@@ -153,7 +116,7 @@ export function SearchUIProvider({ config, children }) {
      * @returns {boolean} True if the filter exists, false otherwise.
      */
     function hasFilter(name) {
-        return filters.hasOwnProperty(name)
+        return state.filters.hasOwnProperty(name)
     }
 
     /**
@@ -162,8 +125,8 @@ export function SearchUIProvider({ config, children }) {
      * @param {Filter} filter - The value of the filter.
      */
     function addFilter(name, filter) {
-        const newFilters = { ...filters, [name]: filter }
-        setFilters(newFilters)
+        const newFilters = { ...state.filters, [name]: filter }
+        setState({ ...state, filters: newFilters })
     }
 
     /**
@@ -171,8 +134,8 @@ export function SearchUIProvider({ config, children }) {
      * @param {Record<string, Filter>} newFilters - An object containing filter names and values.
      */
     function addFilters(newFilters) {
-        const mergedFilters = { ...filters, ...newFilters }
-        setFilters(mergedFilters)
+        const mergedFilters = { ...state.filters, ...newFilters }
+        setState({ ...state, filters: mergedFilters })
     }
 
     /**
@@ -181,9 +144,9 @@ export function SearchUIProvider({ config, children }) {
      */
     function removeFilter(name) {
         if (!hasFilter(name)) return
-        const newFilters = { ...filters }
+        const newFilters = { ...state.filters }
         delete newFilters[name]
-        setFilters(newFilters)
+        setState({ ...state, filters: newFilters })
     }
 
     /**
@@ -191,35 +154,63 @@ export function SearchUIProvider({ config, children }) {
      * @param {string[]} names - An array of filter names to remove.
      */
     function removeFilters(names) {
-        const newFilters = { ...filters }
+        const newFilters = { ...state.filters }
         for (const name of names) {
             delete newFilters[name]
         }
-        setFilters(newFilters)
+        setState({ ...state, filters: newFilters })
     }
 
     /**
      * Clears all filters.
      */
     function clearFilters() {
-        setFilters({})
+        setState({ ...state, filters: {} })
+    }
+
+    /**
+     * Sets the sort configuration.
+     * @param {Object} sortConfig - The configuration for sorting.
+     */
+    function setSort(sortConfig) {
+        setState({ ...state, sort: sortConfig })
+    }
+
+    /**
+     * Sets the current page number.
+     * @param {number} page - The page number to set.
+     */
+    function setPageNumber(page) {
+        setState({ ...state, pageNumber: page })
+    }
+
+    /**
+     * Sets the number of items per page.
+     * @param {number} size - The number of items per page.
+     */
+    function setPageSize(size) {
+        setState({ ...state, pageSize: size })
     }
 
     /**
      * Initiates a search using the provided search term.
      * @param {string} term - The search term to use.
      */
-    function searchWithTerm(term) {
-        setFilters({})
-        setSort(undefined)
-        setSearchTerm(term)
+    function setSearchTerm(term) {
+        setState({ ...state, searchTerm: term, filters: {}, sort: undefined })
     }
 
     /**
      * Clears the search term.
+     * @param {boolean} [clearFilters=false] - Whether to clear the filters as well.
      */
-    function clearSearchTerm() {
-        setSearchTerm(undefined)
+    function clearSearchTerm(clearFilters = false) {
+        setState({
+            ...state,
+            filters: clearFilters ? {} : state.filters,
+            searchTerm: undefined,
+            sort: config.initial?.sort
+        })
     }
 
     /**
@@ -229,11 +220,11 @@ export function SearchUIProvider({ config, children }) {
      * and then calls the `search` function with these parameters.
      */
     function searchWithCurrentState() {
-        search(Object.values(filters), config, {
-            sort,
-            from: (pageNumber - 1) * pageSize,
-            size: pageSize,
-            searchTerm: searchTerm
+        search(Object.values(state.filters), config, {
+            sort: state.sort,
+            from: (state.pageNumber - 1) * state.pageSize,
+            size: state.pageSize,
+            searchTerm: state.searchTerm
         })
     }
 
@@ -245,7 +236,7 @@ export function SearchUIProvider({ config, children }) {
      * @param {SearchParams} params - The search parameters including sort order, pagination details, etc.
      */
     function search(filters, config, params) {
-        setLoading(true)
+        setState({ ...state, loading: true })
         executeSearch(filters, config, params)
             .then((res) => {
                 /**
@@ -270,29 +261,32 @@ export function SearchUIProvider({ config, children }) {
                 }
                 const numberOfHits = res.hits.total?.value ?? newHits.length
 
-                setAggregations(newAggregations)
-                setHits(newHits)
-                setTotalHits(numberOfHits)
-                setLoading(false)
+                setState({
+                    ...state,
+                    loading: false,
+                    aggregations: newAggregations,
+                    hits: newHits,
+                    totalHits: numberOfHits
+                })
             })
             .catch((error) => {
                 console.error(error)
-                setLoading(false)
+                setState({ ...state, loading: false })
             })
     }
 
     return (
         <SearchUIContext.Provider
             value={{
-                config,
-                loading,
-                filters,
-                aggregations,
-                hits,
-                totalHits,
-                sort,
-                pageNumber,
-                pageSize,
+                config: config,
+                loading: state.loading,
+                filters: state.filters,
+                aggregations: state.aggregations,
+                hits: state.hits,
+                totalHits: state.totalHits,
+                sort: state.sort,
+                pageNumber: state.pageNumber,
+                pageSize: state.pageSize,
                 getFilter,
                 hasFilter,
                 addFilter,
@@ -303,7 +297,7 @@ export function SearchUIProvider({ config, children }) {
                 setSort,
                 setPageNumber,
                 setPageSize,
-                searchWithTerm,
+                setSearchTerm,
                 clearSearchTerm
             }}
         >
