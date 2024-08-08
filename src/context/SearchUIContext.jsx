@@ -3,6 +3,7 @@ import { executeSearch } from '../core/search'
 
 /**
  * @typedef {import('../types').AggregationBucket} AggregationBucket
+ * @typedef {import('../types').AuthenticationState} AuthenticationState
  * @typedef {import('../types').Config} Config
  * @typedef {import('../types').Filter} Filter
  * @typedef {import('../types').SearchParams} SearchParams
@@ -77,12 +78,12 @@ export function useSearchUIContext() {
  *
  * @param {Object} props - The properties object.
  * @param {Config} props.config - The configuration object for the search UI.
- * @param {boolean} [props.isAuthenticated=false] - Indicates if the user is authenticated.
+ * @param {AuthenticationState} props.authenticated - Indicates if the user is authenticated and authorized.
  * @param {React.ReactNode} props.children - The child components to be wrapped by the provider.
  *
  * @returns {JSX.Element} The provider component that wraps its children with the SearchUIContext.
  */
-export function SearchUIProvider({ config, isAuthenticated = false, children }) {
+export function SearchUIProvider({ config, authenticated, children }) {
     /**
      * State variable for managing the search UI state.
      * @type {[SearchUIState, React.Dispatch<React.SetStateAction<SearchUIState>>]}
@@ -227,7 +228,7 @@ export function SearchUIProvider({ config, isAuthenticated = false, children }) 
             from: (state.pageNumber - 1) * state.pageSize,
             size: state.pageSize,
             searchTerm: state.searchTerm
-        }, isAuthenticated)
+        }, authenticated)
     }
 
     /**
@@ -236,11 +237,11 @@ export function SearchUIProvider({ config, isAuthenticated = false, children }) 
      * @param {Filter[]} filters - An array of filter objects to apply to the search.
      * @param {Config} config - The configuration object for the search.
      * @param {SearchParams} params - The search parameters including sort order, pagination details, etc.
-     * @param {boolean} isAuthenticated - Indicates if the user is authenticated.
+     * @param {AuthenticationState} authenticated - Indicates if the user is authenticated and authorized.
      */
-    function search(filters, config, params, isAuthenticated) {
+    function search(filters, config, params, authenticated) {
         setState({ ...state, loading: true })
-        executeSearch(filters, config, params, isAuthenticated)
+        executeSearch(filters, config, params, authenticated)
             .then((res) => {
                 /**
                  * @type {Record<string, AggregationBucket[]>}

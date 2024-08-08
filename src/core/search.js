@@ -1,6 +1,7 @@
 import esb from 'elastic-builder'
 
 /**
+ * @typedef {import('../types').AuthenticationState} AuthenticationState
  * @typedef {import('../types').Config} Config
  * @typedef {import('../types').Filter} Filter
  * @typedef {import('../types').SearchParams} SearchParams
@@ -14,11 +15,11 @@ import esb from 'elastic-builder'
  * @param {Filter[]} filters - An array of filters to apply to the search query.
  * @param {Config} config - Configuration object containing connection details.
  * @param {SearchParams} params - Parameters for the search query including sorting, starting index, and size.
- * @param {boolean} isAuthenticated - A flag indicating if the user is authenticated.
+ * @param {AuthenticationState} authenticated - The authentication and authorization state of the user.
  * @returns {Promise<SearchResponse>} - A promise that resolves to the response of the search query.
  */
-export async function executeSearch(filters, config, params, isAuthenticated) {
-    const body = createSearchBody(filters, config, params, isAuthenticated)
+export async function executeSearch(filters, config, params, authenticated) {
+    const body = createSearchBody(filters, config, params, authenticated)
 
     const token =
         typeof config.connection.token === 'function'
@@ -45,10 +46,10 @@ export async function executeSearch(filters, config, params, isAuthenticated) {
  * @param {Filter[]} filters - An array of filter objects to apply to the search.
  * @param {Config} config - The configuration object containing connection details.
  * @param {SearchParams} params - The search parameters to include in the request.
- * @param {boolean} isAuthenticated - A flag indicating if the user is authenticated.
+ * @param {AuthenticationState} authenticated - The authentication and authorization state of the user.
  * @returns {string} The search body as a JSON string.
  */
-function createSearchBody(filters, config, params, isAuthenticated) {
+function createSearchBody(filters, config, params, authenticated) {
     const start = performance.now()
 
     // Filters
@@ -102,7 +103,7 @@ function createSearchBody(filters, config, params, isAuthenticated) {
                 // Check if facet is active
                 const isActive =
                     (typeof facet.aggregation.isActive === 'function'
-                        ? facet.aggregation.isActive(filters, isAuthenticated)
+                        ? facet.aggregation.isActive(filters, authenticated)
                         : facet.aggregation.isActive) ?? true
                 if (!isActive) {
                     continue
