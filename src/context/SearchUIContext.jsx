@@ -223,12 +223,17 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * and then calls the `search` function with these parameters.
      */
     function searchWithCurrentState() {
-        search(Object.values(state.filters), config, {
-            sort: state.sort,
-            from: (state.pageNumber - 1) * state.pageSize,
-            size: state.pageSize,
-            searchTerm: state.searchTerm
-        }, authenticated)
+        search(
+            Object.values(state.filters),
+            config,
+            {
+                sort: state.sort,
+                from: (state.pageNumber - 1) * state.pageSize,
+                size: state.pageSize,
+                searchTerm: state.searchTerm
+            },
+            authenticated
+        )
     }
 
     /**
