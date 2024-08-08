@@ -14,10 +14,11 @@ import esb from 'elastic-builder'
  * @param {Filter[]} filters - An array of filters to apply to the search query.
  * @param {Config} config - Configuration object containing connection details.
  * @param {SearchParams} params - Parameters for the search query including sorting, starting index, and size.
+ * @param {boolean} isAuthenticated - A flag indicating if the user is authenticated.
  * @returns {Promise<SearchResponse>} - A promise that resolves to the response of the search query.
  */
-export async function executeSearch(filters, config, params) {
-    const body = createSearchBody(filters, config, params)
+export async function executeSearch(filters, config, params, isAuthenticated) {
+    const body = createSearchBody(filters, config, params, isAuthenticated)
 
     const token =
         typeof config.connection.token === 'function'
@@ -44,9 +45,10 @@ export async function executeSearch(filters, config, params) {
  * @param {Filter[]} filters - An array of filter objects to apply to the search.
  * @param {Config} config - The configuration object containing connection details.
  * @param {SearchParams} params - The search parameters to include in the request.
+ * @param {boolean} isAuthenticated - A flag indicating if the user is authenticated.
  * @returns {string} The search body as a JSON string.
  */
-function createSearchBody(filters, config, params) {
+function createSearchBody(filters, config, params, isAuthenticated) {
     const start = performance.now()
 
     // Filters
@@ -100,7 +102,7 @@ function createSearchBody(filters, config, params) {
                 // Check if facet is active
                 const isActive =
                     (typeof facet.aggregation.isActive === 'function'
-                        ? facet.aggregation.isActive(filters)
+                        ? facet.aggregation.isActive(filters, isAuthenticated)
                         : facet.aggregation.isActive) ?? true
                 if (!isActive) {
                     continue

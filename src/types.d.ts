@@ -3,13 +3,13 @@ export type Aggregation = TermAggregation | HistogramAggregation
 
 export type TermAggregation = {
     type: 'term'
-    isActive?: boolean | ((filters: Filter[]) => boolean)
+    isActive?: boolean | ((filters: Filter[], isAuthenticated: boolean) => boolean)
     size?: number
 }
 
 export type HistogramAggregation = {
     type: 'histogram'
-    isActive?: boolean | ((filters: Filter[]) => boolean)
+    isActive?: boolean | ((filters: Filter[], isAuthenticated: boolean) => boolean)
     interval: number
 }
 

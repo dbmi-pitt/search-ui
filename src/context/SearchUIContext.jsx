@@ -77,11 +77,12 @@ export function useSearchUIContext() {
  *
  * @param {Object} props - The properties object.
  * @param {Config} props.config - The configuration object for the search UI.
+ * @param {boolean} [props.isAuthenticated=false] - Indicates if the user is authenticated.
  * @param {React.ReactNode} props.children - The child components to be wrapped by the provider.
  *
  * @returns {JSX.Element} The provider component that wraps its children with the SearchUIContext.
  */
-export function SearchUIProvider({ config, children }) {
+export function SearchUIProvider({ config, isAuthenticated = false, children }) {
     /**
      * State variable for managing the search UI state.
      * @type {[SearchUIState, React.Dispatch<React.SetStateAction<SearchUIState>>]}
@@ -226,7 +227,7 @@ export function SearchUIProvider({ config, children }) {
             from: (state.pageNumber - 1) * state.pageSize,
             size: state.pageSize,
             searchTerm: state.searchTerm
-        })
+        }, isAuthenticated)
     }
 
     /**
@@ -235,10 +236,11 @@ export function SearchUIProvider({ config, children }) {
      * @param {Filter[]} filters - An array of filter objects to apply to the search.
      * @param {Config} config - The configuration object for the search.
      * @param {SearchParams} params - The search parameters including sort order, pagination details, etc.
+     * @param {boolean} isAuthenticated - Indicates if the user is authenticated.
      */
-    function search(filters, config, params) {
+    function search(filters, config, params, isAuthenticated) {
         setState({ ...state, loading: true })
-        executeSearch(filters, config, params)
+        executeSearch(filters, config, params, isAuthenticated)
             .then((res) => {
                 /**
                  * @type {Record<string, AggregationBucket[]>}
