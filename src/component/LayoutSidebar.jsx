@@ -8,33 +8,19 @@ import { appendClassName } from '../util/view'
  */
 
 /**
- * @typedef {Object} LayoutSidebarState
- * @property {boolean} isSidebarToggled - Indicates whether the sidebar is toggled open or closed.
- */
-
-/**
- * LayoutSidebar component that renders a sidebar with toggle functionality.
+ * LayoutSidebar component that renders a sidebar with optional toggle functionality.
  *
- * @extends {React.Component<LayoutSidebarProps, LayoutSidebarState>}
+ * @param {LayoutSidebarProps} props - Properties to configure the layout.
+ * @returns {JSX.Element} The rendered sidebar component.
  */
-export default class LayoutSidebar extends React.Component {
-    /**
-     * Creates an instance of LayoutSidebar.
-     *
-     * @param {LayoutSidebarProps} props - The properties for the LayoutSidebar component.
-     */
-    constructor(props) {
-        super(props)
-        this.state = { isSidebarToggled: false }
-    }
+export default function LayoutSidebar({ className, children }) {
+    const [isSidebarToggled, setIsSidebarToggled] = React.useState(false)
 
     /**
      * Toggles the sidebar open or closed.
      */
-    toggleSidebar = () => {
-        this.setState(({ isSidebarToggled }) => ({
-            isSidebarToggled: !isSidebarToggled
-        }))
+    function toggleSidebar() {
+        setIsSidebarToggled(!isSidebarToggled)
     }
 
     /**
@@ -43,7 +29,7 @@ export default class LayoutSidebar extends React.Component {
      * @param {string} label - The label for the toggle button.
      * @returns {React.ReactNode | null} The toggle button element or null if no children are present.
      */
-    renderToggleButton = (label) => {
+    function renderToggleButton(label) {
         if (!this.props.children) return null
 
         return (
@@ -51,35 +37,25 @@ export default class LayoutSidebar extends React.Component {
                 hidden
                 type='button'
                 className='sui-layout-sidebar-toggle'
-                onClick={this.toggleSidebar}
+                onClick={toggleSidebar}
             >
                 {label}
             </button>
         )
     }
 
-    /**
-     * Renders the LayoutSidebar component.
-     *
-     * @returns {React.ReactNode} The rendered sidebar component.
-     */
-    render() {
-        const { className, children } = this.props
-        const { isSidebarToggled } = this.state
-
-        const classes = appendClassName(
-            className,
-            isSidebarToggled ? `${className}--toggled` : ''
-        )
-
-        return (
-            <>
-                {this.renderToggleButton('Show Filters')}
-                <div className={classes}>
-                    {this.renderToggleButton('Save Filters')}
-                    {children}
-                </div>
-            </>
-        )
-    }
+    return (
+        <>
+            {renderToggleButton('Show Filters')}
+            <div
+                className={appendClassName(
+                    className,
+                    isSidebarToggled ? `${className}--toggled` : ''
+                )}
+            >
+                {renderToggleButton('Save Filters')}
+                {children}
+            </div>
+        </>
+    )
 }
