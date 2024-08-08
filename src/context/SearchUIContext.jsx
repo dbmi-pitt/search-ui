@@ -102,6 +102,15 @@ export function SearchUIProvider({ config, authenticated, children }) {
 
     useEffect(() => {
         searchWithCurrentState()
+        if (config.onStateChange) {
+            config.onStateChange({
+                filters: state.filters,
+                sort: state.sort,
+                pageNumber: state.pageNumber,
+                pageSize: state.pageSize,
+                searchTerm: state.searchTerm
+            })
+        }
     }, [state])
 
     /**

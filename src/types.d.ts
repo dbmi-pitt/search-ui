@@ -93,6 +93,14 @@ export type ConnectionConfig = {
     token?: (() => string | undefined) | string
 }
 
+export type SearchUICallbackState = {
+    filters: Record<string, Filter>
+    sort: SortConfig | undefined
+    pageNumber: number
+    pageSize: number
+    searchTerm: string | undefined
+}
+
 export type Config = {
     facets?: FacetConfig[]
     include?: Filter[]
@@ -108,6 +116,7 @@ export type Config = {
         pageNumber?: number
         pageSize?: number
     }
+    onStateChange?: (state: SearchUICallbackState) => void
 }
 
 // Response
