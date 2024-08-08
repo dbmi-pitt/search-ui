@@ -53,7 +53,7 @@ export type HistogramFilter = {
 }
 
 // Facets
-export type FacetType = 'term' | 'range' | 'histogram'
+export type FacetType = 'term' | 'daterange' | 'histogram'
 
 export type FacetConfig = {
     label: string

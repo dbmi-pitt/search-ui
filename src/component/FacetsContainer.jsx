@@ -28,7 +28,7 @@ export default function FacetsContainer() {
         switch (facet.type) {
             case 'term':
                 return <TermFacet config={facet} />
-            case 'range':
+            case 'daterange':
                 return <DateRangeFacet config={facet} />
             case 'histogram':
                 return <HistogramFacet config={facet} />
