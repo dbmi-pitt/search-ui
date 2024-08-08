@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../css/facet.css'
 import { formatValue } from '../util/string'
 
@@ -20,6 +20,12 @@ import { formatValue } from '../util/string'
  */
 export default function FacetContainer({ facet, children }) {
     const [isExpanded, setIsExpanded] = useState(true)
+
+    useEffect(() => {
+        if (facet.onExpandedStateChange) {
+            facet.onExpandedStateChange(isExpanded)
+        }
+    }, [isExpanded])
 
     /**
      * Formats the class name for the facet title based on the provided label.

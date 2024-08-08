@@ -79,6 +79,7 @@ export type FacetConfig = {
               filters: Record<string, Filter>,
               aggregations: Record<string, AggregationBucket[]>
           ) => boolean)
+    onExpandedStateChange?: (expanded: boolean) => void
 }
 
 // Sort
