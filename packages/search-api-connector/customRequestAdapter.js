@@ -1,9 +1,17 @@
-import { es_query_builder } from "../../lib/search-tools";
+import { es_query_builder } from '../../lib/search-tools';
 
+/**
+ * @typedef {import('../../lib/search-tools').QueryConfig} QueryConfig
+ * @typedef {import('../../lib/search-tools').RequestState} RequestState
+ */
 
-export default function customAdaptRequest(request, queryConfig, state) {
-
-  let payload = es_query_builder(request, state.current, state.resultsPerPage, queryConfig);
-
-  return payload;
+/**
+ * Custom adapter function to transform a search request using the provided query configuration and state.
+ *
+ * @param {RequestState} request - The original search request object.
+ * @param {QueryConfig} queryConfig - The configuration for the query.
+ * @returns {Object} - The transformed search request object.
+ */
+export default function customAdaptRequest(request, queryConfig) {
+  return es_query_builder(request, queryConfig);
 }
