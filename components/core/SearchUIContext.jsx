@@ -382,6 +382,12 @@ export function SearchUIProvider({ name, children }) {
                 isFacetExpanded,
                 setFacetExpanded,
                 a11yNotify: driver.a11yNotify,
+                pageNumber: driver.state.current,
+                setPageNumber: driver.actions.setCurrent,
+                pageSize: driver.state.resultsPerPage,
+                setPageSize: driver.actions.setResultsPerPage,
+                sort: driver.state.sort,
+                setSort: driver.actions.setSort,
             }}
         >
             {children}
