@@ -34,5 +34,6 @@ yarn-error.log*
 # UI react-app
 package-lock.json
 
-# WebStorm IDE
+# IDE
 .idea
+.vscode
