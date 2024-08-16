@@ -121,6 +121,9 @@ const NumericRangeFacet = ({ field, facet }) => {
 
     function handleSliderChange(_, newValues) {
         setValues(newValues)
+        if (GoogleTagManager && GoogleTagManager.dispatch) {
+            GoogleTagManager.dispatch({data: newValues, event: _, key: 'numericFacets'})
+        }
     }
 
     function handleSliderCommitted(_, newValues) {
