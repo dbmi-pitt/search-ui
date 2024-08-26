@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSearchUIContext } from '../context/SearchUIContext'
 import { formatValue } from '../util/string'
 
@@ -21,22 +21,45 @@ import { formatValue } from '../util/string'
  * @returns {JSX.Element} The rendered component.
  */
 export default function TermFacetOption({ config, value, count }) {
-    const { hasFilter, addFilter, removeFilter } = useSearchUIContext()
+    const { getFilter, addFilter, removeFilter } = useSearchUIContext()
 
-    const name = `${config.name}_${value}`
-    const isChecked = hasFilter(name)
+    const filter = /** @type {TermFilter} */ (getFilter(config.name))
 
     function handleCheckboxChange() {
-        if (isChecked) {
-            removeFilter(name)
-        } else {
+        if (filter === undefined || filter.values.length === 0) {
+            // Create a new filter if one doesn't exist
             /** @type {TermFilter} */
             const filter = {
                 type: 'term',
+                name: config.name,
                 field: config.field,
-                value
+                values: [value]
             }
-            addFilter(name, filter)
+            // setFilter(filter)
+            addFilter(filter)
+            return
+        }
+
+        if (filter.values.length === 1 && filter.values[0] === value) {
+            // Remove the filter if it only contains this value
+            removeFilter(config.name)
+            return
+        }
+
+        if (filter.values.includes(value)) {
+            // Remove this value from the filter if there are multiple values
+            const newFilter = {
+                ...filter,
+                values: filter.values.filter((v) => v !== value)
+            }
+            addFilter(newFilter)
+        } else {
+            // Add this value to the filter if it doesn't already exist
+            const newFilter = {
+                ...filter,
+                values: [...filter.values, value]
+            }
+            addFilter(newFilter)
         }
     }
 
@@ -50,7 +73,7 @@ export default function TermFacetOption({ config, value, count }) {
                     id={`sui-facet--${formatValue(config.label)}-${formatValue(value)}`}
                     type='checkbox'
                     className='sui-multi-checkbox-facet__checkbox'
-                    checked={isChecked}
+                    checked={filter?.values.includes(value) ?? false}
                     onChange={handleCheckboxChange}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>

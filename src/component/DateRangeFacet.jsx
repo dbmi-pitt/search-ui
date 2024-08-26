@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSearchUIContext } from '../context/SearchUIContext.jsx'
 import { formatValue } from '../util/string'
 
 /**
- * @typedef {import('../types').FacetConfig} FacetConfig
+ * @typedef {import('../types').DateRangeFacetConfig} DateRangeFacetConfig
  * @typedef {import('../types').RangeFilter} RangeFilter
  */
 
@@ -32,7 +32,7 @@ function convertStringToTimestamp(dateString) {
 
 /**
  * @typedef {Object} DateRangeFacetProps
- * @property {FacetConfig} config - The configuration for the facet.
+ * @property {DateRangeFacetConfig} config - The configuration for the facet.
  */
 
 /**
@@ -42,9 +42,8 @@ function convertStringToTimestamp(dateString) {
  * @returns {JSX.Element} The rendered component.
  */
 export default function DateRangeFacet({ config }) {
-    const { getFilter, addFilter, removeFilter } = useSearchUIContext()
+    const { addFilter, getFilter, removeFilter } = useSearchUIContext()
 
-    // JSDoc cast the filter to a RangeFilter type.
     const filter = /** @type {RangeFilter} */ (getFilter(config.name))
 
     /**
@@ -56,7 +55,11 @@ export default function DateRangeFacet({ config }) {
     function handleDateChange(value, type) {
         let newFilter = filter
         if (!newFilter || newFilter.type !== 'range') {
-            newFilter = { type: 'range', field: config.field }
+            newFilter = {
+                type: 'range',
+                name: config.name,
+                field: config.field
+            }
         }
 
         if (type === 'start') {
@@ -72,7 +75,7 @@ export default function DateRangeFacet({ config }) {
             return
         }
 
-        addFilter(config.name, newFilter)
+        addFilter(newFilter)
     }
 
     /**

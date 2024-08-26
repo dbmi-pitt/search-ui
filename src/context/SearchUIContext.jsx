@@ -5,6 +5,7 @@ import { executeSearch } from '../core/search'
  * @typedef {import('../types').AggregationBucket} AggregationBucket
  * @typedef {import('../types').AuthenticationState} AuthenticationState
  * @typedef {import('../types').Config} Config
+ * @typedef {import('../types').FacetConfig} FacetConfig
  * @typedef {import('../types').Filter} Filter
  * @typedef {import('../types').SearchParams} SearchParams
  * @typedef {import('../types').SearchResponse} SearchResponse
@@ -14,10 +15,14 @@ import { executeSearch } from '../core/search'
 /**
  * @typedef {Object} SearchUIContent
  * @property {Config} config
+ * @property {Record<string, FacetConfig>} facetConfig
+ * @property {AuthenticationState} authentication
+ * @property {boolean} initialized
  * @property {boolean} loading
  * @property {Record<string, Filter>} filters
  * @property {Record<string, AggregationBucket[]>} aggregations
  * @property {Record<string, any>[]} hits
+ * @property {SearchUIOutputState} results
  * @property {number} totalHits
  * @property {SortConfig} [sort]
  * @property {number} pageNumber
@@ -25,10 +30,8 @@ import { executeSearch } from '../core/search'
  * @property {string} [searchTerm]
  * @property {(name: string) => Filter | undefined} getFilter
  * @property {(name: string) => boolean} hasFilter
- * @property {(name: string, filter: Filter) => void} addFilter
- * @property {(filters: Record<string, Filter>) => void} addFilters
+ * @property {(filter: Filter) => void} addFilter
  * @property {(name: string) => void} removeFilter
- * @property {(names: string[]) => void} removeFilters
  * @property {() => void} clearFilters
  * @property {(sortConfig: SortConfig) => void} setSort
  * @property {(page: number) => void} setPageNumber
@@ -61,16 +64,19 @@ export function useSearchUIContext() {
 }
 
 /**
- * @typedef {Object} SearchUIState
- * @property {boolean} loading
+ * @typedef {Object} SearchUIInputState
  * @property {Record<string, Filter>} filters
- * @property {Record<string, AggregationBucket[]>} aggregations
- * @property {Record<string, any>[]} hits
- * @property {number} totalHits
- * @property {SortConfig | undefined} sort
  * @property {number} pageNumber
  * @property {number} pageSize
  * @property {string | undefined} searchTerm
+ * @property {SortConfig | undefined} sort
+ */
+
+/**
+ * @typedef {Object} SearchUIOutputState
+ * @property {Record<string, AggregationBucket[]>} aggregations
+ * @property {Record<string, any>[]} hits
+ * @property {number} totalHits
  */
 
 /**
@@ -78,40 +84,51 @@ export function useSearchUIContext() {
  *
  * @param {Object} props - The properties object.
  * @param {Config} props.config - The configuration object for the search UI.
- * @param {AuthenticationState} props.authenticated - Indicates if the user is authenticated and authorized.
+ * @param {AuthenticationState} props.authentication- Indicates if the user is authenticated and authorized.
  * @param {React.ReactNode} props.children - The child components to be wrapped by the provider.
  *
  * @returns {JSX.Element} The provider component that wraps its children with the SearchUIContext.
  */
-export function SearchUIProvider({ config, authenticated, children }) {
+export function SearchUIProvider({ config, authentication, children }) {
+    const facetConfig = createFacetConfig(config)
+
+    const [initialized, setInitialized] = useState(false)
+    const [loading, setLoading] = useState(false)
+
     /**
      * State variable for managing the search UI state.
-     * @type {[SearchUIState, React.Dispatch<React.SetStateAction<SearchUIState>>]}
+     * @type {[SearchUIInputState, React.Dispatch<React.SetStateAction<SearchUIInputState>>]}
      */
-    const [state, setState] = useState({
-        loading: false,
+    const [inputState, setInputState] = useState({
         filters: config.initial?.filters ?? {},
-        aggregations: {},
-        hits: [],
-        totalHits: 0,
-        sort: config.initial?.sort,
         pageNumber: config.initial?.pageNumber ?? 1,
         pageSize: config.initial?.pageSize ?? 10,
-        searchTerm: undefined
+        searchTerm: undefined,
+        sort: config.initial?.sort
+    })
+
+    /**
+     * State variable for managing the search UI data.
+     * @type {[SearchUIOutputState, React.Dispatch<React.SetStateAction<SearchUIOutputState>>]}
+     */
+    const [outputState, setOutputState] = useState({
+        aggregations: {},
+        hits: [],
+        totalHits: 0
     })
 
     useEffect(() => {
         searchWithCurrentState()
         if (config.onStateChange) {
             config.onStateChange({
-                filters: state.filters,
-                sort: state.sort,
-                pageNumber: state.pageNumber,
-                pageSize: state.pageSize,
-                searchTerm: state.searchTerm
+                filters: inputState.filters,
+                pageNumber: inputState.pageNumber,
+                pageSize: inputState.pageSize,
+                searchTerm: inputState.searchTerm,
+                sort: inputState.sort
             })
         }
-    }, [state])
+    }, [inputState])
 
     /**
      * Gets the filter by name.
@@ -119,7 +136,7 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @returns {Filter | undefined} The filter value.
      */
     function getFilter(name) {
-        return state.filters[name]
+        return inputState.filters[name]
     }
 
     /**
@@ -128,26 +145,16 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @returns {boolean} True if the filter exists, false otherwise.
      */
     function hasFilter(name) {
-        return state.filters.hasOwnProperty(name)
+        return inputState.filters.hasOwnProperty(name)
     }
 
     /**
      * Adds a filter.
-     * @param {string} name - The name of the filter.
      * @param {Filter} filter - The value of the filter.
      */
-    function addFilter(name, filter) {
-        const newFilters = { ...state.filters, [name]: filter }
-        setState({ ...state, filters: newFilters })
-    }
-
-    /**
-     * Adds multiple filters.
-     * @param {Record<string, Filter>} newFilters - An object containing filter names and values.
-     */
-    function addFilters(newFilters) {
-        const mergedFilters = { ...state.filters, ...newFilters }
-        setState({ ...state, filters: mergedFilters })
+    function addFilter(filter) {
+        const newFilters = { ...inputState.filters, [filter.name]: filter }
+        setInputState({ ...inputState, filters: newFilters })
     }
 
     /**
@@ -156,28 +163,43 @@ export function SearchUIProvider({ config, authenticated, children }) {
      */
     function removeFilter(name) {
         if (!hasFilter(name)) return
-        const newFilters = { ...state.filters }
+        const newFilters = { ...inputState.filters }
         delete newFilters[name]
-        setState({ ...state, filters: newFilters })
-    }
 
-    /**
-     * Removes multiple filters.
-     * @param {string[]} names - An array of filter names to remove.
-     */
-    function removeFilters(names) {
-        const newFilters = { ...state.filters }
-        for (const name of names) {
-            delete newFilters[name]
+        for (const filter of Object.values(newFilters)) {
+            const facet = facetConfig[filter.name]
+
+            if (facet?.type === 'term' || facet?.type === 'histogram') {
+                let isActive = true
+                if (Array.isArray(facet.aggregation.isActive)) {
+                    // Array of functions
+                    isActive = facet.aggregation.isActive.some((f) =>
+                        f(newFilters, authentication)
+                    )
+                } else if (typeof facet.aggregation.isActive === 'function') {
+                    // Function
+                    isActive = facet.aggregation.isActive(
+                        newFilters,
+                        authentication
+                    )
+                } else {
+                    // Boolean
+                    isActive = facet.aggregation.isActive
+                }
+                if (!isActive) {
+                    delete newFilters[filter.name]
+                }
+            }
         }
-        setState({ ...state, filters: newFilters })
+
+        setInputState({ ...inputState, filters: newFilters })
     }
 
     /**
      * Clears all filters.
      */
     function clearFilters() {
-        setState({ ...state, filters: {} })
+        setInputState({ ...inputState, filters: {} })
     }
 
     /**
@@ -185,7 +207,7 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @param {Object} sortConfig - The configuration for sorting.
      */
     function setSort(sortConfig) {
-        setState({ ...state, sort: sortConfig })
+        setInputState({ ...inputState, sort: sortConfig })
     }
 
     /**
@@ -193,7 +215,7 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @param {number} page - The page number to set.
      */
     function setPageNumber(page) {
-        setState({ ...state, pageNumber: page })
+        setInputState({ ...inputState, pageNumber: page })
     }
 
     /**
@@ -201,7 +223,7 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @param {number} size - The number of items per page.
      */
     function setPageSize(size) {
-        setState({ ...state, pageSize: size })
+        setInputState({ ...inputState, pageSize: size })
     }
 
     /**
@@ -209,7 +231,17 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @param {string} term - The search term to use.
      */
     function setSearchTerm(term) {
-        setState({ ...state, searchTerm: term, filters: {}, sort: undefined })
+        if (term === inputState.searchTerm) return
+        if (term === '') {
+            clearSearchTerm()
+            return
+        }
+        setInputState({
+            ...inputState,
+            searchTerm: term,
+            filters: {},
+            sort: undefined
+        })
     }
 
     /**
@@ -217,12 +249,32 @@ export function SearchUIProvider({ config, authenticated, children }) {
      * @param {boolean} [clearFilters=false] - Whether to clear the filters as well.
      */
     function clearSearchTerm(clearFilters = false) {
-        setState({
-            ...state,
-            filters: clearFilters ? {} : state.filters,
+        if (inputState.searchTerm === undefined) {
+            if (clearFilters && Object.keys(inputState.filters).length > 0) {
+                setInputState({ ...inputState, filters: {} })
+            }
+            return
+        }
+        setInputState({
+            ...inputState,
+            filters: clearFilters ? {} : inputState.filters,
             searchTerm: undefined,
             sort: config.initial?.sort
         })
+    }
+
+    /**
+     * Creates a facet configuration object.
+     * @param {Config} config - The configuration object.
+     * @returns {Record<string, FacetConfig>} The facet configuration object.
+     */
+    function createFacetConfig(config) {
+        /** @type {Record<string, FacetConfig>} */
+        const facetConfig = {}
+        for (const facet of config.facets) {
+            facetConfig[facet.name] = facet
+        }
+        return facetConfig
     }
 
     /**
@@ -233,28 +285,28 @@ export function SearchUIProvider({ config, authenticated, children }) {
      */
     function searchWithCurrentState() {
         search(
-            Object.values(state.filters),
+            inputState.filters,
             config,
             {
-                sort: state.sort,
-                from: (state.pageNumber - 1) * state.pageSize,
-                size: state.pageSize,
-                searchTerm: state.searchTerm
+                sort: inputState.sort,
+                from: (inputState.pageNumber - 1) * inputState.pageSize,
+                size: inputState.pageSize,
+                searchTerm: inputState.searchTerm
             },
-            authenticated
+            authentication
         )
     }
 
     /**
      * Executes a search with the provided filters, configuration, and search parameters.
      *
-     * @param {Filter[]} filters - An array of filter objects to apply to the search.
+     * @param {Record<string, Filter>} filters - Filter objects to apply to the search.
      * @param {Config} config - The configuration object for the search.
      * @param {SearchParams} params - The search parameters including sort order, pagination details, etc.
      * @param {AuthenticationState} authenticated - Indicates if the user is authenticated and authorized.
      */
     function search(filters, config, params, authenticated) {
-        setState({ ...state, loading: true })
+        setLoading(true)
         executeSearch(filters, config, params, authenticated)
             .then((res) => {
                 /**
@@ -279,20 +331,21 @@ export function SearchUIProvider({ config, authenticated, children }) {
                 }
                 const numberOfHits = res.hits.total?.value ?? newHits.length
 
-                setState({
-                    ...state,
-                    loading: false,
+                setLoading(false)
+                setOutputState({
+                    ...outputState,
                     aggregations: newAggregations,
                     hits: newHits,
                     totalHits: numberOfHits
                 })
+                setInitialized(true)
                 if (config.trackUrlState ?? false) {
                     // TODO: Update URL with filters, sort, page, etc.
                 }
             })
             .catch((error) => {
                 console.error(error)
-                setState({ ...state, loading: false })
+                setLoading(false)
             })
     }
 
@@ -300,21 +353,23 @@ export function SearchUIProvider({ config, authenticated, children }) {
         <SearchUIContext.Provider
             value={{
                 config: config,
-                loading: state.loading,
-                filters: state.filters,
-                aggregations: state.aggregations,
-                hits: state.hits,
-                totalHits: state.totalHits,
-                sort: state.sort,
-                pageNumber: state.pageNumber,
-                pageSize: state.pageSize,
-                searchTerm: state.searchTerm,
+                facetConfig: facetConfig,
+                authentication: authentication,
+                initialized: initialized,
+                loading: loading,
+                filters: inputState.filters,
+                aggregations: outputState.aggregations,
+                hits: outputState.hits,
+                totalHits: outputState.totalHits,
+                results: outputState,
+                sort: inputState.sort,
+                pageNumber: inputState.pageNumber,
+                pageSize: inputState.pageSize,
+                searchTerm: inputState.searchTerm,
                 getFilter,
                 hasFilter,
                 addFilter,
-                addFilters,
                 removeFilter,
-                removeFilters,
                 clearFilters,
                 setSort,
                 setPageNumber,

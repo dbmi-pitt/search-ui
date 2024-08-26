@@ -26,7 +26,7 @@ export default function Histogram({ bins, minValue, maxValue }) {
     const heightMultiplier = 100 / Math.max(...bins.map((bin) => bin.count))
 
     return (
-        <div className='d-flex flex-row align-items-end w-100 h-75'>
+        <div className='d-flex flex-row align-items-end w-100' style={{height: '8em'}}>
             {bins.map((bin, index) => (
                 <div
                     key={index}

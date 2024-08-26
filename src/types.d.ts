@@ -1,20 +1,23 @@
 // Aggregations
-export type Aggregation = TermAggregation | HistogramAggregation
+export type AggregationConfig =
+    | TermAggregationConfig
+    | HistogramAggregationConfig
 
-export type TermAggregation = {
+export type IsActiveFunction = (
+    filters: Record<string, Filter>,
+    authenticationState: AuthenticationState
+) => boolean
+
+export type TermAggregationConfig = {
     type: 'term'
-    isActive?:
-        | boolean
-        | ((filters: Filter[], authenticated: AuthenticationState) => boolean)
     size?: number
+    isActive?: boolean | IsActiveFunction | IsActiveFunction[]
 }
 
-export type HistogramAggregation = {
+export type HistogramAggregationConfig = {
     type: 'histogram'
-    isActive?:
-        | boolean
-        | ((filters: Filter[], authenticated: AuthenticationState) => boolean)
     interval: number
+    isActive?: boolean | IsActiveFunction | IsActiveFunction[]
 }
 
 export type AggregationBucket = {
@@ -33,17 +36,20 @@ export type Filter = TermFilter | ExistsFilter | RangeFilter | HistogramFilter
 
 export type TermFilter = {
     type: 'term'
+    name: string
     field: string
-    value: string
+    values: string[]
 }
 
 export type ExistsFilter = {
     type: 'exists'
+    name: string
     field: string
 }
 
 export type RangeFilter = {
     type: 'range'
+    name: string
     field: string
     gte?: number
     lte?: number
@@ -51,35 +57,72 @@ export type RangeFilter = {
 
 export type HistogramFilter = {
     type: 'histogram'
+    name: string
     field: string
     gte?: number
     lte?: number
 }
 
 // Facets
-export type FacetType = 'term' | 'daterange' | 'histogram'
+export type FacetConfig =
+    | TermFacetConfig
+    | DateRangeFacetConfig
+    | HistogramFacetConfig
 
-export type FacetConfig = {
+export type TermFacetConfig = {
     label: string
     name: string
     field: string
-    type: FacetType
-    aggregation?: Aggregation
+    type: 'term'
+    aggregation?: TermAggregationConfig
     transformFunction?: (value: string) => string
+    onExpandedStateChange?: (expanded: boolean) => void
     isVisible?:
         | boolean
         | ((
               filters: Record<string, Filter>,
-              aggregations: Record<string, AggregationBucket[]>
+              aggregations: Record<string, AggregationBucket[]>,
+              authenticationState: AuthenticationState
           ) => boolean)
     isOptionVisible?:
         | boolean
         | ((
               option: AggregationBucket,
               filters: Record<string, Filter>,
-              aggregations: Record<string, AggregationBucket[]>
+              aggregations: Record<string, AggregationBucket[]>,
+              authenticationState: AuthenticationState
           ) => boolean)
+}
+
+export type DateRangeFacetConfig = {
+    label: string
+    name: string
+    field: string
+    type: 'daterange'
     onExpandedStateChange?: (expanded: boolean) => void
+    isVisible?:
+        | boolean
+        | ((
+              filters: Record<string, Filter>,
+              aggregations: Record<string, AggregationBucket[]>,
+              authenticationState: AuthenticationState
+          ) => boolean)
+}
+
+export type HistogramFacetConfig = {
+    label: string
+    name: string
+    field: string
+    type: 'histogram'
+    aggregation?: HistogramAggregationConfig
+    onExpandedStateChange?: (expanded: boolean) => void
+    isVisible?:
+        | boolean
+        | ((
+              filters: Record<string, Filter>,
+              aggregations: Record<string, AggregationBucket[]>,
+              authenticationState: AuthenticationState
+          ) => boolean)
 }
 
 // Sort

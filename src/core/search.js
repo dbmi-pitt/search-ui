@@ -12,7 +12,7 @@ import esb from 'elastic-builder'
 /**
  * Executes a search query with the given filters, configuration, and parameters.
  *
- * @param {Filter[]} filters - An array of filters to apply to the search query.
+ * @param {Record<string, Filter>} filters - Filters to apply to the search query.
  * @param {Config} config - Configuration object containing connection details.
  * @param {SearchParams} params - Parameters for the search query including sorting, starting index, and size.
  * @param {AuthenticationState} authenticated - The authentication and authorization state of the user.
@@ -32,7 +32,7 @@ export async function executeSearch(filters, config, params, authenticated) {
         headers.append('Authorization', `Bearer ${token}`)
     }
 
-    const response = await fetch(config.connection.url, {
+    const response = await fetch(config.connection.url + '/search', {
         method: 'POST',
         headers: headers,
         body
@@ -43,7 +43,7 @@ export async function executeSearch(filters, config, params, authenticated) {
 /**
  * Creates the search body for a search request.
  *
- * @param {Filter[]} filters - An array of filter objects to apply to the search.
+ * @param {Record<string, Filter>} filters - Filter objects to apply to the search.
  * @param {Config} config - The configuration object containing connection details.
  * @param {SearchParams} params - The search parameters to include in the request.
  * @param {AuthenticationState} authenticated - The authentication and authorization state of the user.
@@ -56,10 +56,11 @@ function createSearchBody(filters, config, params, authenticated) {
     let queryFilters = undefined
     let postFilters = undefined
 
-    if (filters.length > 0) {
+    const filterArray = Object.values(filters)
+    if (filterArray.length > 0) {
         queryFilters = []
         postFilters = []
-        for (const filter of filters) {
+        for (const filter of filterArray) {
             if (filter.type === 'histogram') {
                 postFilters.push(mapFilter(filter))
             } else {
@@ -99,12 +100,29 @@ function createSearchBody(filters, config, params, authenticated) {
     if (config.facets) {
         aggs = []
         for (const facet of config.facets) {
+            if (facet.type === 'daterange') {
+                continue
+            }
+
             if (facet.aggregation) {
                 // Check if facet is active
-                const isActive =
-                    (typeof facet.aggregation.isActive === 'function'
-                        ? facet.aggregation.isActive(filters, authenticated)
-                        : facet.aggregation.isActive) ?? true
+                let isActive = true
+                if (Array.isArray(facet.aggregation.isActive)) {
+                    // Array of functions
+                    isActive = facet.aggregation.isActive.some((f) =>
+                        f(filters, authenticated)
+                    )
+                } else if (typeof facet.aggregation.isActive === 'function') {
+                    // Function
+                    isActive = facet.aggregation.isActive(
+                        filters,
+                        authenticated
+                    )
+                } else {
+                    // Boolean
+                    isActive = facet.aggregation.isActive
+                }
+
                 if (!isActive) {
                     continue
                 }
@@ -170,7 +188,7 @@ function createSearchBody(filters, config, params, authenticated) {
 
     console.log('Search body created in', performance.now() - start, 'ms')
 
-    return JSON.stringify(body.toJSON(), null, 2)
+    return JSON.stringify(body.toJSON())
 }
 
 /**
@@ -197,7 +215,7 @@ function mapFilter(filter) {
     switch (filter.type) {
         case 'term':
             const termFilter = filter
-            return esb.termQuery(termFilter.field, termFilter.value)
+            return esb.termsQuery(termFilter.field, termFilter.values)
 
         case 'exists':
             return esb.existsQuery(filter.field)

@@ -15,7 +15,8 @@ import TermFacet from './TermFacet'
  * @returns {JSX.Element} The rendered component
  */
 export default function FacetsContainer() {
-    const { config, filters, aggregations } = useSearchUIContext()
+    const { aggregations, authentication, config, filters, initialized } =
+        useSearchUIContext()
     const facets = config.facets ?? []
 
     /**
@@ -39,21 +40,26 @@ export default function FacetsContainer() {
 
     return (
         <>
-            {facets.map((facet) => {
-                const isFacetVisible =
-                    (typeof facet.isVisible === 'function'
-                        ? facet.isVisible(filters, aggregations)
-                        : facet.isVisible) ?? true
+            {initialized &&
+                facets.map((facet) => {
+                    const isFacetVisible =
+                        (typeof facet.isVisible === 'function'
+                            ? facet.isVisible(
+                                  filters,
+                                  aggregations,
+                                  authentication
+                              )
+                            : facet.isVisible) ?? true
 
-                if (!isFacetVisible) {
-                    return null
-                }
-                return (
-                    <FacetContainer key={facet.name} facet={facet}>
-                        {getFacet(facet)}
-                    </FacetContainer>
-                )
-            })}
+                    if (!isFacetVisible) {
+                        return null
+                    }
+                    return (
+                        <FacetContainer key={facet.name} facet={facet}>
+                            {getFacet(facet)}
+                        </FacetContainer>
+                    )
+                })}
         </>
     )
 }

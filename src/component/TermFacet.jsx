@@ -3,7 +3,7 @@ import { useSearchUIContext } from '../context/SearchUIContext'
 import TermFacetOption from './TermFacetOption'
 
 /**
- * @typedef {import('../types').FacetConfig} FacetConfig
+ * @typedef {import('../types').TermFacetConfig} TermFacetConfig
  */
 
 /**
@@ -14,7 +14,7 @@ import TermFacetOption from './TermFacetOption'
 
 /**
  * @typedef {Object} TermFacetProps
- * @property {FacetConfig} config - The configuration for the facet.
+ * @property {TermFacetConfig} config - The configuration for the facet.
  */
 
 /**
@@ -24,8 +24,8 @@ import TermFacetOption from './TermFacetOption'
  * @returns {JSX.Element} The rendered component.
  */
 export default function TermFacet({ config }) {
-    const { filters, aggregations } = useSearchUIContext()
-    const options = aggregations[config.field] ?? []
+    const { aggregations, authentication, filters } = useSearchUIContext()
+    const options = aggregations[config.name] ?? []
 
     return (
         <fieldset className='sui-facet js-gtm--facets'>
@@ -36,7 +36,8 @@ export default function TermFacet({ config }) {
                             ? config.isOptionVisible(
                                   option,
                                   filters,
-                                  aggregations
+                                  aggregations,
+                                  authentication
                               )
                             : config.isOptionVisible) ?? true
 

@@ -67,6 +67,8 @@ export default function DoubleSlider({
      * @param {React.MouseEvent | React.TouchEvent | React.KeyboardEvent} e - The end event from the slider input.
      */
     function handleSliderEnd(e) {
+        const target = /** @type {HTMLInputElement} */ (e.target)
+        target.blur()
         setBubbleValue(undefined)
         onRangeChange?.({ min: minValue, max: maxValue })
     }

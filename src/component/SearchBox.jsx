@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useSearchUIContext } from '../context/SearchUIContext'
 
 /**
  * @typedef {Object} SearchBoxProps
- * @property {string | undefined} initialValue - The initial value of the search input.
  * @property {string | undefined} placeholder - The placeholder text for the search input.
  */
 
@@ -12,24 +12,32 @@ import React, { useState } from 'react'
  * @param {SearchBoxProps} props - The properties for the component.
  * @returns {JSX.Element} The rendered search box component.
  */
-export default function SearchBox({ initialValue, placeholder }) {
-    const [value, setValue] = useState(initialValue || '')
+export default function SearchBox({ placeholder }) {
+    const { searchTerm, setSearchTerm, clearSearchTerm } = useSearchUIContext()
 
     /**
-     * Handles the change event for the input element.
+     * Handles the key down event for the input element.
      *
-     * @param {React.ChangeEvent<HTMLInputElement>} e - The change event object.
+     * @param {React.KeyboardEvent<HTMLInputElement>} e - The keyboard event object.
      */
-    function handleInputChange(e) {
-        setValue(e.target.value)
+    function handleKeyDown(e) {
+        if (e.key === 'Enter') {
+            const target = /** @type {HTMLInputElement} */ (e.target)
+            const searchTerm = target.value.trim()
+            if (searchTerm === '') {
+                clearSearchTerm()
+            } else {
+                setSearchTerm(searchTerm)
+            }
+        }
     }
 
     return (
         <div className='react-es-searchbox'>
             <input
                 type='text'
-                value={value}
-                onChange={handleInputChange}
+                value={searchTerm || ''}
+                onKeyDown={handleKeyDown}
                 placeholder={placeholder || 'search…'}
             />
         </div>

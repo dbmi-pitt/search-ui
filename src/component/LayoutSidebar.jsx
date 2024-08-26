@@ -30,7 +30,7 @@ export default function LayoutSidebar({ className, children }) {
      * @returns {React.ReactNode | null} The toggle button element or null if no children are present.
      */
     function renderToggleButton(label) {
-        if (!this.props.children) return null
+        if (!children) return null
 
         return (
             <button
