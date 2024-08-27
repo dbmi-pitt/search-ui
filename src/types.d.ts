@@ -29,6 +29,7 @@ export type AggregationBucket = {
 export type AuthenticationState = {
     isAuthenticated: boolean
     isAuthorized: boolean
+    isAdmin: boolean
 }
 
 // Filters
