@@ -33,11 +33,19 @@ import { executeSearch } from '../core/search'
  * @property {(filter: Filter) => void} addFilter
  * @property {(name: string) => void} removeFilter
  * @property {() => void} clearFilters
+ * @property {(params: PageParams) => void} setPageParams
  * @property {(sortConfig: SortConfig) => void} setSort
  * @property {(page: number) => void} setPageNumber
  * @property {(size: number) => void} setPageSize
  * @property {(term: string) => void} setSearchTerm
  * @property {(clearFilters?: boolean) => void} clearSearchTerm
+ */
+
+/**
+ * @typedef {Object} PageParams
+ * @property {number} [pageNumber] - The page number.
+ * @property {number} [pageSize] - The page size.
+ * @property {SortConfig} [sort] - The sort configuration.
  */
 
 /**
@@ -203,8 +211,35 @@ export function SearchUIProvider({ config, authentication, children }) {
     }
 
     /**
+     * Sets the page parameters.
+     * @param {PageParams} params - The page parameters.
+     */
+    function setPageParams(params) {
+        if (!params) return
+        if (
+            params.pageNumber === undefined &&
+            params.pageSize === undefined &&
+            params.sort === undefined
+        )
+            return
+        if (
+            params.pageNumber === inputState.pageNumber &&
+            params.pageSize === inputState.pageSize &&
+            params.sort.field === inputState.sort.field &&
+            params.sort.order === inputState.sort.order
+        )
+            return
+
+        const pageNumber = params.pageNumber ?? inputState.pageNumber
+        const pageSize = params.pageSize ?? inputState.pageSize
+        const sort = params.sort ?? inputState.sort
+
+        setInputState({ ...inputState, pageNumber, pageSize, sort })
+    }
+
+    /**
      * Sets the sort configuration.
-     * @param {Object} sortConfig - The configuration for sorting.
+     * @param {SortConfig} sortConfig - The configuration for sorting.
      */
     function setSort(sortConfig) {
         setInputState({ ...inputState, sort: sortConfig })
@@ -371,6 +406,7 @@ export function SearchUIProvider({ config, authentication, children }) {
                 addFilter,
                 removeFilter,
                 clearFilters,
+                setPageParams,
                 setSort,
                 setPageNumber,
                 setPageSize,
