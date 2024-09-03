@@ -63,6 +63,10 @@ const HierarchicalCheckboxOptionFacet = ({
         setIsExpanded(!isExpanded)
     }
 
+    if (option.subvalues.length === 0) {
+        return null
+    }
+
     return (
         <div className='d-flex flex-column align-items-start w-100'>
             {/* Label and checkbox */}
