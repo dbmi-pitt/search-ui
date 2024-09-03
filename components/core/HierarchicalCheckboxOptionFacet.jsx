@@ -13,10 +13,10 @@ const HierarchicalCheckboxOptionFacet = ({
     const [isExpanded, setIsExpanded] = useState(false)
 
     const getOptionCheckedState = () => {
-        let checked = true
+        let checked = false
         for (const subval of option.subvalues) {
-            if (!filterExists(field, subval.value)) {
-                checked = false
+            if (filterExists(field, subval.value)) {
+                checked = true
                 break
             }
         }
