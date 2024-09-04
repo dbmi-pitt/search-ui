@@ -366,6 +366,9 @@ export function SearchUIProvider({ config, authentication, children }) {
                 const newHits = Array(res.hits.hits.length)
                 for (let i = 0; i < res.hits.hits.length; i++) {
                     newHits[i] = res.hits.hits[i]._source
+                    if (newHits[i]._id === undefined) {
+                        newHits[i]._id = res.hits.hits[i]._id
+                    }
                 }
                 const numberOfHits = res.hits.total?.value ?? newHits.length
 
