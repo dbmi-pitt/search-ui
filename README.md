@@ -13,8 +13,14 @@ const config = {
 
 // Main Component
 function MainComponent() {
+    const auth = {
+        isAuthenticated: true,
+        isAuthorized: true,
+        isAdmin: false
+    }
+
     return (
-        <SearchUIProvider config={config}>
+        <SearchUIProvider config={config} authentication={auth}>
             <Layout
                 header={<>/* Header content goes here */</>}
                 sideContent={<FacetsContainer />}
