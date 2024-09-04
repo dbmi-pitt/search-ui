@@ -51,7 +51,7 @@ import { executeSearch } from '../core/search'
 /**
  * Context for managing the state and behavior of the search UI.
  *
- * @type {React.Context<SearchUIContent | undefined>}
+ * @type {React.Context<SearchUIContent>}
  */
 const SearchUIContext = createContext(undefined)
 
@@ -88,21 +88,24 @@ export function useSearchUIContext() {
  */
 
 /**
+ * @typedef {Object} SearchUIProviderProps
+ * @property {Config} config - The configuration object for the search UI.
+ * @property {AuthenticationState} authentication - Indicates if the user is authenticated and authorized.
+ * @property {React.ReactNode} children - The child components to be wrapped by the provider.
+ */
+
+/**
  * Provider component for the SearchUIContext.
  *
- * @param {Object} props - The properties object.
- * @param {Config} props.config - The configuration object for the search UI.
- * @param {AuthenticationState} props.authentication- Indicates if the user is authenticated and authorized.
- * @param {React.ReactNode} props.children - The child components to be wrapped by the provider.
+ * @param {SearchUIProviderProps} props - The properties object.
  *
  * @returns {JSX.Element} The provider component that wraps its children with the SearchUIContext.
  */
 export function SearchUIProvider({ config, authentication, children }) {
-    const facetConfig = createFacetConfig(config)
-
     const [initialized, setInitialized] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const facetConfig = createFacetConfig(config)
     /**
      * State variable for managing the search UI state.
      * @type {[SearchUIInputState, React.Dispatch<React.SetStateAction<SearchUIInputState>>]}
