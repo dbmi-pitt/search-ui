@@ -225,12 +225,21 @@ export function SearchUIProvider({ config, authentication, children }) {
             params.sort === undefined
         )
             return
-        if (
-            params.pageNumber === inputState.pageNumber &&
-            params.pageSize === inputState.pageSize &&
-            params.sort.field === inputState.sort.field &&
-            params.sort.order === inputState.sort.order
-        )
+
+        let searchNeedsUpdate = false
+        if (params.pageNumber !== undefined && params.pageNumber !== inputState.pageNumber) {
+            searchNeedsUpdate = true
+        }
+        if (params.pageSize !== undefined && params.pageSize !== inputState.pageSize) {
+            searchNeedsUpdate = true
+        }
+        if (params.sort?.field !== undefined && params.sort?.field !== inputState.sort.field) {
+            searchNeedsUpdate = true
+        }
+        if (params.sort?.order !== undefined && params.sort?.order !== inputState.sort.order) {
+            searchNeedsUpdate = true
+        }
+        if (searchNeedsUpdate === false)
             return
 
         const pageNumber = params.pageNumber ?? inputState.pageNumber
