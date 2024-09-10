@@ -160,6 +160,7 @@ export type Config = {
         pageNumber?: number
         pageSize?: number
     }
+    pageSizeOptions?: number[]
     onStateChange?: (state: SearchUICallbackState) => void
 }
 

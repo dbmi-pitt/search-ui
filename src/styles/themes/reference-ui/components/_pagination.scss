@@ -1,0 +1,88 @@
+@include block('pagination') {
+  @include themeTypography;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  color: rgba(0, 0, 0, 0.54);
+  fill: rgba(0, 0, 0, 0.54);
+  font-size: 13px;
+
+  .rows-per-page {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+
+  .rows-dropdown {
+    position: relative;
+    flex-shrink: 0;
+    font-size: inherit;
+    color: inherit;
+    margin-top: 1px;
+
+    select {
+      cursor: pointer;
+      height: 24px;
+      max-width: 100%;
+      user-select: none;
+      padding-left: 8px;
+      padding-right: 24px;
+      box-sizing: content-box;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+      background-color: transparent;
+      appearance: none;
+      direction: ltr;
+      margin: 0;
+    }
+
+    svg {
+      top: 0;
+      right: 0;
+      color: inherit;
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      user-select: none;
+      pointer-events: none;
+    }
+  }
+
+  .range {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
+
+  .btn-container {
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    white-space: nowrap;
+
+    button {
+      position: relative;
+      display: block;
+      user-select: none;
+      border: none;
+      border-radius: 50%;
+      height: 40px;
+      width: 40px;
+      padding: 8px;
+      margin: px;
+      cursor: pointer;
+      transition: 0.4s;
+      color: rgba(0, 0, 0, .54);
+      fill: rgba(0, 0, 0, .54);
+      background-color: transparent;
+    }
+
+    button:disabled,
+    button[disabled] {
+      cursor: unset;
+      color: rgba(0, 0, 0, .18);
+      fill: rgba(0, 0, 0, .18);
+    }
+  }
+}
