@@ -17,9 +17,10 @@ export default function Pagination({ className, ...rest }) {
     const end = Math.min(pageNumber * pageSize, totalHits)
     const lastPageNumber = Math.ceil(totalHits / pageSize)
 
-    const filteredOptions = pageSizeOptions.filter(
-        (option) => option <= totalHits
-    )
+    let filteredOptions = pageSizeOptions.filter((opt) => opt <= totalHits)
+    if (filteredOptions.length === 0) {
+        filteredOptions = [Math.min(...pageSizeOptions)]
+    }
 
     function handlePrevPageClick() {
         setPageNumber(pageNumber - 1)
