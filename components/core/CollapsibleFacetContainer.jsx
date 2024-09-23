@@ -76,7 +76,7 @@ export class CollapsibleFacetContainer extends React.Component {
             this.props
 
         let viewProps
-        if (facet.uiType !== 'daterange') {
+        if (facet.facetType !== 'daterange') {
             const facets = this.context.getFacetData()
             const facetsForField = facets[field]
 

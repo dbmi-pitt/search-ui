@@ -15,9 +15,9 @@ const NumericRangeFacet = ({ field, facet }) => {
     } = useContext(SearchUIContext)
 
     const valueInterval =
-        typeof facet.uiInterval == 'function'
-            ? facet.uiInterval(filters)
-            : (facet.uiInterval || 1)
+        typeof facet.aggregation?.interval == 'function'
+            ? facet.aggregation.interval(filters)
+            : (facet.aggregation?.interval || 1)
 
     const [valueRange, setValueRange] = useState(facet.uiRange || [0, 100])
     const [values, setValues] = useState(getInitialValues())

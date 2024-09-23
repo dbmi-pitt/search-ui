@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from 'react'
+import React, { useContext } from 'react'
 import SearchUIContext from './SearchUIContext'
 import CollapsibleFacetContainer from './CollapsibleFacetContainer'
 import CheckboxFacet from './CheckboxFacet'
@@ -6,7 +6,7 @@ import DateRangeFacet from './DateRangeFacet'
 import NumericRangeFacet from './NumericRangeFacet'
 
 const Facets = ({ transformFunction }) => {
-    const { getFacets, getConditionalFacets, filters } = useContext(SearchUIContext)
+    const { aggregations, authState, getFacets, getConditionalFacets, filters } = useContext(SearchUIContext)
 
     function formatVal(id) {
         if (typeof id === 'string') {
@@ -15,60 +15,65 @@ const Facets = ({ transformFunction }) => {
         return id
     }
 
-    function isFacetVisible(field) {
+    function isFacetVisible(name) {
         const conditionalFacets = getConditionalFacets()
-        if (conditionalFacets.hasOwnProperty(field)) {
-            const predicate = conditionalFacets[field]
-            if (filters) {
-                return predicate({ filters })
-            } else {
-                return false
-            }
+        const predicate = conditionalFacets[name]
+        if (!predicate) {
+            return true
         }
-        return true
+        return predicate({ filters, aggregations, authState })
     }
+
+    function createFacet(name, facet) {
+        switch (facet.facetType) {
+            case 'term':
+                return (
+                    <CollapsibleFacetContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        transformFunction={transformFunction}
+                        formatVal={formatVal}
+                        view={CheckboxFacet}
+                    />
+                )
+            case 'daterange':
+                return (
+                    <CollapsibleFacetContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        transformFunction={transformFunction}
+                        formatVal={formatVal}
+                        view={DateRangeFacet}
+                    />
+                )
+            case 'histogram':
+                return (
+                    <CollapsibleFacetContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        transformFunction={transformFunction}
+                        formatVal={formatVal}
+                        view={NumericRangeFacet}
+                    />
+                )
+            default:
+                return null
+        }
+    }
+
+
 
     return (
         <>
-            {Object.entries(getFacets()).map(([field, facet]) => {
-                if (!isFacetVisible(field)) {
-                    return <Fragment key={field}></Fragment>
+            {Object.entries(getFacets()).map(([name, facet]) => {
+                if (!isFacetVisible(name)) {
+                    return null;
                 }
 
-                if (facet.uiType === 'daterange') {
-                    return (
-                        <CollapsibleFacetContainer
-                            key={field}
-                            field={field}
-                            facet={facet}
-                            transformFunction={transformFunction}
-                            formatVal={formatVal}
-                            view={DateRangeFacet}
-                        />
-                    )
-                } else if (facet.uiType === 'numrange') {
-                    return (
-                        <CollapsibleFacetContainer
-                            key={field}
-                            field={field}
-                            facet={facet}
-                            transformFunction={transformFunction}
-                            formatVal={formatVal}
-                            view={NumericRangeFacet}
-                        />
-                    )                
-                } else {
-                    return (
-                        <CollapsibleFacetContainer
-                            key={field}
-                            field={field}
-                            facet={facet}
-                            transformFunction={transformFunction}
-                            formatVal={formatVal}
-                            view={CheckboxFacet}
-                        />
-                    )
-                }
+                return createFacet(name, facet);
             })}
         </>
     )

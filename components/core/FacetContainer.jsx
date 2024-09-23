@@ -57,7 +57,7 @@ export class FacetContainer extends React.Component {
       view,
       isFilterable,
       a11yNotify,
-      uiType,
+      facetType,
       ...rest
     } = this.props;
     const facetsForField = facets[field];
@@ -74,14 +74,14 @@ export class FacetContainer extends React.Component {
       field,
       filterType
     ).data;
-    
+
     let selectedValues = facetValues
-    if (uiType !== "daterange" && uiType !== "numrange") {
+    if (facetType !== "daterange" && facetType !== "histogram") {
       // Checkbox
       selectedValues = facetValues
         .filter((fv) => fv.selected)
         .map((fv) => fv.value);
-  
+
       if (!facetValues.length && !selectedValues.length) return null;
     }
 

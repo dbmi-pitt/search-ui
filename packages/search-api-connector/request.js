@@ -1,24 +1,17 @@
 export default async function request(engineKey, method, path, params, token, indexUrl, indexName) {
-  const headers = (token ? (
-      new Headers({
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      })
-  ) : (new Headers({
-        "Content-Type": "application/json"
-      })
-  ));
+  const headers = new Headers({
+    "Content-Type": "application/json"
+  });
+  if (token) {
+    headers.set("Authorization", "Bearer " + token);
+  }
 
-  const response = await fetch(
-     `${indexUrl}${indexName}${path}`,
-    {
+  const response = await fetch(`${indexUrl}${indexName}${path}`, {
       method,
       headers,
       body: JSON.stringify({
-   //     engine_key: engineKey,
         ...params
       })
-//      credentials: "include"
     }
   );
 

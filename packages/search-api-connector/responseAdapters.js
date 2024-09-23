@@ -13,7 +13,7 @@ export function getFacets(results) {
   let facet = {}
 
   let agg_list = Object.entries(results.aggregations);
-  
+
   agg_list.forEach((agg) => {
       let aggregate = []
       let facet_name = agg[0]
@@ -74,7 +74,7 @@ export function transformResults(records, indexName, state) {
   let total = records["hits"]["total"].value;
 
   result["record_count"] = total;
- 
+
   // set the records
   let hits = records["hits"]["hits"].map(transform);
   docType[indexName] = hits
@@ -100,9 +100,9 @@ export function transformResults(records, indexName, state) {
 // you must have an "id" field for search-ui to uniquely display the records
 // so just add it from _id;  change this field depending on the key
 export function transform(item, index) {
-  
+
   let data = item["_source"]
-  data["id"] = item["_id"]   
+  data["id"] = item["_id"]
   return data
 }
 
@@ -125,7 +125,7 @@ export function getResults(records, indexName) {
         Object.entries(highlight).forEach(([key, value]) => {
           result[key].snippet = value;
         });
-     
+
       }
       return result;
   });

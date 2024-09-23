@@ -1,4 +1,4 @@
-import { es_query_builder } from '../../lib/search-tools';
+import { es_query_builder, esQueryBuilder } from '../../lib/search-tools';
 
 /**
  * @typedef {import('../../lib/search-tools').QueryConfig} QueryConfig
@@ -13,5 +13,5 @@ import { es_query_builder } from '../../lib/search-tools';
  * @returns {Object} - The transformed search request object.
  */
 export default function customAdaptRequest(request, queryConfig) {
-  return es_query_builder(request, queryConfig);
+  return esQueryBuilder(request, queryConfig);
 }

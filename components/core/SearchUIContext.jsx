@@ -7,7 +7,7 @@ const SearchUIContext = createContext()
  * Provider to get access to the SearchUIContext
  * @param {string} name The name of the search UI. This is used to namespace local storage. If not provided, local storage will not be used.
  */
-export function SearchUIProvider({ name, children }) {
+export function SearchUIProvider({ name, authState, children }) {
     // Used to check if local storage should be cleared
     const LOCAL_SCHEMA_VERSION = 1
 
@@ -48,16 +48,14 @@ export function SearchUIProvider({ name, children }) {
     function removeInvalidConditionalFacets() {
         const conditionalFacets = driver.searchQuery.conditionalFacets
         const filters = getFilters()
-        filters.forEach((filter) => {
-            if (conditionalFacets.hasOwnProperty(filter.field)) {
-                const predicate = conditionalFacets[filter.field]
-                if (!predicate({ filters })) {
-                    filter.values.forEach((value) => {
-                        removeFilter(filter.field, value)
-                    })
+        for (const filter of filters) {
+            const predicate = conditionalFacets[filter.field]
+            if (predicate && !predicate({ filters, aggregations, authState })) {
+                for (const value of filter.values) {
+                    removeFilter(filter.field, value)
                 }
             }
-        })
+        }
     }
 
     // Facets
@@ -128,7 +126,7 @@ export function SearchUIProvider({ name, children }) {
                 type: facet.type,
                 filterType: facet.filterType,
                 label: facet.label,
-                uiType: facet.uiType || 'checkbox'
+                facetType: facet.facetType || 'term'
             }
         })
     }
@@ -171,7 +169,7 @@ export function SearchUIProvider({ name, children }) {
             type: facet.type,
             filterType: facet.filterType,
             label: facet.label,
-            uiType: facet.uiType || 'checkbox'
+            facetType: facet.facetType || 'term'
         }
     }
 
@@ -334,7 +332,7 @@ export function SearchUIProvider({ name, children }) {
         if (!name) return {}
         return JSON.parse(localStorage.getItem(`${name}.settings`)) || {}
     }
-    
+
     /**
      * @param {string} field The facet field
      * @returns {boolean} Whether or not the facet is expanded 
@@ -362,6 +360,7 @@ export function SearchUIProvider({ name, children }) {
     return (
         <SearchUIContext.Provider
             value={{
+                authState,
                 getFacets,
                 getConditionalFacets,
                 getFacetData,
