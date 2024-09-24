@@ -12,6 +12,6 @@ import { es_query_builder, esQueryBuilder } from '../../lib/search-tools';
  * @param {QueryConfig} queryConfig - The configuration for the query.
  * @returns {Object} - The transformed search request object.
  */
-export default function customAdaptRequest(request, queryConfig) {
-  return esQueryBuilder(request, queryConfig);
+export default function customAdaptRequest(request, queryConfig, authState) {
+  return esQueryBuilder(request, queryConfig, authState);
 }

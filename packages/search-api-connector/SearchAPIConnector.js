@@ -56,6 +56,11 @@ class SearchAPIConnector {
         beforeAutocompleteResultsCall = (queryOptions, next) =>
             next(queryOptions)
     }) {
+        this.authState = {
+            isAuthenticated: false,
+            isAuthorized: false,
+            isAdmin: false
+        }
         this.indexName = indexName
         this.indexUrl = indexUrl
         this.accessToken = accessToken
@@ -93,7 +98,7 @@ class SearchAPIConnector {
     }
 
     onSearch(state, queryConfig) {
-        const options = customAdaptRequest(state, queryConfig)
+        const options = customAdaptRequest(state, queryConfig, this.authState)
 
         log.info("I'm HERE:  onSearch", options)
         return this.beforeSearchCall(options, (newOptions) =>
