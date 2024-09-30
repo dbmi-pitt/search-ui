@@ -20,6 +20,8 @@ export function getFacets(results) {
       let buckets = null
       if(agg[1].hasOwnProperty("buckets")) {
           buckets = agg[1].buckets
+      } else if (agg[1].hasOwnProperty(facet_name)) {
+          buckets = agg[1][facet_name].buckets
       } else {
           let keys = Object.keys(agg[1])
           keys = keys.filter(val => val !== "doc_count" && val !== "meta");
@@ -36,8 +38,8 @@ export function getFacets(results) {
           const c = b["doc_count"]
           bucket_list[i] = {"value": k, "count": c};
 
-          if (b.hasOwnProperty("sub_aggs")) {
-            const sub_aggs = b["sub_aggs"].buckets
+          if (b.hasOwnProperty("subagg")) {
+            const sub_aggs = b["subagg"].buckets
             const sub_bucket_list = sub_aggs.map((sb) => {
               return {"value": sb["key"], "count": sb["doc_count"]}; 
             });
@@ -79,22 +81,33 @@ export function transformResults(records, indexName, state) {
   let hits = records["hits"]["hits"].map(transform);
   docType[indexName] = hits
   result["records"] = docType
-  result["aggregations"] = records.aggregations
+
+  const aggs = {}
+  for (const [key, value] of Object.entries(records.aggregations)) {
+    if (value.hasOwnProperty(key)) {
+      // Aggregations that create post filters (histogram) will have an inner object with the name as key
+      aggs[key] = value[key]
+    } else {
+      aggs[key] = value
+    }
+  }
+  result["aggregations"] = aggs
 
   // set info block
   let info = new Object();
-  info[indexName] = {"total_result_count": total, 
-          "query": "test", 
-          "current_page": state.current,
-          "num_pages": total/state.resultsPerPage,
-          "per_page": state.resultsPerPage,
-          "facets": {}}
+  info[indexName] = {
+    "total_result_count": total,
+      "query": "test",
+      "current_page": state.current,
+      "num_pages": total/state.resultsPerPage,
+      "per_page": state.resultsPerPage,
+      "facets": {}
+  }
   result["info"] = info
   result["errors"] = {}
 
   log.info("result", result)
   return result;
-
 }
 
 // you must have an "id" field for search-ui to uniquely display the records

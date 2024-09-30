@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import { convertListToArray } from "../../lib/utils";
-import log from "loglevel";
 
 const MultiSelection = (props) => {
   const [selected, setSelected] = useState([]);

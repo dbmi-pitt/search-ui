@@ -1,12 +1,15 @@
-import React, { useContext } from 'react'
-import SearchUIContext from './SearchUIContext'
 import CollapsibleFacetContainer from './CollapsibleFacetContainer'
-import CheckboxFacet from './CheckboxFacet'
 import DateRangeFacet from './DateRangeFacet'
-import NumericRangeFacet from './NumericRangeFacet'
+import HierarchyFacet from './HierarchyFacet'
+import HistogramFacet from './HistogramFacet'
+import { useSearchUIContext } from './SearchUIContext'
+import TermFacet from './TermFacet'
+
+const DEFAULT_FACET_VISIBLE = true
 
 const Facets = ({ transformFunction }) => {
-    const { aggregations, authState, getFacets, getConditionalFacets, filters } = useContext(SearchUIContext)
+    const { aggregations, authState, facetConfig, filters } =
+        useSearchUIContext()
 
     function formatVal(id) {
         if (typeof id === 'string') {
@@ -15,13 +18,20 @@ const Facets = ({ transformFunction }) => {
         return id
     }
 
-    function isFacetVisible(name) {
-        const conditionalFacets = getConditionalFacets()
-        const predicate = conditionalFacets[name]
-        if (!predicate) {
-            return true
+    function isFacetVisible(facetConfig) {
+        if (!facetConfig.isFacetVisible) {
+            return DEFAULT_FACET_VISIBLE
         }
-        return predicate({ filters, aggregations, authState })
+        const predicate = facetConfig.isFacetVisible
+        if (typeof predicate === 'function') {
+            return predicate(filters, aggregations, authState)
+        } else if (typeof predicate === 'boolean') {
+            return predicate
+        } else {
+            throw new Error(
+                'Facet isFacetVisible must be a boolean or a function'
+            )
+        }
     }
 
     function createFacet(name, facet) {
@@ -30,11 +40,22 @@ const Facets = ({ transformFunction }) => {
                 return (
                     <CollapsibleFacetContainer
                         key={name}
+                        facet={facet}
+                        field={name}
+                        formatVal={formatVal}
+                        transformFunction={transformFunction}
+                        view={TermFacet}
+                    />
+                )
+            case 'hierarchy':
+                return (
+                    <CollapsibleFacetContainer
+                        key={name}
                         field={name}
                         facet={facet}
                         transformFunction={transformFunction}
                         formatVal={formatVal}
-                        view={CheckboxFacet}
+                        view={HierarchyFacet}
                     />
                 )
             case 'daterange':
@@ -56,7 +77,7 @@ const Facets = ({ transformFunction }) => {
                         facet={facet}
                         transformFunction={transformFunction}
                         formatVal={formatVal}
-                        view={NumericRangeFacet}
+                        view={HistogramFacet}
                     />
                 )
             default:
@@ -64,16 +85,14 @@ const Facets = ({ transformFunction }) => {
         }
     }
 
-
-
     return (
         <>
-            {Object.entries(getFacets()).map(([name, facet]) => {
-                if (!isFacetVisible(name)) {
-                    return null;
+            {Object.entries(facetConfig).map(([name, facet]) => {
+                if (!isFacetVisible(facet)) {
+                    return null
                 }
 
-                return createFacet(name, facet);
+                return createFacet(name, facet)
             })}
         </>
     )
