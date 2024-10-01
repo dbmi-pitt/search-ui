@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSearchUIContext } from './SearchUIContext'
 import TermOptionFacet from './TermOptionFacet'
 
@@ -27,15 +27,25 @@ export default function TermFacet({
     facet,
     field,
     formatVal,
-    transformFunction,
+    transformFunction
 }) {
     const { aggregations, authState, filters } = useSearchUIContext()
     const options = aggregations[field]?.buckets ?? []
 
+    const [moreExpanded, setMoreExpanded] = useState(false)
+
+    function handleMoreClick() {
+        setMoreExpanded(!moreExpanded)
+    }
+
     return (
         <fieldset className='sui-facet js-gtm--facets'>
             <div className='sui-multi-checkbox-facet'>
-                {options.map((option) => {
+                {options.map((option, idx) => {
+                    if (idx >= 5 && !moreExpanded) {
+                        return null
+                    }
+
                     const isOptionVisible =
                         (typeof facet.isOptionVisible === 'function'
                             ? facet.isOptionVisible(
@@ -62,6 +72,18 @@ export default function TermFacet({
                     )
                 })}
             </div>
+
+            {/* More button */}
+            {options.length > 5 && !moreExpanded && (
+                <button
+                    type='button'
+                    class='sui-facet-view-more'
+                    aria-label='Show more options'
+                    onClick={handleMoreClick}
+                >
+                    + More
+                </button>
+            )}
         </fieldset>
     )
 }
