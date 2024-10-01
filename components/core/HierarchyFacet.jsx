@@ -1,5 +1,6 @@
 import HierarchyOptionFacet from './HierarchyOptionFacet'
 import { useSearchUIContext } from './SearchUIContext'
+import TermOptionFacet from './TermOptionFacet'
 
 /**
  * @typedef {import('../types').TermFacetConfig} TermFacetConfig
@@ -50,9 +51,30 @@ export default function HierarchyFacet({
                     if (!isOptionVisible) {
                         return null
                     }
+
+                    let isHierarchical = facet.isHierarchyOption ?? true
+                    if (typeof isHierarchical === 'function') {
+                        isHierarchical = isHierarchical(option.key)
+                    }
+
+                    if (!isHierarchical) {
+                        const firstBucket = option.subagg.buckets[0]
+                        return (
+                            <TermOptionFacet
+                                key={option.key}
+                                facet={facet}
+                                field={field}
+                                formatVal={formatVal}
+                                transformFunction={transformFunction}
+                                value={firstBucket.key}
+                                count={firstBucket.doc_count}
+                            />
+                        )
+                    }
+
                     return (
                         <HierarchyOptionFacet
-                            key={option.value}
+                            key={option.key}
                             facet={facet}
                             field={field}
                             formatVal={formatVal}
