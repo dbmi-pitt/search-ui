@@ -1,8 +1,7 @@
 import { getFacets, getResults, transformResults } from "./responseAdapters";
-import log from "loglevel";
 
 export default function adaptResponse(response, indexName, state) {
-  
+
   // transform from pure ES results
   const transFormedResults = transformResults(response, indexName, state);
 

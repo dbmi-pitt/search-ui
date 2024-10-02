@@ -1,6 +1,5 @@
-import React from "react";
-import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip} from 'chart.js';
-import {Bar} from "react-chartjs-2";
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
+import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
     CategoryScale,
@@ -11,9 +10,8 @@ ChartJS.register(
     Legend
 );
 
-const Histogram = ({data, values}) => {
+const Histogram = ({ data, values }) => {
     const render = () => {
-
         const bins = Array(data.length)
         const counts = Array(data.length)
         for (let i = 0; i < data.length; i++) {
@@ -37,7 +35,6 @@ const Histogram = ({data, values}) => {
                 }
             ]
         };
-        barData.labels.sort()
 
         const options = {
             animation: {
