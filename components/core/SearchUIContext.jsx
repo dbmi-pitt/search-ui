@@ -108,10 +108,8 @@ export function SearchUIProvider({ name, authState, children }) {
         }
     }
 
-    function setFilters(filters) {
-        for (const filter of filters) {
-            setFilter(filter.field, filter.values)
-        }
+    function clearSearchTerm(shouldClearFilters = true) {
+        driver.actions.setSearchTerm("", { shouldClearFilters })
     }
 
     function addFilter(field, value) {
@@ -160,6 +158,7 @@ export function SearchUIProvider({ name, authState, children }) {
                 aggregations: aggregations,
                 rawResponse: driver.state.rawResponse || {},
 
+                clearSearchTerm: clearSearchTerm,
                 addFilter,
                 setFilter,
                 removeFilter,
