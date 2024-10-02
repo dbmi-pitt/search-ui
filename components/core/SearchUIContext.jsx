@@ -94,15 +94,21 @@ export function SearchUIProvider({ name, authState, children }) {
             const facet = driver.searchQuery.facets[field]
             if (!facet) continue
 
-            if (typeof facet.isAggregationActive === 'function') {
-                const isActive = facet.isAggregationActive(
-                    driver.state.filters,
-                    authState
-                )
-                if (!isActive) {
-                    for (const value of filter.values) {
-                        removeFilter(field, value)
-                    }
+            let isAggregationActive = true
+            if (Array.isArray(facet.isAggregationActive)) {
+                // Array of functions
+                isAggregationActive = facet.isAggregationActive.some((f) => f(driver.state.filters, authState))
+            } else if (typeof facet.isAggregationActive === 'function') {
+                // Function
+                isAggregationActive = facet.isAggregationActive(driver.state.filters, authState)
+            } else if (typeof facet.isAggregationActive === 'boolean') {
+                // Boolean
+                isAggregationActive = facet.isAggregationActive
+            }
+
+            if (!isAggregationActive) {
+                for (const value of filter.values) {
+                    removeFilter(field, value)
                 }
             }
         }
