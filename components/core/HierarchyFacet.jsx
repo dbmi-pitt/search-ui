@@ -72,6 +72,11 @@ export default function HierarchyFacet({
                         )
                     }
 
+                    let subValues = option.subagg.buckets
+                    if (facet.filterSubValues) {
+                        subValues = facet.filterSubValues(option.key, subValues)
+                    }
+
                     return (
                         <HierarchyOptionFacet
                             key={option.key}
@@ -81,7 +86,7 @@ export default function HierarchyFacet({
                             transformFunction={transformFunction}
                             value={option.key}
                             count={option.doc_count}
-                            subValues={option.subagg.buckets}
+                            subValues={subValues}
                         />
                     )
                 })}
