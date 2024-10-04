@@ -58,7 +58,12 @@ export default function HierarchyFacet({
                     }
 
                     if (!isHierarchical) {
-                        const firstBucket = option.subagg.buckets[0]
+                        let subValues = option.subagg.buckets
+                        if (facet.filterSubValues) {
+                            subValues = facet.filterSubValues(option.key, subValues)
+                        }
+
+                        const firstBucket = subValues[0]
                         return (
                             <TermOptionFacet
                                 key={option.key}
