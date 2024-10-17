@@ -77,7 +77,7 @@ export default function TermFacet({
             {options.length > 5 && !moreExpanded && (
                 <button
                     type='button'
-                    class='sui-facet-view-more'
+                    className='sui-facet-view-more'
                     aria-label='Show more options'
                     onClick={handleMoreClick}
                 >
