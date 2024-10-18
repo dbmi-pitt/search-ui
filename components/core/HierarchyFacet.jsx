@@ -63,6 +63,11 @@ export default function HierarchyFacet({
                             subValues = facet.filterSubValues(option.key, subValues)
                         }
 
+                        if (subValues.length === 0) {
+                            console.error('No HierarchyFacet subvalues found for option', option)
+                            return null
+                        }
+
                         const firstBucket = subValues[0]
                         return (
                             <TermOptionFacet
