@@ -25,6 +25,7 @@ const CollapsibleFacetContainer = ({
             isExpanded={isExpanded}
             setIsExpanded={handleSetIsExpanded}
             label={facet.label}
+            tooltipText={facet.tooltipText}
             formatVal={formatVal}
         >
             <View
