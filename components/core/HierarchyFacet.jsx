@@ -87,6 +87,20 @@ export default function HierarchyFacet({
                         subValues = facet.filterSubValues(option.key, subValues)
                     }
 
+                    if (subValues.length === 1 && subValues[0].key === option.key) {
+                       return (
+                            <TermOptionFacet
+                                key={option.key}
+                                facet={facet}
+                                field={field}
+                                formatVal={formatVal}
+                                transformFunction={transformFunction}
+                                value={option.key}
+                                count={option.doc_count}
+                            />
+                        )
+                    }
+
                     return (
                         <HierarchyOptionFacet
                             key={option.key}
