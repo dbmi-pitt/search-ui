@@ -18,6 +18,13 @@ const Facets = ({ transformFunction }) => {
         return id
     }
 
+    function setTransformFunction(facetConfig) {
+         if (!facetConfig.transformFunction) {
+            return transformFunction
+        }
+         return facetConfig.transformFunction
+    }
+
     function isFacetVisible(facetConfig) {
         if (!facetConfig.isFacetVisible) {
             return DEFAULT_FACET_VISIBLE
@@ -43,7 +50,7 @@ const Facets = ({ transformFunction }) => {
                         facet={facet}
                         field={name}
                         formatVal={formatVal}
-                        transformFunction={transformFunction}
+                        transformFunction={setTransformFunction(facet)}
                         view={TermFacet}
                     />
                 )
@@ -53,7 +60,7 @@ const Facets = ({ transformFunction }) => {
                         key={name}
                         field={name}
                         facet={facet}
-                        transformFunction={transformFunction}
+                        transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HierarchyFacet}
                     />
@@ -64,7 +71,7 @@ const Facets = ({ transformFunction }) => {
                         key={name}
                         field={name}
                         facet={facet}
-                        transformFunction={transformFunction}
+                        transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={DateRangeFacet}
                     />
@@ -75,7 +82,7 @@ const Facets = ({ transformFunction }) => {
                         key={name}
                         field={name}
                         facet={facet}
-                        transformFunction={transformFunction}
+                        transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HistogramFacet}
                     />
