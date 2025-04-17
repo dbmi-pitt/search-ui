@@ -65,13 +65,27 @@ export function SearchUIProvider({ name, authState, children }) {
 
     useEffect(() => {
         checkLocalStorageSchema()
-        if (driver.state.filters && driver.state.filters.length > 0)
+        if (driver.state.filters && driver.state.filters.length > 0) {
+            // Remove any filters that are not in the search config
+            for (const filter of driver.state.filters) {
+                const facet = driver.searchQuery.facets[filter.field]
+                if (!facet) {
+                    for (const value of filter.values) {
+                        removeFilter(filter.field, value)
+                    }
+                }
+            }
             return
+        }
 
         const localFilters = getLocalStorageFilters(name)
         for (const filter of localFilters) {
-            for (const value of filter.values) {
-                addFilter(filter.field, value)
+            // Ignore any filters that are not in the search config
+            const facet = driver.searchQuery.facets[filter.field]
+            if (facet) {
+                for (const value of filter.values) {
+                    addFilter(filter.field, value)
+                }
             }
         }
     }, [])
@@ -120,17 +134,17 @@ export function SearchUIProvider({ name, authState, children }) {
 
     function addFilter(field, value) {
         const facet = driver.searchQuery.facets[field]
-        driver.actions.addFilter(field, value, facet.filterType || 'any')
+        driver.actions.addFilter(field, value, facet?.filterType || 'any')
     }
 
     function setFilter(field, value) {
         const facet = driver.searchQuery.facets[field]
-        driver.actions.setFilter(field, value, facet.filterType || 'any')
+        driver.actions.setFilter(field, value, facet?.filterType || 'any')
     }
 
     function removeFilter(filter, value) {
         const facet = driver.searchQuery.facets[filter]
-        driver.actions.removeFilter(filter, value, facet.filterType || 'any')
+        driver.actions.removeFilter(filter, value, facet?.filterType || 'any')
     }
 
     function isFacetExpanded(field) {
