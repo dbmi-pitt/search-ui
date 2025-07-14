@@ -77,8 +77,9 @@ export function transformResults(records, indexName, state) {
 
   result["record_count"] = total;
 
+  const rawHits = records["hits"]["hits"]
   // set the records
-  let hits = records["hits"]["hits"].map(transform);
+  let hits = indexName !== 'files' ? rawHits.map(transform) : rawHits
   docType[indexName] = hits
   result["records"] = docType
 
