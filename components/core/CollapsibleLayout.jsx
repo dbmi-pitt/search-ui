@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import Tooltip from '@mui/material/Tooltip';
 import styles from '../../css/collapsableFacets.module.css';
+import Zoom from "@mui/material/Zoom";
 
 const CollapsibleLayout = ({
     isExpanded,
@@ -10,14 +10,8 @@ const CollapsibleLayout = ({
     formatVal,
     children
 }) => {
-    const [showTooltip, setShowTooltip] = useState(false)
-
     function formatClassName(label) {
         return `sui-facet__title sui-facet__title--${formatVal(label)}`
-    }
-
-    function handleInfoCircleHoverChange(e) {
-        setShowTooltip(e.type === 'mouseenter')
     }
 
     function handleExpandClick() {
@@ -36,27 +30,21 @@ const CollapsibleLayout = ({
                         {label}
                         {tooltipText && (
                             <>
-                                <OverlayTrigger
-                                    show={showTooltip}
-                                    trigger={['hover', 'focus']}
+                                <Tooltip
+                                    title={tooltipText}
+
                                     placement='top'
-                                    overlay={
-                                        <Popover>
-                                            <Popover.Body>
-                                                {tooltipText}
-                                            </Popover.Body>
-                                        </Popover>
-                                    }
+                                    classes={{ popper: 'snPopover' }}
+                                    arrow slots={{transition: Zoom}}
+
                                 >
                                         <span>
                                             {' '}
                                             <i
-                                                className="bi bi-question-circle-fill"     
-                                                onMouseEnter={handleInfoCircleHoverChange}     
-                                                onMouseLeave={handleInfoCircleHoverChange}>
+                                                className="bi bi-question-circle-fill">
                                             </i>
                                         </span>
-                                </OverlayTrigger>
+                                </Tooltip>
                             </>
                         )}
                     </legend>
