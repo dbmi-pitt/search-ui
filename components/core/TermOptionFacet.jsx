@@ -27,7 +27,7 @@ export default function TermOptionFacet({
     value,
     count
 }) {
-    const { filters, addFilter, removeFilter } = useSearchUIContext()
+    const { filters, addFilter, removeFilter, stateProps } = useSearchUIContext()
 
     const filter = filters.find((f) => f.field === field)
 
@@ -66,6 +66,7 @@ export default function TermOptionFacet({
                     className='sui-multi-checkbox-facet__checkbox'
                     checked={filter?.values.includes(value) ?? false}
                     onChange={handleCheckboxChange}
+                    {...stateProps[facet.field] || {}}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>
                     {transformFunction(value)}
