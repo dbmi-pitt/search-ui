@@ -11,7 +11,7 @@ export default function HierarchyOptionFacet({
     count,
     subValues
 }) {
-    const { filters, addFilter, removeFilter } = useSearchUIContext()
+    const { filters, addFilter, removeFilter, stateProps } = useSearchUIContext()
     const [isExpanded, setIsExpanded] = useState(false)
 
     const filter = filters.find((f) => f.field === field)
@@ -87,6 +87,7 @@ export default function HierarchyOptionFacet({
                         className='sui-multi-checkbox-facet__checkbox'
                         checked={getValueCheckedState()}
                         onChange={handleValueCheckboxChange}
+                        {...stateProps[facet.groupByField] || {}}
                     />
                     <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
                         {transformFunction(value)}
@@ -127,6 +128,7 @@ export default function HierarchyOptionFacet({
                                     style={{ marginLeft: '1.25rem' }}
                                     checked={getSubValueCheckedState(subValue)}
                                     onChange={(e) => handleSubValueCheckboxChange(e, subValue)}
+                                    {...stateProps[facet.field] || {}}
                                 />
                                 <span className='sui-multi-checkbox-facet__input-text'>
                                     {transformFunction(subValue.key)}
