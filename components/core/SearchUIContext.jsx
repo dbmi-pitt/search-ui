@@ -62,6 +62,7 @@ export function useSearchUIContext() {
 export function SearchUIProvider({ name, authState, children }) {
     const { driver } = useContext(SearchContext)
     const [aggregations, setAggregations] = useState({})
+    const [stateProps, setStateProps] = useState({})
 
     useEffect(() => {
         checkLocalStorageSchema()
@@ -191,7 +192,10 @@ export function SearchUIProvider({ name, authState, children }) {
                 pageSize: driver.state.resultsPerPage,
                 setPageSize: driver.actions.setResultsPerPage,
                 sort: driver.state.sort,
-                setSort: driver.actions.setSort
+                setSort: driver.actions.setSort,
+
+                stateProps,
+                setStateProps
             }}
         >
             {children}
