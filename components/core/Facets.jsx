@@ -1,4 +1,5 @@
 import CollapsibleFacetContainer from './CollapsibleFacetContainer'
+import CollapsibleGroupContainer from './CollapsibleGroupContainer'
 import DateRangeFacet from './DateRangeFacet'
 import HierarchyFacet from './HierarchyFacet'
 import HistogramFacet from './HistogramFacet'
@@ -19,10 +20,10 @@ const Facets = ({ transformFunction }) => {
     }
 
     function setTransformFunction(facetConfig) {
-         if (!facetConfig.transformFunction) {
+        if (!facetConfig.transformFunction) {
             return transformFunction
         }
-         return facetConfig.transformFunction
+        return facetConfig.transformFunction
     }
 
     function isFacetVisible(facetConfig) {
@@ -86,6 +87,23 @@ const Facets = ({ transformFunction }) => {
                         formatVal={formatVal}
                         view={HistogramFacet}
                     />
+                )
+            case 'group':
+                return (
+                    <CollapsibleGroupContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        formatVal={formatVal}
+                    >
+                        {Object.entries(facet.facets).map(([name, childFacet]) => {
+                                if (!isFacetVisible(childFacet)) {
+                                    return null
+                                }
+                                return createFacet(name, childFacet)
+                            }
+                        )}
+                    </CollapsibleGroupContainer>
                 )
             default:
                 return null

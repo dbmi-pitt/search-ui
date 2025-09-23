@@ -69,7 +69,7 @@ export function SearchUIProvider({ name, authState, children }) {
         if (driver.state.filters && driver.state.filters.length > 0) {
             // Remove any filters that are not in the search config
             for (const filter of driver.state.filters) {
-                const facet = driver.searchQuery.facets[filter.field]
+                const facet = findFacet(filter.field)
                 if (!facet) {
                     for (const value of filter.values) {
                         removeFilter(filter.field, value)
@@ -82,7 +82,7 @@ export function SearchUIProvider({ name, authState, children }) {
         const localFilters = getLocalStorageFilters(name)
         for (const filter of localFilters) {
             // Ignore any filters that are not in the search config
-            const facet = driver.searchQuery.facets[filter.field]
+            const facet = findFacet(filter.field)
             if (facet) {
                 for (const value of filter.values) {
                     addFilter(filter.field, value)
@@ -92,13 +92,15 @@ export function SearchUIProvider({ name, authState, children }) {
     }, [])
 
     useEffect(() => {
-        if (driver.state.isLoading)
-            return
+        if (driver.state.isLoading) return
 
         setAggregations(driver.state.rawResponse.aggregations || {})
 
         if (name) {
-            localStorage.setItem(`${name}.filters`, JSON.stringify(driver.state.filters))
+            localStorage.setItem(
+                `${name}.filters`,
+                JSON.stringify(driver.state.filters)
+            )
         }
         removeInactiveFacets()
     }, [driver.state])
@@ -106,16 +108,21 @@ export function SearchUIProvider({ name, authState, children }) {
     function removeInactiveFacets() {
         for (const filter of driver.state.filters) {
             const field = filter.field
-            const facet = driver.searchQuery.facets[field]
+            const facet = findFacet(filter.field)
             if (!facet) continue
 
             let isAggregationActive = true
             if (Array.isArray(facet.isAggregationActive)) {
                 // Array of functions
-                isAggregationActive = facet.isAggregationActive.some((f) => f(driver.state.filters, authState))
+                isAggregationActive = facet.isAggregationActive.some((f) =>
+                    f(driver.state.filters, authState)
+                )
             } else if (typeof facet.isAggregationActive === 'function') {
                 // Function
-                isAggregationActive = facet.isAggregationActive(driver.state.filters, authState)
+                isAggregationActive = facet.isAggregationActive(
+                    driver.state.filters,
+                    authState
+                )
             } else if (typeof facet.isAggregationActive === 'boolean') {
                 // Boolean
                 isAggregationActive = facet.isAggregationActive
@@ -130,21 +137,21 @@ export function SearchUIProvider({ name, authState, children }) {
     }
 
     function clearSearchTerm(shouldClearFilters = true) {
-        driver.actions.setSearchTerm("", { shouldClearFilters })
+        driver.actions.setSearchTerm('', { shouldClearFilters })
     }
 
     function addFilter(field, value) {
-        const facet = driver.searchQuery.facets[field]
+        const facet = findFacet(field)
         driver.actions.addFilter(field, value, facet?.filterType || 'any')
     }
 
     function setFilter(field, value) {
-        const facet = driver.searchQuery.facets[field]
+        const facet = findFacet(field)
         driver.actions.setFilter(field, value, facet?.filterType || 'any')
     }
 
     function removeFilter(filter, value) {
-        const facet = driver.searchQuery.facets[filter]
+        const facet = findFacet(field)
         driver.actions.removeFilter(filter, value, facet?.filterType || 'any')
     }
 
@@ -153,19 +160,37 @@ export function SearchUIProvider({ name, authState, children }) {
         if (settings.hasOwnProperty(field)) {
             return (
                 settings[field].isExpanded ||
-                driver.searchQuery.facets[field].isExpanded
+                findFacet(field)?.isExpanded ||
+                false
             )
         } else {
-            return driver.searchQuery.facets[field].isExpanded
+            return findFacet()?.isExpanded || false
         }
     }
 
     function setFacetExpanded(field, value) {
-        if (!name)
-            return
+        if (!name) return
         const settings = getLocalStorageSettings(name)
         settings[field] = { isExpanded: value }
         localStorage.setItem(`${name}.settings`, JSON.stringify(settings))
+    }
+
+    function findFacet(field) {
+        const facet = driver.searchQuery.facets[field]
+        if (facet) {
+            return facet
+        }
+
+        // field is not a top-level facet, look for it in grouped facets
+        const groupedFacets = Object.values(driver.searchQuery.facets).filter(
+            (f) => f.facetType === 'group'
+        )
+        for (const group of groupedFacets) {
+            if (group.facets && group.facets[field]) {
+                return group.facets[field]
+            }
+        }
+        return undefined
     }
 
     return (
