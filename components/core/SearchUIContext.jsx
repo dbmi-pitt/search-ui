@@ -142,16 +142,19 @@ export function SearchUIProvider({ name, authState, children }) {
 
     function addFilter(field, value) {
         const facet = findFacet(field)
+        if (!facet) return
         driver.actions.addFilter(field, value, facet?.filterType || 'any')
     }
 
     function setFilter(field, value) {
         const facet = findFacet(field)
+        if (!facet) return
         driver.actions.setFilter(field, value, facet?.filterType || 'any')
     }
 
     function removeFilter(field, value) {
         const facet = findFacet(field)
+        if (!facet) return
         driver.actions.removeFilter(field, value, facet?.filterType || 'any')
     }
 
@@ -211,6 +214,7 @@ export function SearchUIProvider({ name, authState, children }) {
 
                 isFacetExpanded,
                 setFacetExpanded,
+                findFacet,
                 a11yNotify: driver.a11yNotify,
                 pageNumber: driver.state.current,
                 setPageNumber: driver.actions.setCurrent,
