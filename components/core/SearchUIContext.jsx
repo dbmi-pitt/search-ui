@@ -150,9 +150,9 @@ export function SearchUIProvider({ name, authState, children }) {
         driver.actions.setFilter(field, value, facet?.filterType || 'any')
     }
 
-    function removeFilter(filter, value) {
+    function removeFilter(field, value) {
         const facet = findFacet(field)
-        driver.actions.removeFilter(filter, value, facet?.filterType || 'any')
+        driver.actions.removeFilter(field, value, facet?.filterType || 'any')
     }
 
     function isFacetExpanded(field) {
