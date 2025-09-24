@@ -22,7 +22,7 @@ const CollapsibleLayout = ({
 
     return (
         <div className={className}>
-            <div className='pt-4 d-flex flex-row'>
+            <div className='d-flex flex-row'>
                 <div className={`sui-facet__${formatVal(label)} flex-grow-1`}>
                     <legend
                         className={cls(

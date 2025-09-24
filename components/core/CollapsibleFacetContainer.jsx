@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { cls } from '../../lib/utils'
 import CollapsibleLayout from './CollapsibleLayout'
 import { useSearchUIContext } from './SearchUIContext'
 
@@ -28,7 +29,7 @@ const CollapsibleFacetContainer = ({
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
-            className={className}
+            className={cls('mt-4', className)}
         >
             <View
                 facet={facet}

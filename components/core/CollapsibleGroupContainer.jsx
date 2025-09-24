@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import styles from '../../css/collapsableFacets.module.css'
+import { cls } from '../../lib/utils'
 import CollapsibleLayout from './CollapsibleLayout'
 import { useSearchUIContext } from './SearchUIContext'
 
@@ -19,6 +21,7 @@ const CollapsibleGroupContainer = ({ field, facet, formatVal, children }) => {
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
+            className={cls('mt-4 pt-4', styles.groupFacet)}
         >
             {children}
         </CollapsibleLayout>
