@@ -21,7 +21,7 @@ const CollapsibleGroupContainer = ({ field, facet, formatVal, children }) => {
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
-            className={cls('mt-4 pt-4', styles.groupFacet)}
+            className={cls('mt-2 pt-3', styles.groupFacet)}
         >
             {children}
         </CollapsibleLayout>
