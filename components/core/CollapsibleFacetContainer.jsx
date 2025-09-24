@@ -7,7 +7,8 @@ const CollapsibleFacetContainer = ({
     field,
     formatVal,
     transformFunction,
-    view
+    view,
+    className
 }) => {
     const { isFacetExpanded, setFacetExpanded } = useSearchUIContext()
 
@@ -27,6 +28,7 @@ const CollapsibleFacetContainer = ({
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
+            className={className}
         >
             <View
                 facet={facet}

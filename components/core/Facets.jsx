@@ -42,7 +42,7 @@ const Facets = ({ transformFunction }) => {
         }
     }
 
-    function createFacet(name, facet) {
+    function createFacet(name, facet, className) {
         switch (facet.facetType) {
             case 'term':
                 return (
@@ -53,6 +53,7 @@ const Facets = ({ transformFunction }) => {
                         formatVal={formatVal}
                         transformFunction={setTransformFunction(facet)}
                         view={TermFacet}
+                        className={className}
                     />
                 )
             case 'hierarchy':
@@ -64,6 +65,7 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HierarchyFacet}
+                        className={className}
                     />
                 )
             case 'daterange':
@@ -75,6 +77,7 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={DateRangeFacet}
+                        className={className}
                     />
                 )
             case 'histogram':
@@ -86,6 +89,7 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HistogramFacet}
+                        className={className}
                     />
                 )
             case 'group':
@@ -96,11 +100,12 @@ const Facets = ({ transformFunction }) => {
                         facet={facet}
                         formatVal={formatVal}
                     >
-                        {Object.entries(facet.facets).map(([name, childFacet]) => {
+                        {Object.entries(facet.facets).map(
+                            ([name, childFacet]) => {
                                 if (!isFacetVisible(childFacet)) {
                                     return null
                                 }
-                                return createFacet(name, childFacet)
+                                return createFacet(name, childFacet, 'ms-2')
                             }
                         )}
                     </CollapsibleGroupContainer>
