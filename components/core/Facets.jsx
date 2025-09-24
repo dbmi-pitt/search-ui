@@ -30,6 +30,28 @@ const Facets = ({ transformFunction }) => {
         if (!facetConfig.isFacetVisible) {
             return DEFAULT_FACET_VISIBLE
         }
+        if (facetConfig.facetType === 'group') {
+            const predicate = facetConfig.isFacetVisible
+            if (typeof predicate === 'function') {
+                // Find the visible child facets and pass them to the predicate
+                const visibleChildFacets = Object.values(
+                    facetConfig.facets
+                ).filter((childFacet) => isFacetVisible(childFacet))
+                return predicate(
+                    filters,
+                    aggregations,
+                    authState,
+                    visibleChildFacets
+                )
+            } else if (typeof predicate === 'boolean') {
+                return predicate
+            } else {
+                throw new Error(
+                    'Group Facet isFacetVisible must be a boolean or a function'
+                )
+            }
+        }
+
         const predicate = facetConfig.isFacetVisible
         if (typeof predicate === 'function') {
             return predicate(filters, aggregations, authState)
