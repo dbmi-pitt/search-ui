@@ -1,5 +1,6 @@
 import { SearchContext } from '@elastic/react-search-ui'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { findFacet as utilFindFacet } from '../../lib/search-tools'
 
 const SearchUIContext = createContext()
 
@@ -179,21 +180,7 @@ export function SearchUIProvider({ name, authState, children }) {
     }
 
     function findFacet(field) {
-        const facet = driver.searchQuery.facets[field]
-        if (facet) {
-            return facet
-        }
-
-        // field is not a top-level facet, look for it in grouped facets
-        const groupedFacets = Object.values(driver.searchQuery.facets).filter(
-            (f) => f.facetType === 'group'
-        )
-        for (const group of groupedFacets) {
-            if (group.facets && group.facets[field]) {
-                return group.facets[field]
-            }
-        }
-        return undefined
+        return utilFindFacet(field, driver.searchQuery.facets)
     }
 
     return (
