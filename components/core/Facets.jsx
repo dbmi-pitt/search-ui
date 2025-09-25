@@ -1,4 +1,5 @@
 import CollapsibleFacetContainer from './CollapsibleFacetContainer'
+import CollapsibleGroupContainer from './CollapsibleGroupContainer'
 import DateRangeFacet from './DateRangeFacet'
 import HierarchyFacet from './HierarchyFacet'
 import HistogramFacet from './HistogramFacet'
@@ -19,16 +20,38 @@ const Facets = ({ transformFunction }) => {
     }
 
     function setTransformFunction(facetConfig) {
-         if (!facetConfig.transformFunction) {
+        if (!facetConfig.transformFunction) {
             return transformFunction
         }
-         return facetConfig.transformFunction
+        return facetConfig.transformFunction
     }
 
     function isFacetVisible(facetConfig) {
         if (!facetConfig.isFacetVisible) {
             return DEFAULT_FACET_VISIBLE
         }
+        if (facetConfig.facetType === 'group') {
+            const predicate = facetConfig.isFacetVisible
+            if (typeof predicate === 'function') {
+                // Find the visible child facets and pass them to the predicate
+                const visibleChildFacets = Object.values(
+                    facetConfig.facets
+                ).filter((childFacet) => isFacetVisible(childFacet))
+                return predicate(
+                    filters,
+                    aggregations,
+                    authState,
+                    visibleChildFacets
+                )
+            } else if (typeof predicate === 'boolean') {
+                return predicate
+            } else {
+                throw new Error(
+                    'Group Facet isFacetVisible must be a boolean or a function'
+                )
+            }
+        }
+
         const predicate = facetConfig.isFacetVisible
         if (typeof predicate === 'function') {
             return predicate(filters, aggregations, authState)
@@ -41,7 +64,7 @@ const Facets = ({ transformFunction }) => {
         }
     }
 
-    function createFacet(name, facet) {
+    function createFacet(name, facet, className) {
         switch (facet.facetType) {
             case 'term':
                 return (
@@ -52,6 +75,7 @@ const Facets = ({ transformFunction }) => {
                         formatVal={formatVal}
                         transformFunction={setTransformFunction(facet)}
                         view={TermFacet}
+                        className={className}
                     />
                 )
             case 'hierarchy':
@@ -63,6 +87,7 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HierarchyFacet}
+                        className={className}
                     />
                 )
             case 'daterange':
@@ -74,6 +99,7 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={DateRangeFacet}
+                        className={className}
                     />
                 )
             case 'histogram':
@@ -85,7 +111,26 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HistogramFacet}
+                        className={className}
                     />
+                )
+            case 'group':
+                return (
+                    <CollapsibleGroupContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        formatVal={formatVal}
+                    >
+                        {Object.entries(facet.facets).map(
+                            ([name, childFacet]) => {
+                                if (!isFacetVisible(childFacet)) {
+                                    return null
+                                }
+                                return createFacet(name, childFacet, 'ms-2')
+                            }
+                        )}
+                    </CollapsibleGroupContainer>
                 )
             default:
                 return null
