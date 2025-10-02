@@ -1,21 +1,13 @@
 import { useState } from 'react'
+import styles from '../../css/collapsableFacets.module.css'
 import { cls } from '../../lib/utils'
 import CollapsibleLayout from './CollapsibleLayout'
 import { useSearchUIContext } from './SearchUIContext'
 
-const CollapsibleFacetContainer = ({
-    facet,
-    field,
-    formatVal,
-    transformFunction,
-    view,
-    className
-}) => {
+const CollapsibleGroupContainer = ({ field, facet, formatVal, children }) => {
     const { isFacetExpanded, setFacetExpanded } = useSearchUIContext()
 
     const [isExpanded, setIsExpanded] = useState(isFacetExpanded(field))
-
-    const View = view
 
     const handleSetIsExpanded = (isExpanded) => {
         setIsExpanded(isExpanded)
@@ -29,16 +21,11 @@ const CollapsibleFacetContainer = ({
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
-            className={cls('mt-4', className)}
+            className={cls('mt-2 pt-3', styles.groupFacet)}
         >
-            <View
-                facet={facet}
-                field={field}
-                formatVal={formatVal}
-                transformFunction={transformFunction}
-            />
+            {children}
         </CollapsibleLayout>
     )
 }
 
-export default CollapsibleFacetContainer
+export default CollapsibleGroupContainer
