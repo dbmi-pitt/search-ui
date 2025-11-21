@@ -168,7 +168,7 @@ export function SearchUIProvider({ name, authState, children }) {
                 false
             )
         } else {
-            return findFacet()?.isExpanded || false
+            return findFacet(field)?.isExpanded || false
         }
     }
 
