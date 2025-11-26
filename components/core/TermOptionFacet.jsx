@@ -69,7 +69,7 @@ export default function TermOptionFacet({
                     {...stateProps[facet.field] || {}}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>
-                    {transformFunction(value)}
+                    {transformFunction(facet, value)}
                 </span>
             </div>
             <span className='sui-multi-checkbox-facet__option-count me-5'>
