@@ -90,7 +90,7 @@ export default function HierarchyOptionFacet({
                         {...stateProps[facet.groupByField] || {}}
                     />
                     <span className='sui-multi-checkbox-facet__input-text flex-grow-1'>
-                        {transformFunction(value)}
+                        {transformFunction(facet, value)}
                     </span>
                     <span
                         className='sui-multi-checkbox-facet__option-count'
@@ -131,7 +131,7 @@ export default function HierarchyOptionFacet({
                                     {...stateProps[facet.field] || {}}
                                 />
                                 <span className='sui-multi-checkbox-facet__input-text'>
-                                    {transformFunction(subValue.key)}
+                                    {transformFunction(facet, subValue.key)}
                                 </span>
                             </div>
                             <span className='sui-multi-checkbox-facet__option-count me-4'>
