@@ -29,7 +29,7 @@ const CollapsibleFacetContainer = ({
             label={facet.label}
             tooltipText={facet.tooltipText}
             formatVal={formatVal}
-            className={cls('mt-4', className)}
+            className={cls(`mt-4 facetContainer facetContainer--${facet.field?.replaceAll('.', '-')}`, className)}
         >
             <View
                 facet={facet}
