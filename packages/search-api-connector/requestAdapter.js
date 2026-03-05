@@ -4,7 +4,7 @@ import {
   adaptResultFieldsConfig,
   adaptSearchFieldsConfig
 } from "./requestAdapters";
-import log from "loglevel";
+import {log} from 'xac-loglevel';
 
 export default function adaptRequest(request, queryConfig, documentType) {
   const { disjunctiveFacets, disjunctiveFacetsAnalyticsTags } = queryConfig;

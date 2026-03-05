@@ -1,4 +1,4 @@
-import log from 'loglevel'
+import {log} from 'xac-loglevel'
 import customAdaptRequest from './customRequestAdapter'
 import request from './request'
 import adaptRequest from './requestAdapter'
