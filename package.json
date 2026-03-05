@@ -1,6 +1,6 @@
 {
     "name": "search-ui",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "private": true,
     "scripts": {
         "format": "prettier --write ."
@@ -13,10 +13,10 @@
         "bootstrap": "^5.1.3",
         "chart.js": "^4.0.0",
         "elastic-builder": "^2.16.0",
-        "loglevel": "^1.8.0",
         "react-chartjs-2": "^5.0.0",
         "react-hook-form": "^7.28.1",
-        "react-select": "^5.2.2"
+        "react-select": "^5.2.2",
+        "xac-loglevel": "github:x-atlas-consortia/xac-loglevel#1.0.0"
     },
     "devDependencies": {
         "prettier": "^3.3.3"
