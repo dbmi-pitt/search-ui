@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import log from "loglevel";
+import {log} from 'xac-loglevel';
 
 //const Field = ({ field, fieldChanged, type, value }) => {
 const TextArea = ({...props}) => {
