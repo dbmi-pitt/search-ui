@@ -1,4 +1,5 @@
-import {log} from 'xac-loglevel';
+import log from 'xac-loglevel';
+
 
 function adaptFilterType(type) {
   if (type === "any") return {};
