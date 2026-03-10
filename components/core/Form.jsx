@@ -1,6 +1,6 @@
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import 'bootstrap/dist/css/bootstrap.css'
-import {log} from 'xac-loglevel'
+import log from 'xac-loglevel';
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'

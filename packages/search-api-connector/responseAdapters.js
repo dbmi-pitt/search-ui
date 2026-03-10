@@ -1,4 +1,5 @@
-import {log} from 'xac-loglevel';
+import log from 'xac-loglevel';
+
 
 const addEachKeyValueToObject = (acc, [key, value]) => ({
   ...acc,
