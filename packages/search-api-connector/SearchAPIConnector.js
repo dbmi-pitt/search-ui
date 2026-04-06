@@ -100,7 +100,7 @@ class SearchAPIConnector {
     onSearch(state, queryConfig) {
         const options = customAdaptRequest(state, queryConfig, this.authState)
 
-        log.info("I'm HERE:  onSearch", options)
+        log.info("SearchAPIConnector.onSearch", options)
         return this.beforeSearchCall(options, (newOptions) =>
             this.request(
                 'POST',
