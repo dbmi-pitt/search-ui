@@ -61,6 +61,7 @@ export default function TermFacet({
                     }
                     return (
                         <TermOptionFacet
+                            data={option}
                             key={option.key}
                             facet={facet}
                             field={field}

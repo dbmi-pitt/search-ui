@@ -71,6 +71,7 @@ export default function HierarchyFacet({
                         const firstBucket = subValues[0]
                         return (
                             <TermOptionFacet
+                                data={option}
                                 key={option.key}
                                 facet={facet}
                                 field={field}
@@ -90,6 +91,7 @@ export default function HierarchyFacet({
                     if (subValues.length === 1 && subValues[0].key === option.key) {
                        return (
                             <TermOptionFacet
+                                data={option}
                                 key={option.key}
                                 facet={facet}
                                 field={field}
