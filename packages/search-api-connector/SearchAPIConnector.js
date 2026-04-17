@@ -2,7 +2,7 @@ import log from 'xac-loglevel';
 import customAdaptRequest from './customRequestAdapter'
 import request from './request'
 import adaptRequest from './requestAdapter'
-import adaptResponse from './responseAdapter'
+import adaptResponse, {adaptErrorResponse} from './responseAdapter'
 
 function _get(engineKey, path, params) {
     const query = Object.entries({ engine_key: engineKey, ...params })
@@ -100,7 +100,7 @@ class SearchAPIConnector {
     onSearch(state, queryConfig) {
         const options = customAdaptRequest(state, queryConfig, this.authState)
 
-        log.info("I'm HERE:  onSearch", options)
+        log.info("SearchAPIConnector.onSearch", options)
         return this.beforeSearchCall(options, (newOptions) =>
             this.request(
                 'POST',
@@ -110,6 +110,7 @@ class SearchAPIConnector {
                 this.indexUrl,
                 this.indexName
             ).then((json) => adaptResponse(json, this.indexName, state))
+            .catch((error) => adaptErrorResponse(error))
         )
     }
 

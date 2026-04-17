@@ -22,3 +22,10 @@ export default function adaptResponse(response, indexName, state) {
     ...(Object.keys(facets).length > 0 && { facets })
   };
 }
+
+export function adaptErrorResponse(response) {
+  return {
+    rawResponse: response.message,
+    isError: true
+  }
+}
