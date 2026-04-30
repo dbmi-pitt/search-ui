@@ -8,6 +8,7 @@ import { useSearchUIContext } from './SearchUIContext'
 
 /**
  * @typedef {Object} TermOptionFacetProps
+ * @typedef {Object} data - Current facet data
  * @property {FacetConfig} config - The configuration for the facet.
  * @property {string} value - The value of the term facet option.
  * @property {number} count - The count of the term facet option.
@@ -24,6 +25,7 @@ export default function TermOptionFacet({
     field,
     formatVal,
     transformFunction,
+    data,
     value,
     count
 }) {
@@ -69,7 +71,7 @@ export default function TermOptionFacet({
                     {...stateProps[facet.field] || {}}
                 />
                 <span className='sui-multi-checkbox-facet__input-text'>
-                    {transformFunction(value, facet)}
+                    {transformFunction(value, {...facet, data})}
                 </span>
             </div>
             <span className='sui-multi-checkbox-facet__option-count me-5'>

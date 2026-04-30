@@ -30,7 +30,7 @@ export default function HierarchyFacet({
     transformFunction
 }) {
     const { aggregations, authState, filters } = useSearchUIContext()
-    const options = aggregations[field]?.buckets ?? []
+    const options = (facet?.bucketsTransform ? facet?.bucketsTransform({facet, field, aggregations, filters, component: 'HierarchyFacet'}) : aggregations[field]?.buckets ?? [])
 
     return (
         <fieldset className='sui-facet js-gtm--facets'>
@@ -71,6 +71,7 @@ export default function HierarchyFacet({
                         const firstBucket = subValues[0]
                         return (
                             <TermOptionFacet
+                                data={option}
                                 key={option.key}
                                 facet={facet}
                                 field={field}
@@ -90,6 +91,7 @@ export default function HierarchyFacet({
                     if (subValues.length === 1 && subValues[0].key === option.key) {
                        return (
                             <TermOptionFacet
+                                data={option}
                                 key={option.key}
                                 facet={facet}
                                 field={field}

@@ -138,7 +138,11 @@ export function SearchUIProvider({ name, authState, children }) {
     }
 
     function clearSearchTerm(shouldClearFilters = true) {
-        driver.actions.setSearchTerm('', { shouldClearFilters })
+        setSearchTerm('')
+    }
+
+    function setSearchTerm(query, shouldClearFilters = true) {
+        driver.actions.setSearchTerm(query, { shouldClearFilters })
     }
 
     function addFilter(field, value) {
@@ -198,6 +202,7 @@ export function SearchUIProvider({ name, authState, children }) {
                 addFilter,
                 setFilter,
                 removeFilter,
+                setSearchTerm,
 
                 isFacetExpanded,
                 setFacetExpanded,
