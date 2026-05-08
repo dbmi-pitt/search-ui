@@ -29,8 +29,17 @@ export default function TermFacet({
     formatVal,
     transformFunction
 }) {
-    const { aggregations, authState, filters } = useSearchUIContext()
-    const options = (facet?.bucketsTransform ? facet?.bucketsTransform({facet, field, aggregations, filters, component: 'TermFacet'}) : aggregations[field]?.buckets ?? [])
+    const { aggregations, authState, filters, stateProps } = useSearchUIContext()
+    const options = facet?.bucketsTransform
+        ? facet?.bucketsTransform({
+              facet,
+              field,
+              aggregations,
+              filters,
+              stateProps,
+              component: 'TermFacet'
+          })
+        : (aggregations[field]?.buckets ?? [])
 
     const [moreExpanded, setMoreExpanded] = useState(false)
 
