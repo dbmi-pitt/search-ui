@@ -29,8 +29,17 @@ export default function HierarchyFacet({
     formatVal,
     transformFunction
 }) {
-    const { aggregations, authState, filters } = useSearchUIContext()
-    const options = (facet?.bucketsTransform ? facet?.bucketsTransform({facet, field, aggregations, filters, component: 'HierarchyFacet'}) : aggregations[field]?.buckets ?? [])
+    const { aggregations, authState, filters, stateProps } = useSearchUIContext()
+    const options = facet?.bucketsTransform
+        ? facet?.bucketsTransform({
+              facet,
+              field,
+              aggregations,
+              filters,
+              stateProps,
+              component: 'HierarchyFacet'
+          })
+        : (aggregations[field]?.buckets ?? [])
 
     return (
         <fieldset className='sui-facet js-gtm--facets'>
