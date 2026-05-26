@@ -112,7 +112,6 @@ export default function MegaHierarchyOptionFacet({
                                 key={child.key}
                                 style={{
                                     marginLeft: `${(depth + 1) * INDENT_PX}px`,
-                                    width: '100%'
                                 }}
                             >
                                 <TermOptionFacet
