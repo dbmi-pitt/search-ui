@@ -58,10 +58,10 @@ export default function MegaHierarchyOptionFacet({
     const isLeafLevel = remainingFields.length === 1
 
     return (
-        <div className='d-flex flex-column align-items-start w-100'>
+        <div className={`d-flex flex-column align-items-start sui-megaFacet--d${depth}`}>
             {/* This node's row */}
             <div
-                className='sui-multi-checkbox-facet__option-input-wrapper d-flex flex-row w-100'
+                className='sui-multi-checkbox-facet__option-input-wrapper d-flex flex-row'
                 style={indentStyle}
             >
                 <label
@@ -108,6 +108,7 @@ export default function MegaHierarchyOptionFacet({
                     if (isLeafLevel || grandchildBuckets.length === 0) {
                         return (
                             <div
+                                className={`sui-megaFacet__leaf sui-megaFacet--d${depth + 1}`}
                                 key={child.key}
                                 style={{
                                     marginLeft: `${(depth + 1) * INDENT_PX}px`,
