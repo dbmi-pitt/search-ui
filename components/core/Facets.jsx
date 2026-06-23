@@ -3,6 +3,7 @@ import CollapsibleGroupContainer from './CollapsibleGroupContainer'
 import DateRangeFacet from './DateRangeFacet'
 import HierarchyFacet from './HierarchyFacet'
 import HistogramFacet from './HistogramFacet'
+import MegaHierarchyFacet from './MegaHierarchyFacet'
 import { useSearchUIContext } from './SearchUIContext'
 import TermFacet from './TermFacet'
 
@@ -87,6 +88,18 @@ const Facets = ({ transformFunction }) => {
                         transformFunction={setTransformFunction(facet)}
                         formatVal={formatVal}
                         view={HierarchyFacet}
+                        className={className}
+                    />
+                )
+            case 'megahierarchy':
+                return (
+                    <CollapsibleFacetContainer
+                        key={name}
+                        field={name}
+                        facet={facet}
+                        transformFunction={setTransformFunction(facet)}
+                        formatVal={formatVal}
+                        view={MegaHierarchyFacet}
                         className={className}
                     />
                 )
