@@ -6,16 +6,16 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@elastic/react-search-ui": "^1.20.2",
-    "@elastic/react-search-ui-views": "^1.20.2",
+    "@elastic/react-search-ui": "^1.24.2",
+    "@elastic/react-search-ui-views": "^1.24.2",
     "@hookform/error-message": "^2.0.0",
-    "@mui/material": "^7.3.9",
+    "@mui/material": "^7.3.11",
     "bootstrap": "^5.1.3",
     "chart.js": "^4.0.0",
     "elastic-builder": "^2.16.0",
     "react-chartjs-2": "^5.0.0",
     "react-hook-form": "^7.28.1",
-    "react-select": "^5.2.2",
+    "react-select": "^5.10.2",
     "xac-loglevel": "github:x-atlas-consortia/xac-loglevel#1.0.2"
   },
   "devDependencies": {
