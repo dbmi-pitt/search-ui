@@ -1,13 +1,13 @@
 import { SearchProvider, WithSearch } from '@elastic/react-search-ui'
 import { SearchUIProvider } from './SearchUIContext'
-import { compressToEncodedURIComponent } from 'lz-string';
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 
 const routingOptions = {
     readUrl: () => window.location.pathname + window.location.search,
 
     writeUrl: (url, { replaceUrl }) => {
-        const method = replaceUrl ? "replaceState" : "pushState";
-        window.history[method](null, "", url);
+        const method = replaceUrl ? 'replaceState' : 'pushState';
+        window.history[method](null, '', url);
     },
 
     // 1. Serialize and compress the search state into a single ?s= parameter
@@ -25,24 +25,24 @@ const routingOptions = {
         if (Object.keys(cleanState).length > 0) {
             const json = JSON.stringify(cleanState);
             const compressed = compressToEncodedURIComponent(json);
-            params.set("s", compressed);
+            params.set('s', compressed);
         } else {
-            params.delete("s");
+            params.delete('s');
         }
 
         const queryString = params.toString();
-        return `${window.location.pathname}${queryString ? `?${queryString}` : ""}`;
+        return `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
     },
 
     // 2. Decompress the ?s= parameter back into Search UI state
     urlToState: (url) => {
         const parsedUrl = new URL(url, window.location.origin);
-        const compressed = parsedUrl.searchParams.get("s");
+        const compressed = parsedUrl.searchParams.get('s');
 
         if (!compressed) return {};
 
         try {
-            const json = LZString.decompressFromEncodedURIComponent(compressed);
+            const json = decompressFromEncodedURIComponent(compressed);
             if (!json) return {};
 
             const parsed = JSON.parse(json);
@@ -55,7 +55,7 @@ const routingOptions = {
             if (parsed.f) state.filters = parsed.f;
 
             return state;
-        } catch (error) {
+        } catch {
             // Fallback safely if a user modifies or truncates the URL manually
             return {};
         }
