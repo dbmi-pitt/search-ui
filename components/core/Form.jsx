@@ -185,7 +185,7 @@ const Form = (props) => {
                                                 </label>
                                                 <a
                                                     href={values[field._uid]}
-                                                    target='_blank'
+                                                    target='_blank' rel="noreferrer"
                                                 >
                                                     {'   '}
                                                     {values[field._uid]}
