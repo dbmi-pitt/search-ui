@@ -13,10 +13,11 @@
     "bootstrap": "^5.1.3",
     "chart.js": "^4.0.0",
     "elastic-builder": "^2.16.0",
+    "lz-string": "^1.5.0",
     "react-chartjs-2": "^5.0.0",
     "react-hook-form": "^7.28.1",
     "react-select": "^5.10.2",
-    "xac-loglevel": "github:x-atlas-consortia/xac-loglevel#1.0.2"
+    "xac-loglevel": "github:x-atlas-consortia/xac-loglevel#1.0.4"
   },
   "devDependencies": {
     "prettier": "^3.3.3"
