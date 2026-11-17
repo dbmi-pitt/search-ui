@@ -1,6 +1,6 @@
 import { SearchContext } from '@elastic/react-search-ui'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { findFacet as utilFindFacet } from '../../lib/search-tools'
+import { findFacet as utilFindFacet, encodeSearchQueryParam } from '../../lib/search-tools'
 
 const SearchUIContext = createContext()
 
@@ -187,6 +187,28 @@ export function SearchUIProvider({ name, authState, children }) {
         return utilFindFacet(field, driver.searchQuery.facets)
     }
 
+    /**
+     * @typedef {Object} Filter
+     * @property {string} field - The field to filter on
+     * @property {string[]|string} values - The values to filter on
+     */
+
+    /**
+     * Creates an encoded search query parameter string from the given filters and size.
+     *
+     * @param {Array<Filter>|string} filters - The filters to include in the search query.
+     * @param {number} size - The number of results to return.
+     * @returns {string} The encoded search query parameter.
+     *
+     * @example
+     * const filters = 'entity_id=123,456;entity_type=Dataset';
+     * const encoded = createEncodedSearchQueryParam(filters);
+     * // encoded is a string suitable for use in a URL query parameter
+     */
+    function createEncodedSearchQueryParam(filters, size = 20) {
+        return encodeSearchQueryParam(filters, driver.searchQuery.facets, size)
+    }
+
     return (
         <SearchUIContext.Provider
             value={{
@@ -216,7 +238,9 @@ export function SearchUIProvider({ name, authState, children }) {
                 setSort: driver.actions.setSort,
 
                 stateProps,
-                setStateProps
+                setStateProps,
+
+                createEncodedSearchQueryParam
             }}
         >
             {children}
