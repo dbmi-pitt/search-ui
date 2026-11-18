@@ -41,7 +41,10 @@ export default function MegaHierarchyFacet({
                     const childBuckets = option[childFields[0]]?.buckets ?? []
 
                     // Collapse into a single plain term option when there are no children
-                    const collapseSingle = (facet.collapseSingleChild ?? false) && childBuckets.length === 1
+                    const collapseSingle =
+                        (facet.collapseSingleChild ?? false) &&
+                        childBuckets.length === 1 &&
+                        transformFunction(childBuckets[0].key) === transformFunction(option.key)
                     if (
                         childFields.length === 0 ||
                         childBuckets.length === 0 ||
