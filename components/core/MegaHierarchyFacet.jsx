@@ -40,18 +40,27 @@ export default function MegaHierarchyFacet({
                     // Child buckets are nested under the agg named after the next field
                     const childBuckets = option[childFields[0]]?.buckets ?? []
 
-                    // If only one level remains (or no children), render as a plain term option
-                    if (childFields.length === 0 || childBuckets.length === 0) {
+                    // Collapse into a single plain term option when there are no children
+                    const collapseSingle = (facet.collapseSingleChild ?? false) && childBuckets.length === 1
+                    if (
+                        childFields.length === 0 ||
+                        childBuckets.length === 0 ||
+                        collapseSingle
+                    ) {
+                        // With a single child, filter on that child's key/count
+                        // since the filter is applied to the leaf field.
+                        const termOption = collapseSingle ? childBuckets[0] : option
+
                         return (
                             <TermOptionFacet
                                 key={option.key}
-                                data={option}
+                                data={termOption}
                                 facet={facet}
                                 field={leafField}
                                 formatVal={formatVal}
                                 transformFunction={transformFunction}
-                                value={option.key}
-                                count={option.doc_count}
+                                value={termOption.key}
+                                count={termOption.doc_count}
                             />
                         )
                     }
